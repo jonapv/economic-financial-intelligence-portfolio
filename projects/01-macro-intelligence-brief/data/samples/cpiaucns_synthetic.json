@@ -1,0 +1,33 @@
+{
+  "_synthetic": true,
+  "_warning": "SYNTHETIC TEST FIXTURE — NOT REAL FRED DATA. These values were invented so that expected results are exact and hand-checkable. They must never be presented as observed data.",
+  "series_id": "CPIAUCNS",
+  "series_name": "Consumer Price Index for All Urban Consumers: All Items, not seasonally adjusted (synthetic stand-in)",
+  "frequency": "monthly",
+  "unit": "index",
+  "seasonal_adjustment": "not seasonally adjusted",
+  "_designed_so_that": {
+    "yoy_current": "104.0 / 100.0 (2025-02 vs 2024-02) => 4.0 percent",
+    "yoy_previous": "103.0 / 100.0 (2025-01 vs 2024-01) => 3.0 percent",
+    "change": "4.0 - 3.0 => +1.0 percentage points",
+    "note": "14 observations: the documented minimum history for a year-over-year comparison plus its prior month. Only positions t, t-1, t-12 and t-13 enter the calculation.",
+    "why_not_seasonally_adjusted": "The headline twelve-month CPI figure is conventionally computed from the NSA index. A twelve-month comparison already spans a full seasonal cycle, so adjustment is unnecessary. The intra-year values below deliberately wiggle rather than rising monotonically, as a real NSA index does; the twelve-month comparison is unaffected by that seasonality.",
+    "do_not": "This series is an index level. It is never itself an inflation rate, and it must not be used for month-over-month inflation, which does require seasonal adjustment."
+  },
+  "observations": [
+    { "date": "2024-01-01", "value": 100.0 },
+    { "date": "2024-02-01", "value": 100.0 },
+    { "date": "2024-03-01", "value": 100.9 },
+    { "date": "2024-04-01", "value": 101.3 },
+    { "date": "2024-05-01", "value": 101.6 },
+    { "date": "2024-06-01", "value": 101.8 },
+    { "date": "2024-07-01", "value": 102.1 },
+    { "date": "2024-08-01", "value": 102.0 },
+    { "date": "2024-09-01", "value": 101.7 },
+    { "date": "2024-10-01", "value": 101.5 },
+    { "date": "2024-11-01", "value": 101.9 },
+    { "date": "2024-12-01", "value": 102.4 },
+    { "date": "2025-01-01", "value": 103.0 },
+    { "date": "2025-02-01", "value": 104.0 }
+  ]
+}

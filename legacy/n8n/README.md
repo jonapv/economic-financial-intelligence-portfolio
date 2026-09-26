@@ -22,6 +22,11 @@ Three reasons, in order of importance.
    documented in full in
    [`../../projects/01-macro-intelligence-brief/README.md`](../../projects/01-macro-intelligence-brief/README.md).
 
+> **Series identifiers in this file are historical.** The workflow reads `CPIAUCSL` and `FEDFUNDS`.
+> V1 has since superseded both: `CPIAUCSL` → `CPIAUCNS` (the unadjusted index, the conventional basis
+> for the headline twelve-month figure) and `FEDFUNDS` → `DFF` (the daily effective rate, rather than a
+> monthly average, for a weekly brief). Do not treat the identifiers in this export as current.
+
 2. **The calculations were not testable.** Logic lived in visual nodes and inline JavaScript
    snippets inside a JSON export. There was no way to unit-test a transformation, review a change as
    a diff, or reproduce a past brief from its inputs.

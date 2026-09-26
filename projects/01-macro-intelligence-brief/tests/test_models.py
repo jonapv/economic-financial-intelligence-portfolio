@@ -28,7 +28,7 @@ def build(**overrides):
         previous_value=3.0,
         change=1.0,
         change_unit=Unit.PERCENTAGE_POINTS,
-        source_series="CPIAUCSL",
+        source_series="CPIAUCNS",
         source_name="Federal Reserve Bank of St. Louis (FRED)",
         retrieved_at=RETRIEVED_AT,
     )
@@ -147,7 +147,7 @@ class TestPresentationBoundary(unittest.TestCase):
         self.assertEqual(shown["unit"], "percent")
         self.assertEqual(shown["change_unit"], "percentage points")
         self.assertEqual(shown["direction"], "increased")
-        self.assertEqual(shown["source_series"], "CPIAUCSL")
+        self.assertEqual(shown["source_series"], "CPIAUCNS")
         self.assertEqual(shown["period"], "2025-02-01")
         self.assertEqual(shown["retrieved_at"], "2025-03-01T12:00:00")
 

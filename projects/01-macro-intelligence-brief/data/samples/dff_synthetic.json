@@ -1,0 +1,27 @@
+{
+  "_synthetic": true,
+  "_warning": "SYNTHETIC TEST FIXTURE — NOT REAL FRED DATA. Invented values; must never be presented as observed data.",
+  "series_id": "DFF",
+  "series_name": "Federal Funds Effective Rate, daily (synthetic stand-in)",
+  "frequency": "daily",
+  "unit": "percent",
+  "seasonal_adjustment": "not applicable",
+  "_designed_so_that": {
+    "current": "4.33 percent (2025-02-28)",
+    "previous": "4.33 percent (2025-02-27)",
+    "change": "4.33 - 4.33 => 0.0 percentage points, direction 'unchanged'",
+    "step_down": "Slicing the series to end at 2025-02-25 gives 4.33 against a previous 4.48 => -0.15 percentage points, exercising a decrease",
+    "unchanged_is_normal": "The effective rate holds flat for long stretches between policy moves. Four consecutive identical observations below reflect that; an unchanged reading is the normal case, not a finding.",
+    "calendar_gap": "There is deliberately no observation for 2025-02-22 or 2025-02-23 (a weekend). 'Previous' means the immediately preceding AVAILABLE observation, not a fixed one-day calendar lag, so gaps do not distort the change.",
+    "not_the_target_range": "DFF is the realised overnight market rate. It is NOT the FOMC target range, which is a separate concept and is not part of V1."
+  },
+  "observations": [
+    { "date": "2025-02-20", "value": 4.48 },
+    { "date": "2025-02-21", "value": 4.48 },
+    { "date": "2025-02-24", "value": 4.48 },
+    { "date": "2025-02-25", "value": 4.33 },
+    { "date": "2025-02-26", "value": 4.33 },
+    { "date": "2025-02-27", "value": 4.33 },
+    { "date": "2025-02-28", "value": 4.33 }
+  ]
+}

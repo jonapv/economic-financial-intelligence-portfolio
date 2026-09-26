@@ -19,6 +19,7 @@ from .errors import MissingValueError, NonNumericValueError
 class Frequency(str, Enum):
     """Observation frequency of a source series."""
 
+    DAILY = "daily"
     MONTHLY = "monthly"
     QUARTERLY = "quarterly"
 

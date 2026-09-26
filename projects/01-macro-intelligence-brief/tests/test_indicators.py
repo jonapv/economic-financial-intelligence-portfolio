@@ -39,10 +39,10 @@ def load(name):
 
 
 class TestCpiInflation(unittest.TestCase):
-    """CPIAUCSL: an index, so the output must be a year-over-year rate."""
+    """CPIAUCNS: an NSA index, so the output must be a year-over-year rate."""
 
     def setUp(self):
-        self.series = load("cpiaucsl_synthetic.json")
+        self.series = load("cpiaucns_synthetic.json")
 
     def test_fixture_shape(self):
         self.assertEqual(len(self.series), 14)
@@ -70,10 +70,46 @@ class TestCpiInflation(unittest.TestCase):
         self.assertIs(obs.unit, Unit.PERCENT)
         # The raw index level (104.0) must not appear as the reported value.
         self.assertNotAlmostEqual(obs.value, 104.0, places=6)
+        self.assertIs(CPI_INFLATION.raw_unit, Unit.INDEX)
+        self.assertIs(CPI_INFLATION.output_unit, Unit.PERCENT)
+
+    def test_no_raw_index_level_is_reported_anywhere(self):
+        # Neither the value nor the comparison may be a raw index level.
+        obs = compute_cpi_inflation(self.series, retrieved_at=RETRIEVED_AT)
+        index_levels = {o.value for o in self.series}
+        for field, figure in (("value", obs.value),
+                              ("previous_value", obs.previous_value)):
+            with self.subTest(field=field):
+                self.assertNotIn(figure, index_levels)
+                self.assertLess(figure, 100.0)  # a rate, not an index near 104
+
+    def test_source_series_is_cpiaucns(self):
+        obs = compute_cpi_inflation(self.series, retrieved_at=RETRIEVED_AT)
+        self.assertEqual(obs.source_series, "CPIAUCNS")
+        self.assertEqual(CPI_INFLATION.source_series, "CPIAUCNS")
+
+    def test_seasonally_adjusted_series_is_not_used(self):
+        # V1 uses the NSA index for the headline twelve-month figure.
+        self.assertNotEqual(CPI_INFLATION.source_series, "CPIAUCSL")
+
+    def test_seasonal_adjustment_metadata(self):
+        self.assertEqual(CPI_INFLATION.seasonal_adjustment, "Not seasonally adjusted")
+
+    def test_fixture_declares_not_seasonally_adjusted(self):
+        import json
+        payload = json.loads((SAMPLES / "cpiaucns_synthetic.json").read_text())
+        self.assertEqual(payload["series_id"], "CPIAUCNS")
+        self.assertEqual(payload["seasonal_adjustment"], "not seasonally adjusted")
+
+    def test_nsa_rationale_is_documented(self):
+        interpretation = CPI_INFLATION.interpretation
+        self.assertIn("non-seasonally-adjusted", interpretation)
+        self.assertIn("twelve-month comparison", interpretation)
+        # And the corollary: NSA must not be used for month-over-month.
+        self.assertIn("month-over-month", interpretation)
 
     def test_metadata(self):
         obs = compute_cpi_inflation(self.series, retrieved_at=RETRIEVED_AT)
-        self.assertEqual(obs.source_series, "CPIAUCSL")
         self.assertEqual(obs.economy, "US")
         self.assertEqual(obs.period, date(2025, 2, 1))
         self.assertIs(obs.frequency, Frequency.MONTHLY)
@@ -122,18 +158,43 @@ class TestUnemploymentRate(unittest.TestCase):
 
 
 class TestEffectiveFedFundsRate(unittest.TestCase):
-    """FEDFUNDS: same structure as UNRATE, plus strict naming."""
+    """DFF: daily effective rate, already a rate, plus strict naming."""
 
     def setUp(self):
-        self.series = load("fedfunds_synthetic.json")
+        self.series = load("dff_synthetic.json")
 
-    def test_current_rate(self):
+    def test_source_series_is_dff(self):
+        obs = compute_effective_fed_funds_rate(self.series, retrieved_at=RETRIEVED_AT)
+        self.assertEqual(obs.source_series, "DFF")
+        self.assertEqual(EFFECTIVE_FED_FUNDS.source_series, "DFF")
+
+    def test_monthly_average_series_is_not_used(self):
+        # A weekly brief needs the current daily rate, not a monthly average.
+        self.assertNotEqual(EFFECTIVE_FED_FUNDS.source_series, "FEDFUNDS")
+
+    def test_frequency_is_daily(self):
+        obs = compute_effective_fed_funds_rate(self.series, retrieved_at=RETRIEVED_AT)
+        self.assertIs(obs.frequency, Frequency.DAILY)
+        self.assertIs(EFFECTIVE_FED_FUNDS.frequency, Frequency.DAILY)
+        self.assertEqual(obs.frequency.value, "daily")
+
+    def test_fixture_declares_daily_frequency(self):
+        import json
+        payload = json.loads((SAMPLES / "dff_synthetic.json").read_text())
+        self.assertEqual(payload["series_id"], "DFF")
+        self.assertEqual(payload["frequency"], "daily")
+
+    def test_current_rate_is_latest_observation(self):
         obs = compute_effective_fed_funds_rate(self.series, retrieved_at=RETRIEVED_AT)
         self.assertAlmostEqual(obs.value, 4.33, places=10)
+        self.assertEqual(obs.period, date(2025, 2, 28))
+        self.assertEqual(obs.value, self.series[-1].value)
 
-    def test_previous_rate(self):
+    def test_previous_rate_is_immediately_preceding_observation(self):
         obs = compute_effective_fed_funds_rate(self.series, retrieved_at=RETRIEVED_AT)
         self.assertAlmostEqual(obs.previous_value, 4.33, places=10)
+        self.assertEqual(obs.previous_value, self.series[-2].value)
+        self.assertEqual(self.series[-2].period, date(2025, 2, 27))
 
     def test_unchanged_change_is_zero(self):
         obs = compute_effective_fed_funds_rate(self.series, retrieved_at=RETRIEVED_AT)
@@ -141,25 +202,60 @@ class TestEffectiveFedFundsRate(unittest.TestCase):
         self.assertIs(obs.direction, Direction.UNCHANGED)
         self.assertIs(obs.change_unit, Unit.PERCENTAGE_POINTS)
 
-    def test_decrease_on_the_earlier_pair(self):
-        obs = compute_effective_fed_funds_rate(self.series[:2], retrieved_at=RETRIEVED_AT)
+    def test_step_down_gives_negative_percentage_point_change(self):
+        # Slice ending 2025-02-25: 4.33 against 4.48 on 2025-02-24.
+        obs = compute_effective_fed_funds_rate(self.series[:4], retrieved_at=RETRIEVED_AT)
+        self.assertEqual(obs.period, date(2025, 2, 25))
         self.assertAlmostEqual(obs.value, 4.33, places=10)
         self.assertAlmostEqual(obs.previous_value, 4.48, places=10)
         self.assertAlmostEqual(obs.change, -0.15, places=10)
         self.assertIs(obs.direction, Direction.DECREASED)
+        self.assertIs(obs.change_unit, Unit.PERCENTAGE_POINTS)
+
+    def test_calendar_gap_uses_previous_available_observation(self):
+        # The fixture omits 2025-02-22 and 2025-02-23. A slice ending on the
+        # 24th must compare against the 21st, not fail or assume a 1-day lag.
+        obs = compute_effective_fed_funds_rate(self.series[:3], retrieved_at=RETRIEVED_AT)
+        self.assertEqual(obs.period, date(2025, 2, 24))
+        self.assertEqual(self.series[1].period, date(2025, 2, 21))
+        self.assertAlmostEqual(obs.previous_value, 4.48, places=10)
+        self.assertEqual(obs.change, 0.0)
+        self.assertIs(obs.direction, Direction.UNCHANGED)
+
+    def test_value_is_published_rate_untransformed(self):
+        obs = compute_effective_fed_funds_rate(self.series, retrieved_at=RETRIEVED_AT)
+        self.assertIn("None", EFFECTIVE_FED_FUNDS.transformation)
+        self.assertIs(EFFECTIVE_FED_FUNDS.raw_unit, Unit.PERCENT)
+        self.assertIs(obs.unit, Unit.PERCENT)
 
     def test_described_as_effective_rate_not_policy_rate(self):
         obs = compute_effective_fed_funds_rate(self.series, retrieved_at=RETRIEVED_AT)
         self.assertEqual(obs.display_name, "Effective Federal Funds Rate")
         self.assertIn("Effective", obs.display_name)
         lowered = obs.display_name.lower()
-        self.assertNotIn("policy rate", lowered)
-        self.assertNotIn("target", lowered)
+        for forbidden in ("policy rate", "target", "fed policy", "fed's rate"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, lowered)
+
+    def test_no_field_implies_it_is_the_fomc_target_range(self):
+        # The word 'target' may appear only inside an explicit warning.
+        for field in ("display_name", "economic_concept", "transformation", "comparison"):
+            with self.subTest(field=field):
+                self.assertNotIn("target", getattr(EFFECTIVE_FED_FUNDS, field).lower())
 
     def test_spec_warns_it_is_not_the_target_range(self):
         interpretation = EFFECTIVE_FED_FUNDS.interpretation
         self.assertIn("NOT the FOMC target range", interpretation)
         self.assertIn("never 'policy rate'", interpretation)
+        self.assertIn("separate concept", interpretation)
+
+    def test_spec_documents_that_unchanged_is_normal(self):
+        self.assertIn("unchanged for weeks", EFFECTIVE_FED_FUNDS.interpretation)
+
+    def test_target_range_series_are_absent_from_v1(self):
+        series = {spec.source_series for spec in SPECS.values()}
+        self.assertNotIn("DFEDTARL", series)
+        self.assertNotIn("DFEDTARU", series)
 
     def test_one_observation_is_insufficient(self):
         with self.assertRaises(InsufficientHistoryError):
@@ -259,10 +355,34 @@ class TestRegistryAndSpecs(unittest.TestCase):
     def test_five_indicators_registered(self):
         self.assertEqual(len(SPECS), 5)
 
+    def test_v1_source_series_set_is_exactly_as_specified(self):
+        self.assertEqual(
+            {spec.source_series for spec in SPECS.values()},
+            {"CPIAUCNS", "UNRATE", "DFF", "GDPC1", "RSAFS"},
+        )
+
+    def test_superseded_series_are_no_longer_active(self):
+        active = {spec.source_series for spec in SPECS.values()}
+        for superseded in ("CPIAUCSL", "FEDFUNDS"):
+            with self.subTest(superseded=superseded):
+                self.assertNotIn(superseded, active)
+
+    def test_every_spec_has_a_frequency_and_matching_fixture(self):
+        expected = {
+            "CPIAUCNS": Frequency.MONTHLY,
+            "UNRATE": Frequency.MONTHLY,
+            "DFF": Frequency.DAILY,
+            "GDPC1": Frequency.QUARTERLY,
+            "RSAFS": Frequency.MONTHLY,
+        }
+        for spec in SPECS.values():
+            with self.subTest(series=spec.source_series):
+                self.assertIs(spec.frequency, expected[spec.source_series])
+
     def test_compute_dispatches_by_id(self):
         obs = compute(
             "us_cpi_inflation_yoy",
-            load("cpiaucsl_synthetic.json"),
+            load("cpiaucns_synthetic.json"),
             retrieved_at=RETRIEVED_AT,
         )
         self.assertAlmostEqual(obs.value, 4.0, places=10)
@@ -273,9 +393,9 @@ class TestRegistryAndSpecs(unittest.TestCase):
 
     def test_every_change_is_in_percentage_points(self):
         fixtures = {
-            "us_cpi_inflation_yoy": "cpiaucsl_synthetic.json",
+            "us_cpi_inflation_yoy": "cpiaucns_synthetic.json",
             "us_unemployment_rate": "unrate_synthetic.json",
-            "us_effective_fed_funds_rate": "fedfunds_synthetic.json",
+            "us_effective_fed_funds_rate": "dff_synthetic.json",
             "us_real_gdp_growth_qoq_ann": "gdpc1_synthetic.json",
             "us_retail_sales_mom": "rsafs_synthetic.json",
         }

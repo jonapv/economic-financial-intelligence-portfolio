@@ -60,11 +60,11 @@ class IndicatorSpec:
 CPI_INFLATION = IndicatorSpec(
     indicator_id="us_cpi_inflation_yoy",
     display_name="CPI Inflation (YoY)",
-    economic_concept="Consumer price inflation rate",
-    source_series="CPIAUCSL",
+    economic_concept="Headline consumer price inflation rate",
+    source_series="CPIAUCNS",
     frequency=Frequency.MONTHLY,
     raw_unit=Unit.INDEX,
-    seasonal_adjustment="Seasonally adjusted",
+    seasonal_adjustment="Not seasonally adjusted",
     transformation="Year-over-year percentage change of the index: ((CPI_t / CPI_t-12) - 1) * 100",
     output_unit=Unit.PERCENT,
     comparison="Against the same calculation one month earlier (t-1 vs t-13), differenced in percentage points",
@@ -73,11 +73,17 @@ CPI_INFLATION = IndicatorSpec(
         "The rate at which consumer prices are rising over twelve months. The "
         "index level itself is not the inflation rate: the index rises in "
         "almost every month, so a rising index says nothing about whether "
-        "inflation accelerated. Inflation can decelerate while the index rises."
+        "inflation accelerated. Inflation can decelerate while the index rises. "
+        "The non-seasonally-adjusted index is the conventional basis for the "
+        "headline twelve-month figure: a twelve-month comparison already spans "
+        "a full seasonal cycle, so seasonal adjustment is unnecessary for this "
+        "transformation. The corollary is that this series must NOT be used for "
+        "month-over-month inflation, which does require adjustment."
     ),
     known_revision_risk=(
-        "Low for the headline index. Seasonal factors are revised annually, "
-        "which can alter recent month-over-month figures more than year-over-year ones."
+        "Very low. The not-seasonally-adjusted index is not subject to the "
+        "annual seasonal-factor revisions that alter the adjusted series, so "
+        "published NSA index values are effectively final."
     ),
 )
 
@@ -108,23 +114,35 @@ UNEMPLOYMENT_RATE = IndicatorSpec(
 EFFECTIVE_FED_FUNDS = IndicatorSpec(
     indicator_id="us_effective_fed_funds_rate",
     display_name="Effective Federal Funds Rate",
-    economic_concept="Realised overnight interbank lending rate, monthly average",
-    source_series="FEDFUNDS",
-    frequency=Frequency.MONTHLY,
+    economic_concept="Realised overnight interbank lending rate, daily",
+    source_series="DFF",
+    frequency=Frequency.DAILY,
     raw_unit=Unit.PERCENT,
     seasonal_adjustment="Not applicable",
     transformation="None. The series is already a rate and is reported as published.",
     output_unit=Unit.PERCENT,
-    comparison="Difference against the previous month, in percentage points",
+    comparison=(
+        "Difference against the immediately preceding available daily "
+        "observation, in percentage points"
+    ),
     minimum_history_required=2,
     interpretation=(
-        "The rate actually realised in the market, averaged over the month. "
-        "This is NOT the FOMC target range. It must be labelled 'Effective "
-        "Federal Funds Rate' and never 'policy rate' or 'the Fed's rate', "
-        "because a monthly average spans any intra-month policy change and "
-        "sits inside, not at, the target range."
+        "The rate actually realised in the overnight market, at daily "
+        "frequency. This is NOT the FOMC target range. It must be labelled "
+        "'Effective Federal Funds Rate' and never 'policy rate', 'the Fed's "
+        "rate' or 'target rate': the target range is a separate concept set by "
+        "the FOMC, and the effective rate is where transactions actually "
+        "settle, inside that range. The effective rate commonly remains "
+        "unchanged for weeks or months between policy moves, so an unchanged "
+        "reading is the normal case and is not evidence of anything. Because "
+        "the comparison is against the previous available observation rather "
+        "than a fixed calendar lag, gaps in the publication calendar do not "
+        "distort the change."
     ),
-    known_revision_risk="Very low. A realised market average, not an estimate.",
+    known_revision_risk=(
+        "Very low. A realised market average rather than an estimate, though "
+        "the most recent daily observations can be revised slightly."
+    ),
 )
 
 REAL_GDP_GROWTH = IndicatorSpec(
@@ -280,7 +298,11 @@ def compute_effective_fed_funds_rate(
 ) -> MacroObservation:
     """Latest effective federal funds rate, differenced in percentage points.
 
-    The realised monthly average, not the FOMC target range.
+    Daily series (DFF). ``current`` is the latest observation supplied and
+    ``previous`` is the immediately preceding one in the series, so gaps in the
+    publication calendar are handled without a calendar-lag assumption.
+
+    The realised market rate, not the FOMC target range.
     """
     spec = EFFECTIVE_FED_FUNDS
     _check_history(spec, series)

@@ -109,9 +109,16 @@ The earlier prototype retrieved each FRED series, took the two most recent obser
 them directly — reporting whether the value had "increased", "decreased" or was "unchanged". That
 comparison of raw levels is **not sufficient for professional macroeconomic interpretation.**
 
+> **Note on series identifiers in this section.** The series named below are the ones the *legacy
+> prototype* used. Two have since been superseded for V1: `CPIAUCSL` → **`CPIAUCNS`** and `FEDFUNDS` →
+> **`DFF`**. The active V1 series are listed in the
+> [specification](#v1-economic-specification) further down. The critique below applies regardless of
+> which variant of each series is used — it is about levels versus rates, not about seasonal
+> adjustment or frequency.
+
 Specific problems:
 
-### CPIAUCSL — a price index, not an inflation rate
+### CPIAUCSL (legacy series) — a price index, not an inflation rate
 
 `CPIAUCSL` is the level of the Consumer Price Index. A rise in the index does **not** by itself mean
 that the inflation *rate* increased. The index rises in almost every period; what matters is the rate
@@ -121,6 +128,9 @@ Reporting "CPI increased" is close to vacuous. The conventional statistics are t
 percentage change (often annualised) and the year-over-year percentage change. Inflation can perfectly
 well be *decelerating* while the index is *rising* — the prototype would have described both cases
 identically.
+
+The same objection applies to `CPIAUCNS`, the series V1 actually uses: it too is an index level, and
+it too is never itself an inflation rate.
 
 ### GDPC1 — a level, not a growth rate
 
@@ -139,11 +149,15 @@ alongside them.
 defined basis. It is also nominal, so in an inflationary period a nominal rise may coincide with a
 real decline — a distinction worth making explicit rather than eliding.
 
-### The other two series
+### The other two series (legacy identifiers)
 
 `UNRATE` and `FEDFUNDS` are already expressed as rates, so a level comparison is closer to
 meaningful. Even there, the conventional framing is the change in **percentage points** over a stated
 horizon, and for the unemployment rate a single month's move is often within noise.
+
+V1 replaces `FEDFUNDS` with `DFF`, the daily effective rate, for the reason given in the
+specification below. The point above is unchanged by that substitution: both are already rates, so
+both are differenced in percentage points.
 
 ### The resulting design rule
 
@@ -180,9 +194,9 @@ Scope of V1: **United States only, five indicators.** No euro-area data, no addi
 
 | # | indicator_id | source_series | transformation | output_unit |
 | --- | --- | --- | --- | --- |
-| 1 | `us_cpi_inflation_yoy` | CPIAUCSL | Year-over-year % change of the index | percent |
+| 1 | `us_cpi_inflation_yoy` | CPIAUCNS | Year-over-year % change of the index | percent |
 | 2 | `us_unemployment_rate` | UNRATE | None — already a rate | percent |
-| 3 | `us_effective_fed_funds_rate` | FEDFUNDS | None — already a rate | percent |
+| 3 | `us_effective_fed_funds_rate` | DFF | None — already a rate | percent |
 | 4 | `us_real_gdp_growth_qoq_ann` | GDPC1 | Compounded quarterly change, annualised | percent, annual rate |
 | 5 | `us_retail_sales_mom` | RSAFS | Month-over-month % change | percent |
 
@@ -194,17 +208,17 @@ Every indicator's **change** is a **percentage-point** difference, without excep
 | --- | --- |
 | `indicator_id` | `us_cpi_inflation_yoy` |
 | `display_name` | CPI Inflation (YoY) |
-| `economic_concept` | Consumer price inflation rate |
-| `source_series` | `CPIAUCSL` — Consumer Price Index for All Urban Consumers: All Items |
+| `economic_concept` | Headline consumer price inflation rate |
+| `source_series` | `CPIAUCNS` — Consumer Price Index for All Urban Consumers: All Items, **not seasonally adjusted** |
 | `frequency` | Monthly |
 | `raw_unit` | Index level |
-| `seasonal_adjustment` | Seasonally adjusted |
+| `seasonal_adjustment` | **Not seasonally adjusted** |
 | `transformation` | `((CPI_t / CPI_t-12) - 1) * 100` |
 | `output_unit` | Percent |
 | `comparison` | Same calculation one month earlier (`t-1` vs `t-13`), differenced in percentage points |
 | `minimum_history_required` | **14** observations |
-| `interpretation` | The rate at which consumer prices are rising over twelve months. **The index level is not the inflation rate.** The index rises in almost every month, so a rising index says nothing about whether inflation accelerated — inflation can decelerate while the index rises. |
-| `known_revision_risk` | Low for the headline index. Seasonal factors are revised annually, which affects recent month-over-month figures more than year-over-year ones. |
+| `interpretation` | The rate at which consumer prices are rising over twelve months. **The index level is not the inflation rate.** The index rises in almost every month, so a rising index says nothing about whether inflation accelerated — inflation can decelerate while the index rises. The NSA index is the conventional basis for the headline twelve-month figure (see below). **Corollary: this series must not be used for month-over-month inflation**, which does require seasonal adjustment. |
+| `known_revision_risk` | Very low. The NSA index is not subject to the annual seasonal-factor revisions that alter the adjusted series, so published NSA index values are effectively final. |
 
 ### 2. Unemployment rate
 
@@ -230,17 +244,17 @@ Every indicator's **change** is a **percentage-point** difference, without excep
 | --- | --- |
 | `indicator_id` | `us_effective_fed_funds_rate` |
 | `display_name` | **Effective Federal Funds Rate** |
-| `economic_concept` | Realised overnight interbank lending rate, monthly average |
-| `source_series` | `FEDFUNDS` — Federal Funds Effective Rate |
-| `frequency` | Monthly |
+| `economic_concept` | Realised overnight interbank lending rate, daily |
+| `source_series` | `DFF` — Federal Funds Effective Rate, **daily** |
+| `frequency` | **Daily** |
 | `raw_unit` | Percent |
 | `seasonal_adjustment` | Not applicable |
 | `transformation` | **None.** Already a rate; reported as published. |
 | `output_unit` | Percent |
-| `comparison` | Difference against the previous month, in percentage points |
+| `comparison` | Difference against the **immediately preceding available daily observation**, in percentage points |
 | `minimum_history_required` | **2** observations |
-| `interpretation` | The rate actually realised in the market, averaged over the month. **This is NOT the FOMC target range.** It must be labelled "Effective Federal Funds Rate" and never "policy rate", "the Fed's rate" or "target rate", because a monthly average spans any intra-month policy change and sits inside, not at, the target range. |
-| `known_revision_risk` | Very low. A realised market average, not an estimate. |
+| `interpretation` | The rate actually realised in the overnight market, at daily frequency. **This is NOT the FOMC target range**, which is a separate concept set by the FOMC; the effective rate is where transactions actually settle, inside that range. It must be labelled "Effective Federal Funds Rate" and never "policy rate", "the Fed's rate" or "target rate". **An unchanged reading is the normal case**: the effective rate commonly holds flat for weeks or months between policy moves, so "unchanged" is not a finding. |
+| `known_revision_risk` | Very low. A realised market average rather than an estimate, though the most recent daily observations can be revised slightly. |
 
 ### 4. Real GDP growth
 
@@ -277,6 +291,80 @@ Every indicator's **change** is a **percentage-point** difference, without excep
 | `minimum_history_required` | **3** observations |
 | `interpretation` | Momentum in consumer spending. **The raw dollar level must never be described as growth.** The series is *nominal*, so a rise can coincide with a real decline when inflation is high; any real reading requires explicit deflation, which V1 does not perform. |
 | `known_revision_risk` | **MEDIUM.** "Advance" estimates are revised in the following month as more complete survey responses arrive. |
+
+### Why these source series
+
+Two source-series choices are deliberate and were corrected before any real data entered the system.
+Both changes affect *which series is read*; neither changes any arithmetic.
+
+#### CPIAUCNS rather than CPIAUCSL, for headline YoY inflation
+
+`CPIAUCSL` is the seasonally adjusted CPI-U index; `CPIAUCNS` is the same index **not** seasonally
+adjusted. V1 uses the NSA series, because:
+
+- **It is the conventional basis for the headline figure.** The twelve-month CPI change that is
+  published and quoted is computed from the unadjusted index.
+- **A twelve-month comparison already spans a full seasonal cycle.** Comparing February with the
+  previous February controls for seasonality by construction, so adjusting first adds nothing and
+  introduces a processing step between the source and the published figure.
+- **The NSA index is effectively final once published.** The adjusted series is revised when seasonal
+  factors are re-estimated annually, which can move recent history. The unadjusted index is not, so a
+  figure computed from it is more reproducible — which matters for a project whose stated aim is that
+  any published number can be reconstructed from its source.
+
+**The corollary is a constraint, not a bonus:** because this series is unadjusted, it must **not** be
+used for month-over-month inflation. A single month's unadjusted change mixes the price signal with
+the seasonal pattern. V1 computes only the twelve-month change, so the constraint is respected; if a
+month-over-month inflation figure is ever wanted, it needs the adjusted series and a separate
+specification.
+
+`CPIAUCNS` remains an **index level**. It is never itself an inflation rate.
+
+#### DFF rather than FEDFUNDS, for the effective rate
+
+`FEDFUNDS` is a **monthly average** of the daily effective federal funds rate. `DFF` is the same rate
+at **daily** frequency. V1 uses the daily series, because:
+
+- **The product is a weekly brief.** A monthly average is a poor fit for weekly monitoring: for most
+  of any month the latest `FEDFUNDS` observation describes a period that has already closed, and a
+  policy change mid-month is blurred across the average rather than visible on the day it took effect.
+- **A daily series gives the current rate.** For a brief published on a given date, the useful figure
+  is the most recent effective rate, not last month's mean.
+- **The monthly average obscures exactly what is interesting.** A monthly mean of 4.40% can describe a
+  month that began at 4.48% and ended at 4.33%, reporting a level that was never actually realised for
+  long.
+
+Two consequences are handled explicitly:
+
+1. **Unchanged is the normal case.** The effective rate holds flat for weeks or months between policy
+   moves. A change of `0.0` percentage points is the expected reading and is not a finding; the brief
+   must not imply otherwise.
+2. **"Previous" means the previous *available* observation**, not a fixed one-day calendar lag. Gaps in
+   the publication calendar therefore do not distort the change, and no assumption is made about which
+   calendar days carry an observation.
+
+**This is not the FOMC target range.** The target range is a separate concept, set by the FOMC; the
+effective rate is where transactions actually settle, inside that range. `DFEDTARL` and `DFEDTARU` are
+deliberately **not** part of V1, which remains five indicators.
+
+### Cross-validation required in Phase 2
+
+Two figures are *derived* rather than read directly, so each must be checked against an independently
+published equivalent the first time real data is used. Until these checks pass, neither figure should
+be published.
+
+| Derived figure | Validate against | Why it matters |
+| --- | --- | --- |
+| CPI YoY, computed from the `CPIAUCNS` index | The published twelve-month percent change for the same month, where practical — e.g. an independently transformed CPI series or the figure in the source release | Confirms the lag convention (`t` vs `t-12`), the base of the comparison, and that no rounding or index-base issue has crept in |
+| Real GDP QoQ annualised, computed from the `GDPC1` level series | The corresponding **BEA published growth figure** for the same quarter | Confirms the compounding convention. This is the higher-risk check: the synthetic fixtures verify the arithmetic, but only agreement with BEA confirms the *convention* is the one BEA actually uses |
+
+Expect small differences from rounding and from the vintage of the level series. What matters is
+agreement to within a tenth or so, and identical sign and direction. A discrepancy larger than that
+means the specification is wrong, not the source.
+
+The three remaining indicators — `UNRATE`, `DFF` and `RSAFS` — need no such check for their primary
+value, since each is reported as published. Their percentage-point changes are arithmetic on published
+figures.
 
 ### Design principles
 
@@ -318,8 +406,8 @@ Every indicator's **change** is a **percentage-point** difference, without excep
 | [`src/indicators.py`](src/indicators.py) | `IndicatorSpec` for each of the five indicators, plus their transformations |
 | [`src/models.py`](src/models.py) | `RawObservation`, `MacroObservation`, `Frequency`, `Unit`, `Direction`, `parse_series` |
 | [`src/errors.py`](src/errors.py) | `MissingValueError`, `NonNumericValueError`, `ZeroDenominatorError`, `InsufficientHistoryError` |
-| [`data/samples/`](data/samples/) | Synthetic fixtures — **not real data** |
-| [`tests/`](tests/) | 101 tests covering all five transformations and their failure modes |
+| [`data/samples/`](data/samples/) | Synthetic fixtures, one per source series — **not real data** |
+| [`tests/`](tests/) | 119 tests covering all five transformations, the source-series choices and their failure modes |
 
 Standard library only; no third-party dependencies. The `src` package performs no I/O whatsoever.
 
@@ -351,14 +439,15 @@ A sanitised copy is preserved at [`../../legacy/n8n/`](../../legacy/n8n/) as a h
 ## Known limitations
 
 - **The economic definitions are implemented; the pipeline is not.** The five transformations are
-  written, documented and covered by 101 tests. There is still **no data collection**, no validation
+  written, documented and covered by 119 tests. There is still **no data collection**, no validation
   gate, no synthesis step and no LLM integration. Nothing produces a brief.
 - **Only synthetic data has been used.** Every fixture in `data/samples/` is invented. The
   transformations have never been run against a real observation, so they are verified as *arithmetic*
   but not yet validated as *economics*.
-- **Real GDP growth has not been checked against an official figure.** The annualised rate is derived
-  from the level series. Agreement with the published BEA growth figure is a required Phase 2 check
-  and has not been performed.
+- **The two derived figures have not been cross-validated.** Real GDP QoQ annualised and CPI YoY are
+  both computed rather than read. Neither has been checked against an independently published
+  equivalent; see [Cross-validation required in Phase 2](#cross-validation-required-in-phase-2). The
+  GDP check is the higher-risk one — the synthetic fixtures verify the arithmetic, not the convention.
 - **Coverage is deliberately narrow** — five United States series. Not a complete macroeconomic
   picture. No euro-area data.
 - **Retail sales are nominal.** No deflation is applied, so the figure conflates price and volume
@@ -379,13 +468,21 @@ sanitised legacy material.
 pure functions, documented in the specification table above, and covered by tests against synthetic
 fixtures. No network access, no API key, no LLM.
 
+**Phase 1.1 — source-series refinement.** Complete. Two source series were corrected before any real
+data entered the system: `CPIAUCSL` → `CPIAUCNS` for headline YoY inflation, and `FEDFUNDS` → `DFF`
+for the effective rate at daily frequency. No arithmetic changed. Rationale in
+[Why these source series](#why-these-source-series).
+
 **Phase 2 — collection and validation.** Next. Still no language model:
 
-1. Implement a FRED collector reading `FRED_API_KEY` from the environment.
+1. Implement a FRED collector reading `FRED_API_KEY` from the environment, converting FRED's string
+   values and its `"."` missing-observation sentinel to floats at the boundary.
 2. Persist the raw payload per run, so a published figure can be traced to what was retrieved.
 3. Run the existing transformations against real observations for the first time.
-4. **Validate real GDP growth against the official published figure** — the check that the synthetic
-   fixtures cannot provide.
+4. **Perform both cross-validations** — CPI YoY and, above all, real GDP QoQ annualised against the
+   BEA published figure. See
+   [Cross-validation required in Phase 2](#cross-validation-required-in-phase-2). These are the checks
+   the synthetic fixtures structurally cannot provide.
 5. Implement the validation gate: range, sign, staleness and internal-consistency checks, refusing to
    publish rather than publishing something wrong.
 6. Show a computed dataset on the project page.
