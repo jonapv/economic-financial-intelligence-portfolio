@@ -1,0 +1,839 @@
+{
+  "name": "Macro Intelligence Brief - retired prototype (reference only)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [
+                5
+              ],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "name": "Weekly Trigger (Fri 08:00)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.stlouisfed.org/fred/series/observations?series_id=CPIAUCSL&api_key={{ $env.FRED_API_KEY }}&file_type=json&sort_order=desc&limit=2",
+        "options": {}
+      },
+      "name": "FRED CPI (CPIAUCSL)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "cpi_date_current",
+              "value": "={{ $json.observations[0].date }}",
+              "type": "string"
+            },
+            {
+              "name": "cpi_value_current",
+              "value": "={{ $json.observations[0].value }}",
+              "type": "string"
+            },
+            {
+              "name": "cpi_date_previous",
+              "value": "={{ $json.observations[1].date }}",
+              "type": "string"
+            },
+            {
+              "name": "cpi_value_previous",
+              "value": "={{ $json.observations[1].value }}",
+              "type": "string"
+            },
+            {
+              "name": "cpi_direction",
+              "value": "={{ parseFloat($json.observations[0].value) > parseFloat($json.observations[1].value) ? 'Increased' : parseFloat($json.observations[0].value) < parseFloat($json.observations[1].value) ? 'Decreased' : 'Unchanged' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "name": "FRED CPI Clean",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.stlouisfed.org/fred/series/observations?series_id=UNRATE&api_key={{ $env.FRED_API_KEY }}&file_type=json&sort_order=desc&limit=2",
+        "options": {}
+      },
+      "name": "FRED Unemployment (UNRATE)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "unemployment_date_current",
+              "value": "={{ $json.observations[0].date }}",
+              "type": "string"
+            },
+            {
+              "name": "unemployment_value_current",
+              "value": "={{ $json.observations[0].value }}",
+              "type": "string"
+            },
+            {
+              "name": "unemployment_date_previous",
+              "value": "={{ $json.observations[1].date }}",
+              "type": "string"
+            },
+            {
+              "name": "unemployment_value_previous",
+              "value": "={{ $json.observations[1].value }}",
+              "type": "string"
+            },
+            {
+              "name": "unemployment_direction",
+              "value": "={{ parseFloat($json.observations[0].value) > parseFloat($json.observations[1].value) ? 'Increased' : parseFloat($json.observations[0].value) < parseFloat($json.observations[1].value) ? 'Decreased' : 'Unchanged' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "name": "FRED Unemployment Clean",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.stlouisfed.org/fred/series/observations?series_id=FEDFUNDS&api_key={{ $env.FRED_API_KEY }}&file_type=json&sort_order=desc&limit=2",
+        "options": {}
+      },
+      "name": "FRED Fed Funds (FEDFUNDS)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "fedfunds_date_current",
+              "value": "={{ $json.observations[0].date }}",
+              "type": "string"
+            },
+            {
+              "name": "fedfunds_value_current",
+              "value": "={{ $json.observations[0].value }}",
+              "type": "string"
+            },
+            {
+              "name": "fedfunds_date_previous",
+              "value": "={{ $json.observations[1].date }}",
+              "type": "string"
+            },
+            {
+              "name": "fedfunds_value_previous",
+              "value": "={{ $json.observations[1].value }}",
+              "type": "string"
+            },
+            {
+              "name": "fedfunds_direction",
+              "value": "={{ parseFloat($json.observations[0].value) > parseFloat($json.observations[1].value) ? 'Increased' : parseFloat($json.observations[0].value) < parseFloat($json.observations[1].value) ? 'Decreased' : 'Unchanged' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "name": "FRED Fed Funds Clean",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.stlouisfed.org/fred/series/observations?series_id=GDPC1&api_key={{ $env.FRED_API_KEY }}&file_type=json&sort_order=desc&limit=2",
+        "options": {}
+      },
+      "name": "FRED Real GDP (GDPC1)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "gdp_date_current",
+              "value": "={{ $json.observations[0].date }}",
+              "type": "string"
+            },
+            {
+              "name": "gdp_value_current",
+              "value": "={{ $json.observations[0].value }}",
+              "type": "string"
+            },
+            {
+              "name": "gdp_date_previous",
+              "value": "={{ $json.observations[1].date }}",
+              "type": "string"
+            },
+            {
+              "name": "gdp_value_previous",
+              "value": "={{ $json.observations[1].value }}",
+              "type": "string"
+            },
+            {
+              "name": "gdp_direction",
+              "value": "={{ parseFloat($json.observations[0].value) > parseFloat($json.observations[1].value) ? 'Increased' : parseFloat($json.observations[0].value) < parseFloat($json.observations[1].value) ? 'Decreased' : 'Unchanged' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "name": "FRED Real GDP Clean",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.stlouisfed.org/fred/series/observations?series_id=RSAFS&api_key={{ $env.FRED_API_KEY }}&file_type=json&sort_order=desc&limit=2",
+        "options": {}
+      },
+      "name": "FRED Retail Sales (RSAFS)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "retail_date_current",
+              "value": "={{ $json.observations[0].date }}",
+              "type": "string"
+            },
+            {
+              "name": "retail_value_current",
+              "value": "={{ $json.observations[0].value }}",
+              "type": "string"
+            },
+            {
+              "name": "retail_date_previous",
+              "value": "={{ $json.observations[1].date }}",
+              "type": "string"
+            },
+            {
+              "name": "retail_value_previous",
+              "value": "={{ $json.observations[1].value }}",
+              "type": "string"
+            },
+            {
+              "name": "retail_direction",
+              "value": "={{ parseFloat($json.observations[0].value) > parseFloat($json.observations[1].value) ? 'Increased' : parseFloat($json.observations[0].value) < parseFloat($json.observations[1].value) ? 'Decreased' : 'Unchanged' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "name": "FRED Retail Sales Clean",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "redacted-webhook-path",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "name": "Macro Brief Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ---- Política (ajusta aquí) -------------------------------------------\nconst LIMITS = {\n  perEmailMs: 24 * 60 * 60 * 1000,            // 1 brief por email cada 24 h\n  perIp:  { max: 3,  windowMs: 60 * 60 * 1000 },       // 3 peticiones por IP y hora\n  global: { max: 20, windowMs: 24 * 60 * 60 * 1000 },  // 20 peticiones al día en total\n};\n// -----------------------------------------------------------------------\n\nconst now = Date.now();\nconst req = $input.first().json;\nconst body = req.body || {};\nconst headers = req.headers || {};\n\nconst email = String(body.email || '').trim().toLowerCase();\nconst ip = headers['cf-connecting-ip']\n  || String(headers['x-forwarded-for'] || '').split(',')[0].trim()\n  || headers['x-real-ip']\n  || 'unknown';\n\n// Estado persistente entre ejecuciones (solo en ejecuciones de producción)\nconst store = $getWorkflowStaticData('global');\nstore.rl = store.rl || { emails: {}, ips: {}, global: [] };\nconst rl = store.rl;\n\n// Purga de entradas caducadas\nfor (const [k, t] of Object.entries(rl.emails)) if (now - t >= LIMITS.perEmailMs) delete rl.emails[k];\nfor (const [k, arr] of Object.entries(rl.ips)) {\n  rl.ips[k] = arr.filter(t => now - t < LIMITS.perIp.windowMs);\n  if (!rl.ips[k].length) delete rl.ips[k];\n}\nrl.global = rl.global.filter(t => now - t < LIMITS.global.windowMs);\n\nconst secsUntil = (t, windowMs) => Math.max(1, Math.ceil((windowMs - (now - t)) / 1000));\nconst emailOk = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(email);\n\nlet reason = null, retryAfter = 0;\nif (body.company) {                                   // honeypot rellenado -> bot\n  reason = 'bot';\n} else if (!emailOk) {\n  reason = 'invalid_email';\n} else if (rl.emails[email]) {\n  reason = 'email_cooldown'; retryAfter = secsUntil(rl.emails[email], LIMITS.perEmailMs);\n} else if ((rl.ips[ip] || []).length >= LIMITS.perIp.max) {\n  reason = 'ip_limit';       retryAfter = secsUntil(rl.ips[ip][0], LIMITS.perIp.windowMs);\n} else if (rl.global.length >= LIMITS.global.max) {\n  reason = 'global_limit';   retryAfter = secsUntil(rl.global[0], LIMITS.global.windowMs);\n}\n\nconst allowed = reason === null;\nif (allowed) {\n  rl.emails[email] = now;\n  (rl.ips[ip] = rl.ips[ip] || []).push(now);\n  rl.global.push(now);\n}\n\nreturn [{ json: { allowed, reason, retry_after: retryAfter, email, ip } }];"
+      },
+      "name": "Rate Limit Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -280,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Allowed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -60,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'accepted', message: 'Request received. The brief will arrive in your inbox shortly.' }) }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "name": "Respond 202 Accepted",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'rejected', reason: $json.reason, retry_after: $json.retry_after }) }}",
+        "options": {
+          "responseCode": "={{ $json.reason === 'invalid_email' ? 400 : 429 }}",
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Retry-After",
+                "value": "={{ $json.retry_after }}"
+              }
+            ]
+          }
+        }
+      },
+      "name": "Respond 429 Rate Limited",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 5,
+        "options": {}
+      },
+      "name": "Merge Indicators",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        480,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={{ $env.LLM_API_KEY }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"contents\": [{\"parts\": [{\"text\": \"You are a macroeconomic analyst. I am providing you with the latest and previous data for US CPI, Unemployment, Fed Funds, GDP, and Retail Sales. Write a short, professional sentence for each indicator summarizing the change. Do not invent data. Do not add financial advice. Output ONLY a valid JSON object with these exact keys: \\\"cpi_analysis\\\", \\\"unemployment_analysis\\\", \\\"fedfunds_analysis\\\", \\\"gdp_analysis\\\", \\\"retail_analysis\\\".\\n\\nData:\\n- US CPI (CPIAUCSL): current {{ $('Merge Indicators').first().json.cpi_date_current }} = {{ $('Merge Indicators').first().json.cpi_value_current }}; previous {{ $('Merge Indicators').first().json.cpi_date_previous }} = {{ $('Merge Indicators').first().json.cpi_value_previous }}; direction: {{ $('Merge Indicators').first().json.cpi_direction }}.\\n- US Unemployment Rate (UNRATE): current {{ $('Merge Indicators').first().json.unemployment_date_current }} = {{ $('Merge Indicators').first().json.unemployment_value_current }}; previous {{ $('Merge Indicators').first().json.unemployment_date_previous }} = {{ $('Merge Indicators').first().json.unemployment_value_previous }}; direction: {{ $('Merge Indicators').first().json.unemployment_direction }}.\\n- US Federal Funds Effective Rate (FEDFUNDS): current {{ $('Merge Indicators').first().json.fedfunds_date_current }} = {{ $('Merge Indicators').first().json.fedfunds_value_current }}; previous {{ $('Merge Indicators').first().json.fedfunds_date_previous }} = {{ $('Merge Indicators').first().json.fedfunds_value_previous }}; direction: {{ $('Merge Indicators').first().json.fedfunds_direction }}.\\n- US Real Gross Domestic Product (GDPC1): current {{ $('Merge Indicators').first().json.gdp_date_current }} = {{ $('Merge Indicators').first().json.gdp_value_current }}; previous {{ $('Merge Indicators').first().json.gdp_date_previous }} = {{ $('Merge Indicators').first().json.gdp_value_previous }}; direction: {{ $('Merge Indicators').first().json.gdp_direction }}.\\n- US Advance Retail Sales (RSAFS): current {{ $('Merge Indicators').first().json.retail_date_current }} = {{ $('Merge Indicators').first().json.retail_value_current }}; previous {{ $('Merge Indicators').first().json.retail_date_previous }} = {{ $('Merge Indicators').first().json.retail_value_previous }}; direction: {{ $('Merge Indicators').first().json.retail_direction }}.\"}]}], \"generationConfig\": {\"responseMimeType\": \"application/json\", \"temperature\": 0.2}}",
+        "options": {}
+      },
+      "name": "Gemini Batch Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        400
+      ],
+      "onError": "continueErrorOutput",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ !!$json.error || !$json.candidates?.[0]?.content?.parts?.[0]?.text }}",
+              "rightValue": ""
+            },
+            {
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              },
+              "leftValue": "={{ $runIndex }}",
+              "rightValue": 9
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Gemini OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "name": "Wait 30s (Retry)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.candidates?.[0]?.content?.parts?.[0]?.text ?? '';\n// Quita posibles vallas ```json ... ``` y recorta al primer/último corchete\nlet text = raw.replace(/```json|```/gi, '').trim();\nconst start = text.indexOf('{'), end = text.lastIndexOf('}');\nif (start === -1 || end === -1) throw new Error('Gemini did not return a JSON object: ' + raw.slice(0, 200));\nconst parsed = JSON.parse(text.slice(start, end + 1));\n\nconst keys = [\"cpi_analysis\", \"unemployment_analysis\", \"fedfunds_analysis\", \"gdp_analysis\", \"retail_analysis\"];\nconst out = {};\nfor (const k of keys) {\n  if (typeof parsed[k] !== 'string' || !parsed[k].trim()) throw new Error('Missing or empty key in Gemini response: ' + k);\n  out[k] = parsed[k].trim();\n}\nreturn [{ json: out }];"
+      },
+      "name": "Parse Gemini JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json;\nconst esc = (s) => String(s ?? '').trim()\n  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n\nconst today = new Date().toLocaleDateString('en-GB', {\n  day: 'numeric', month: 'long', year: 'numeric'\n});\n\nconst sections = [\n  { title: 'Inflation',       paras: [d.cpi_analysis] },\n  { title: 'Monetary Policy', paras: [d.fedfunds_analysis] },\n  { title: 'Growth',          paras: [d.gdp_analysis, d.retail_analysis] },\n  { title: 'Labour Market',   paras: [d.unemployment_analysis] },\n];\n\nconst para = (t) => `<p style=\"margin:0 0 12px 0;font-size:15px;line-height:1.65;color:#2f3b4d;\">${esc(t)}</p>`;\n\nconst sectionHtml = sections.map((s, i) => `\n  <tr>\n    <td style=\"padding:${i === 0 ? '8px' : '20px'} 36px 8px 36px;\">\n      <h2 style=\"margin:0 0 10px 0;padding-bottom:6px;font-size:17px;font-weight:700;color:#0f1c2e;border-bottom:2px solid #0f1c2e;display:inline-block;\">${esc(s.title)}</h2>\n      ${s.paras.map(para).join('')}\n    </td>\n  </tr>`).join('');\n\nconst email_html = `<!DOCTYPE html>\n<html>\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head>\n<body style=\"margin:0;padding:0;background:#f2f4f7;font-family:Helvetica,Arial,sans-serif;\">\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f2f4f7;padding:32px 12px;\">\n    <tr><td align=\"center\">\n      <table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:600px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(15,28,46,0.08);\">\n        <tr>\n          <td style=\"background:#0f1c2e;padding:30px 36px;\">\n            <h1 style=\"margin:0;font-size:24px;font-weight:700;color:#ffffff;line-height:1.25;\">Weekly Macro Intelligence Brief</h1>\n            <p style=\"margin:10px 0 0 0;font-size:13px;color:#c7d2e3;\"><strong style=\"color:#ffffff;\">Period:</strong> ${esc(today)}</p>\n          </td>\n        </tr>\n        <tr><td style=\"height:16px;\"></td></tr>\n        ${sectionHtml}\n        <tr><td style=\"height:12px;\"></td></tr>\n        <tr>\n          <td style=\"background:#f7f9fb;border-top:1px solid #e6e9ef;padding:18px 36px 22px 36px;\">\n            <h3 style=\"margin:0 0 6px 0;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:#0f1c2e;\">Source Transparency</h3>\n            <p style=\"margin:0;font-size:12px;line-height:1.55;color:#6b7686;\">Original data sourced directly from the Federal Reserve Economic Data (FRED) API. Analysis generated via Google Gemini Flash.</p>\n          </td>\n        </tr>\n      </table>\n    </td></tr>\n  </table>\n</body>\n</html>`;\n\nreturn [{ json: { ...d, email_html } }];"
+      },
+      "name": "Format Weekly Brief",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $env.BRIEF_RECIPIENT }}",
+        "subject": "=Weekly Macro Intelligence Brief - {{ $now.toFormat('dd LLL yyyy') }}",
+        "emailType": "html",
+        "message": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "name": "Send Brief (Gmail)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1680,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Weekly Trigger (Fri 08:00)": {
+      "main": [
+        [
+          {
+            "node": "FRED CPI (CPIAUCSL)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FRED Unemployment (UNRATE)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FRED Fed Funds (FEDFUNDS)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FRED Real GDP (GDPC1)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FRED Retail Sales (RSAFS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FRED CPI (CPIAUCSL)": {
+      "main": [
+        [
+          {
+            "node": "FRED CPI Clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FRED CPI Clean": {
+      "main": [
+        [
+          {
+            "node": "Merge Indicators",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FRED Unemployment (UNRATE)": {
+      "main": [
+        [
+          {
+            "node": "FRED Unemployment Clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FRED Unemployment Clean": {
+      "main": [
+        [
+          {
+            "node": "Merge Indicators",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "FRED Fed Funds (FEDFUNDS)": {
+      "main": [
+        [
+          {
+            "node": "FRED Fed Funds Clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FRED Fed Funds Clean": {
+      "main": [
+        [
+          {
+            "node": "Merge Indicators",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "FRED Real GDP (GDPC1)": {
+      "main": [
+        [
+          {
+            "node": "FRED Real GDP Clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FRED Real GDP Clean": {
+      "main": [
+        [
+          {
+            "node": "Merge Indicators",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "FRED Retail Sales (RSAFS)": {
+      "main": [
+        [
+          {
+            "node": "FRED Retail Sales Clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FRED Retail Sales Clean": {
+      "main": [
+        [
+          {
+            "node": "Merge Indicators",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Macro Brief Webhook": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit Check": {
+      "main": [
+        [
+          {
+            "node": "Allowed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Allowed?": {
+      "main": [
+        [
+          {
+            "node": "Respond 202 Accepted",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 429 Rate Limited",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond 202 Accepted": {
+      "main": [
+        [
+          {
+            "node": "FRED CPI (CPIAUCSL)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FRED Unemployment (UNRATE)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FRED Fed Funds (FEDFUNDS)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FRED Real GDP (GDPC1)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FRED Retail Sales (RSAFS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Indicators": {
+      "main": [
+        [
+          {
+            "node": "Gemini Batch Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Batch Analysis": {
+      "main": [
+        [
+          {
+            "node": "Gemini OK?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gemini OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini OK?": {
+      "main": [
+        [
+          {
+            "node": "Wait 30s (Retry)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Parse Gemini JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 30s (Retry)": {
+      "main": [
+        [
+          {
+            "node": "Gemini Batch Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Gemini JSON": {
+      "main": [
+        [
+          {
+            "node": "Format Weekly Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Weekly Brief": {
+      "main": [
+        [
+          {
+            "node": "Send Brief (Gmail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Madrid",
+    "executionTimeout": 900
+  },
+  "tags": []
+}

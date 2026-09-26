@@ -1,0 +1,38 @@
+# --- Secrets and credentials ---
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+credentials.json
+secrets/
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# --- Node (not used in this project; guard against stray installs) ---
+node_modules/
+npm-debug.log*
+
+# --- Generated data and logs ---
+# Retrieved source data is reproducible from the pipeline and is not tracked.
+# Curated sample fixtures under projects/*/data/samples/ ARE tracked.
+projects/*/data/latest/*
+!projects/*/data/latest/.gitkeep
+*.log
+
+# --- System and editors ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# --- Claude Code (local config) ---
+.claude/settings.local.json
