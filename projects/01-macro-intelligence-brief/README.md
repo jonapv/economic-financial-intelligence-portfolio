@@ -168,6 +168,169 @@ development phase implements it.
 
 ---
 
+## V1 economic specification
+
+**Status: frozen and tested.** These definitions are implemented in
+[`src/indicators.py`](src/indicators.py), which is the single source of truth — if this table and the
+code ever disagree, the code is correct and this table is stale.
+
+Scope of V1: **United States only, five indicators.** No euro-area data, no additional indicators.
+
+### Summary
+
+| # | indicator_id | source_series | transformation | output_unit |
+| --- | --- | --- | --- | --- |
+| 1 | `us_cpi_inflation_yoy` | CPIAUCSL | Year-over-year % change of the index | percent |
+| 2 | `us_unemployment_rate` | UNRATE | None — already a rate | percent |
+| 3 | `us_effective_fed_funds_rate` | FEDFUNDS | None — already a rate | percent |
+| 4 | `us_real_gdp_growth_qoq_ann` | GDPC1 | Compounded quarterly change, annualised | percent, annual rate |
+| 5 | `us_retail_sales_mom` | RSAFS | Month-over-month % change | percent |
+
+Every indicator's **change** is a **percentage-point** difference, without exception.
+
+### 1. CPI inflation
+
+| Field | Value |
+| --- | --- |
+| `indicator_id` | `us_cpi_inflation_yoy` |
+| `display_name` | CPI Inflation (YoY) |
+| `economic_concept` | Consumer price inflation rate |
+| `source_series` | `CPIAUCSL` — Consumer Price Index for All Urban Consumers: All Items |
+| `frequency` | Monthly |
+| `raw_unit` | Index level |
+| `seasonal_adjustment` | Seasonally adjusted |
+| `transformation` | `((CPI_t / CPI_t-12) - 1) * 100` |
+| `output_unit` | Percent |
+| `comparison` | Same calculation one month earlier (`t-1` vs `t-13`), differenced in percentage points |
+| `minimum_history_required` | **14** observations |
+| `interpretation` | The rate at which consumer prices are rising over twelve months. **The index level is not the inflation rate.** The index rises in almost every month, so a rising index says nothing about whether inflation accelerated — inflation can decelerate while the index rises. |
+| `known_revision_risk` | Low for the headline index. Seasonal factors are revised annually, which affects recent month-over-month figures more than year-over-year ones. |
+
+### 2. Unemployment rate
+
+| Field | Value |
+| --- | --- |
+| `indicator_id` | `us_unemployment_rate` |
+| `display_name` | Unemployment Rate |
+| `economic_concept` | Share of the labour force that is unemployed |
+| `source_series` | `UNRATE` — Unemployment Rate |
+| `frequency` | Monthly |
+| `raw_unit` | Percent |
+| `seasonal_adjustment` | Seasonally adjusted |
+| `transformation` | **None.** Already a rate; reported as published. |
+| `output_unit` | Percent |
+| `comparison` | Difference against the previous month, in percentage points |
+| `minimum_history_required` | **2** observations |
+| `interpretation` | Labour market slack. Already a rate, so the change is a percentage-point difference and never a percentage change. A single month's move of 0.1pp is frequently within sampling noise and must not be described as a trend. |
+| `known_revision_risk` | Low. Household survey estimates are not routinely revised, though seasonal factors and annual population controls can shift the series. |
+
+### 3. Effective federal funds rate
+
+| Field | Value |
+| --- | --- |
+| `indicator_id` | `us_effective_fed_funds_rate` |
+| `display_name` | **Effective Federal Funds Rate** |
+| `economic_concept` | Realised overnight interbank lending rate, monthly average |
+| `source_series` | `FEDFUNDS` — Federal Funds Effective Rate |
+| `frequency` | Monthly |
+| `raw_unit` | Percent |
+| `seasonal_adjustment` | Not applicable |
+| `transformation` | **None.** Already a rate; reported as published. |
+| `output_unit` | Percent |
+| `comparison` | Difference against the previous month, in percentage points |
+| `minimum_history_required` | **2** observations |
+| `interpretation` | The rate actually realised in the market, averaged over the month. **This is NOT the FOMC target range.** It must be labelled "Effective Federal Funds Rate" and never "policy rate", "the Fed's rate" or "target rate", because a monthly average spans any intra-month policy change and sits inside, not at, the target range. |
+| `known_revision_risk` | Very low. A realised market average, not an estimate. |
+
+### 4. Real GDP growth
+
+| Field | Value |
+| --- | --- |
+| `indicator_id` | `us_real_gdp_growth_qoq_ann` |
+| `display_name` | Real GDP Growth (QoQ, annualised) |
+| `economic_concept` | Real output growth at an annual rate |
+| `source_series` | `GDPC1` — Real Gross Domestic Product |
+| `frequency` | Quarterly |
+| `raw_unit` | Billions of chained dollars |
+| `seasonal_adjustment` | Seasonally adjusted annual rate |
+| `transformation` | `(((GDP_t / GDP_t-1) ** 4) - 1) * 100` |
+| `output_unit` | Percent, annual rate |
+| `comparison` | Same calculation for the prior quarter (`t-1` vs `t-2`), differenced in percentage points |
+| `minimum_history_required` | **3** observations |
+| `interpretation` | The headline United States growth number, quoted at a seasonally adjusted annual rate. **Derived here from the level series, so it must be validated against the official published growth figure before publication.** A difference between two adjacent levels is not a growth rate, and the annualised rate is a *compounded* quarterly change, not four times it. |
+| `known_revision_risk` | **HIGH.** Revised across advance, second and third estimates, and again in annual and comprehensive revisions. Revisions of several tenths are routine and can change the sign of a weak quarter. |
+
+### 5. Retail sales
+
+| Field | Value |
+| --- | --- |
+| `indicator_id` | `us_retail_sales_mom` |
+| `display_name` | Retail Sales (MoM) |
+| `economic_concept` | Month-over-month growth in nominal retail and food services sales |
+| `source_series` | `RSAFS` — Advance Retail Sales: Retail Trade and Food Services |
+| `frequency` | Monthly |
+| `raw_unit` | Millions of dollars |
+| `seasonal_adjustment` | Seasonally adjusted |
+| `transformation` | `((Sales_t / Sales_t-1) - 1) * 100` |
+| `output_unit` | Percent |
+| `comparison` | Prior month's month-over-month change (`t-1` vs `t-2`), differenced in percentage points |
+| `minimum_history_required` | **3** observations |
+| `interpretation` | Momentum in consumer spending. **The raw dollar level must never be described as growth.** The series is *nominal*, so a rise can coincide with a real decline when inflation is high; any real reading requires explicit deflation, which V1 does not perform. |
+| `known_revision_risk` | **MEDIUM.** "Advance" estimates are revised in the following month as more complete survey responses arrive. |
+
+### Design principles
+
+1. **Raw levels and rates must never be confused.** An index level, a dollar level and a rate are
+   three different kinds of quantity. Each source series has exactly one stated transformation, and
+   the unit of every output is carried explicitly on the result.
+
+2. **Percentage changes and percentage-point changes are different.** A percentage change is the
+   relative change in a level or index. A percentage-point change is the arithmetic difference
+   between two quantities that are already rates. They are distinct functions, distinct units in the
+   `Unit` enumeration, and separately tested.
+
+3. **Calculations are deterministic and testable.** Every transformation is a pure function with no
+   I/O, no clock read and no hidden state. `retrieved_at` is passed in rather than read from the
+   system clock, so a given input always yields an identical output. Rounding happens only at a
+   presentation boundary (`MacroObservation.to_display`), never inside a calculation.
+
+4. **AI receives derived metrics only after validation.** The language model is handed finished
+   figures with their units, periods and provenance already attached, and is instructed to describe
+   them. It never calculates, infers, adjusts or recalls a statistic. This is the rule the earlier
+   prototype broke.
+
+5. **Latest-vintage data will be used in V1.** Each run reads the most recently published value for
+   each series. There is no attempt to reconstruct what was known at an earlier date.
+
+6. **Raw source snapshots will later be preserved for reproducibility.** Storing the exact payload
+   behind each published figure is a requirement, deferred to a later phase. Until then, a past brief
+   cannot be reproduced exactly if the underlying series has since been revised.
+
+7. **Data revisions are acknowledged but full vintage-data infrastructure is out of scope for V1.**
+   Revision risk is recorded per indicator above. Real GDP in particular is revised substantially.
+   V1 states the retrieval date alongside every figure and does not claim more than that.
+
+### Implementation
+
+| Path | Contents |
+| --- | --- |
+| [`src/calculations.py`](src/calculations.py) | Pure functions: `percentage_change`, `percentage_point_change`, `yoy_change`, `qoq_annualized_change`, `require_number` |
+| [`src/indicators.py`](src/indicators.py) | `IndicatorSpec` for each of the five indicators, plus their transformations |
+| [`src/models.py`](src/models.py) | `RawObservation`, `MacroObservation`, `Frequency`, `Unit`, `Direction`, `parse_series` |
+| [`src/errors.py`](src/errors.py) | `MissingValueError`, `NonNumericValueError`, `ZeroDenominatorError`, `InsufficientHistoryError` |
+| [`data/samples/`](data/samples/) | Synthetic fixtures — **not real data** |
+| [`tests/`](tests/) | 101 tests covering all five transformations and their failure modes |
+
+Standard library only; no third-party dependencies. The `src` package performs no I/O whatsoever.
+
+Run the tests from this directory:
+
+```sh
+python3 -m unittest discover -s tests -t . -v
+```
+
+---
+
 ## Legacy prototype
 
 The first version of this project was built on [n8n](https://n8n.io), a no-code automation platform.
@@ -187,30 +350,46 @@ A sanitised copy is preserved at [`../../legacy/n8n/`](../../legacy/n8n/) as a h
 
 ## Known limitations
 
-- **Nothing is implemented.** This document describes intent. There is no working pipeline, no data
-  collection and no LLM integration in the repository at this stage.
-- **The economic transformations are specified but not built.** Until they are, no figure from this
-  project should be treated as a reliable reading of any indicator.
-- **Coverage is deliberately narrow** — a handful of United States series. It is not a complete
-  macroeconomic picture, and the indicator set is still under review.
-- **Revisions are not yet handled.** Macroeconomic data is revised, and real GDP in particular is
-  revised substantially. Vintage handling is a design requirement that has not been designed.
+- **The economic definitions are implemented; the pipeline is not.** The five transformations are
+  written, documented and covered by 101 tests. There is still **no data collection**, no validation
+  gate, no synthesis step and no LLM integration. Nothing produces a brief.
+- **Only synthetic data has been used.** Every fixture in `data/samples/` is invented. The
+  transformations have never been run against a real observation, so they are verified as *arithmetic*
+  but not yet validated as *economics*.
+- **Real GDP growth has not been checked against an official figure.** The annualised rate is derived
+  from the level series. Agreement with the published BEA growth figure is a required Phase 2 check
+  and has not been performed.
+- **Coverage is deliberately narrow** — five United States series. Not a complete macroeconomic
+  picture. No euro-area data.
+- **Retail sales are nominal.** No deflation is applied, so the figure conflates price and volume
+  effects.
+- **Revisions are acknowledged but not handled.** V1 uses latest-vintage data and records the
+  retrieval date. It cannot reconstruct what was known at an earlier date, and real GDP in particular
+  is revised substantially.
 - **AI-generated text can be wrong** even when the input figures are correct. Human review is the
   mitigation, and it is a required step.
 - **Not investment advice.** This is a research exercise.
 
-## Next development phase
+## Development phases
 
-Phase 1 will implement the **left-hand side of the pipeline only** — collection through validation —
-with no language model involved:
+**Phase 0 — foundation.** Complete. Portfolio structure, shared visual system, documentation,
+sanitised legacy material.
 
-1. Decide and document the transformation for each series, with the reasoning for each choice.
-2. Implement collection into `src/`, reading `FRED_API_KEY` from the environment.
-3. Implement normalisation and the transformation functions.
-4. Write tests in `tests/` against committed fixtures in `data/samples/`, verifying each
-   transformation against known published values.
-5. Implement the validation gate.
-6. Publish a sample computed dataset and show it on the project page.
+**Phase 1 — economic definitions.** Complete. The five transformations are defined, implemented as
+pure functions, documented in the specification table above, and covered by tests against synthetic
+fixtures. No network access, no API key, no LLM.
 
-AI-assisted synthesis is deliberately last. There is no point drafting prose until the figures
-underneath it are correct.
+**Phase 2 — collection and validation.** Next. Still no language model:
+
+1. Implement a FRED collector reading `FRED_API_KEY` from the environment.
+2. Persist the raw payload per run, so a published figure can be traced to what was retrieved.
+3. Run the existing transformations against real observations for the first time.
+4. **Validate real GDP growth against the official published figure** — the check that the synthetic
+   fixtures cannot provide.
+5. Implement the validation gate: range, sign, staleness and internal-consistency checks, refusing to
+   publish rather than publishing something wrong.
+6. Show a computed dataset on the project page.
+
+**Phase 3 — synthesis and review.** AI-assisted drafting from validated figures, plus the human
+review step. Deliberately last: there is no point drafting prose until the figures underneath it are
+correct.

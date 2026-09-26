@@ -1,0 +1,21 @@
+{
+  "_synthetic": true,
+  "_warning": "SYNTHETIC TEST FIXTURE — NOT REAL FRED DATA. Invented values, chosen for exact arithmetic; must never be presented as observed data.",
+  "series_id": "GDPC1",
+  "series_name": "Real Gross Domestic Product (synthetic stand-in)",
+  "frequency": "quarterly",
+  "unit": "billions of chained dollars",
+  "seasonal_adjustment": "seasonally adjusted annual rate",
+  "_designed_so_that": {
+    "ratios": "20301 / 20100 = 1.01 exactly; 20100 / 20000 = 1.005 exactly",
+    "qoq_annualised_current": "(1.01 ** 4 - 1) * 100 = 4.060401 percent",
+    "qoq_annualised_previous": "(1.005 ** 4 - 1) * 100 = 2.0150500625 percent",
+    "change": "4.060401 - 2.0150500625 => +2.0453509375 percentage points",
+    "note": "Annualising compounds the quarterly change to the fourth power. It is NOT four times the quarterly change, and a difference of two levels is not a growth rate."
+  },
+  "observations": [
+    { "date": "2024-07-01", "value": 20000.0 },
+    { "date": "2024-10-01", "value": 20100.0 },
+    { "date": "2025-01-01", "value": 20301.0 }
+  ]
+}

@@ -180,15 +180,16 @@
           <dt>Indicators Under Review</dt>
           <dd>
             <p class="prose mb-3">
-              The prototype tracked five United States series. The set is being reconsidered alongside the
-              transformations applied to each one.
+              Five United States series. Each label below names the transformation applied, not the raw
+              series: an index or a dollar level is not itself a rate. The definitions are specified and
+              tested; no figures are published yet.
             </p>
             <dl class="indicators">
-              <div><dt>CPIAUCSL</dt><dd>Consumer prices</dd></div>
-              <div><dt>FEDFUNDS</dt><dd>Policy rate</dd></div>
-              <div><dt>GDPC1</dt><dd>Real GDP</dd></div>
-              <div><dt>RSAFS</dt><dd>Retail sales</dd></div>
-              <div><dt>UNRATE</dt><dd>Unemployment</dd></div>
+              <div><dt>CPIAUCSL</dt><dd>CPI inflation, YoY</dd></div>
+              <div><dt>FEDFUNDS</dt><dd>Effective federal funds rate</dd></div>
+              <div><dt>GDPC1</dt><dd>Real GDP, QoQ annualised</dd></div>
+              <div><dt>RSAFS</dt><dd>Retail sales, MoM</dd></div>
+              <div><dt>UNRATE</dt><dd>Unemployment rate</dd></div>
             </dl>
           </dd>
         </div>
@@ -208,8 +209,13 @@
               series requires a stated transformation, and the language model is never responsible for
               producing or inferring one.
             </p>
+            <p class="prose">
+              Each series now has one stated transformation, implemented as a tested pure function.
+              Changes in rates are reported in percentage points, changes in levels as percentage
+              changes, and the two are never interchanged.
+            </p>
             <p class="mt-3">
-              <a class="link-rule" href="README.md">Read the full method note <span aria-hidden="true">&#8594;</span></a>
+              <a class="link-rule" href="README.md">Read the full specification <span aria-hidden="true">&#8594;</span></a>
             </p>
           </dd>
         </div>

@@ -1,0 +1,21 @@
+{
+  "_synthetic": true,
+  "_warning": "SYNTHETIC TEST FIXTURE — NOT REAL FRED DATA. Invented values, chosen for exact arithmetic; must never be presented as observed data.",
+  "series_id": "RSAFS",
+  "series_name": "Advance Retail Sales: Retail Trade and Food Services (synthetic stand-in)",
+  "frequency": "monthly",
+  "unit": "millions of dollars",
+  "seasonal_adjustment": "seasonally adjusted",
+  "_designed_so_that": {
+    "ratios": "710535 / 707000 = 1.005 exactly; 707000 / 700000 = 1.01 exactly",
+    "mom_current": "(1.005 - 1) * 100 = 0.5 percent",
+    "mom_previous": "(1.01 - 1) * 100 = 1.0 percent",
+    "momentum_change": "0.5 - 1.0 => -0.5 percentage points (growth continued, but slower)",
+    "note": "The raw level is a dollar amount and is never itself a growth rate. This series is nominal."
+  },
+  "observations": [
+    { "date": "2024-12-01", "value": 700000.0 },
+    { "date": "2025-01-01", "value": 707000.0 },
+    { "date": "2025-02-01", "value": 710535.0 }
+  ]
+}

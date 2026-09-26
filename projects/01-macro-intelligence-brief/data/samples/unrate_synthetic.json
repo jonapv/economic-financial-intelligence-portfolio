@@ -1,0 +1,20 @@
+{
+  "_synthetic": true,
+  "_warning": "SYNTHETIC TEST FIXTURE — NOT REAL FRED DATA. Invented values; must never be presented as observed data.",
+  "series_id": "UNRATE",
+  "series_name": "Unemployment Rate (synthetic stand-in)",
+  "frequency": "monthly",
+  "unit": "percent",
+  "seasonal_adjustment": "seasonally adjusted",
+  "_designed_so_that": {
+    "current": "4.3 percent (2025-02)",
+    "previous": "4.1 percent (2025-01)",
+    "change": "4.3 - 4.1 => +0.2 percentage points",
+    "note": "Already a rate, so no transformation applies. The difference is in percentage points, never a percentage change. 4.3 - 4.1 is not exactly representable in binary floating point, which is why tests compare approximately and rounding happens only at presentation."
+  },
+  "observations": [
+    { "date": "2024-12-01", "value": 4.0 },
+    { "date": "2025-01-01", "value": 4.1 },
+    { "date": "2025-02-01", "value": 4.3 }
+  ]
+}
