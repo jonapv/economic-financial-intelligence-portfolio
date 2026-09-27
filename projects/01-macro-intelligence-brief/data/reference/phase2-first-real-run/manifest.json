@@ -1,0 +1,128 @@
+{
+  "run_id": "phase2-20260927T000634Z-b7ea4089",
+  "retrieved_at_utc": "2026-09-27T00:06:34.170846+00:00",
+  "phase": "Phase 2 — first real data collection",
+  "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+  "source_base": "https://api.stlouisfed.org/fred",
+  "endpoints_used": [
+    "series",
+    "series/observations"
+  ],
+  "series": [
+    "CPIAUCNS",
+    "DFF",
+    "GDPC1",
+    "RSAFS",
+    "UNRATE"
+  ],
+  "fetch_limits": {
+    "CPIAUCNS": 24,
+    "UNRATE": 12,
+    "DFF": 40,
+    "GDPC1": 8,
+    "RSAFS": 12
+  },
+  "primary_units": "lin (raw source values; no source-side transformation)",
+  "cross_check_units": {
+    "CPIAUCNS": "pc1",
+    "GDPC1": "pca"
+  },
+  "git_commit_before_run": "8083c141401dc90506f4d7f1f79126ac3ea8f687",
+  "requests": [
+    {
+      "endpoint": "series",
+      "params": {
+        "series_id": "CPIAUCNS"
+      }
+    },
+    {
+      "endpoint": "series/observations",
+      "params": {
+        "limit": "24",
+        "series_id": "CPIAUCNS",
+        "sort_order": "desc",
+        "units": "lin"
+      }
+    },
+    {
+      "endpoint": "series",
+      "params": {
+        "series_id": "UNRATE"
+      }
+    },
+    {
+      "endpoint": "series/observations",
+      "params": {
+        "limit": "12",
+        "series_id": "UNRATE",
+        "sort_order": "desc",
+        "units": "lin"
+      }
+    },
+    {
+      "endpoint": "series",
+      "params": {
+        "series_id": "DFF"
+      }
+    },
+    {
+      "endpoint": "series/observations",
+      "params": {
+        "limit": "40",
+        "series_id": "DFF",
+        "sort_order": "desc",
+        "units": "lin"
+      }
+    },
+    {
+      "endpoint": "series",
+      "params": {
+        "series_id": "GDPC1"
+      }
+    },
+    {
+      "endpoint": "series/observations",
+      "params": {
+        "limit": "8",
+        "series_id": "GDPC1",
+        "sort_order": "desc",
+        "units": "lin"
+      }
+    },
+    {
+      "endpoint": "series",
+      "params": {
+        "series_id": "RSAFS"
+      }
+    },
+    {
+      "endpoint": "series/observations",
+      "params": {
+        "limit": "12",
+        "series_id": "RSAFS",
+        "sort_order": "desc",
+        "units": "lin"
+      }
+    },
+    {
+      "endpoint": "series/observations",
+      "params": {
+        "limit": "24",
+        "series_id": "CPIAUCNS",
+        "sort_order": "desc",
+        "units": "pc1"
+      }
+    },
+    {
+      "endpoint": "series/observations",
+      "params": {
+        "limit": "8",
+        "series_id": "GDPC1",
+        "sort_order": "desc",
+        "units": "pca"
+      }
+    }
+  ],
+  "credential_policy": "FRED_API_KEY is read from the process environment, is never written to disk, and is excluded from every stored request description. No URL is persisted.",
+  "notes": "Raw payloads are stored exactly as received, including any missing-value sentinels, so every derived figure is traceable to what the source said at retrieval time."
+}

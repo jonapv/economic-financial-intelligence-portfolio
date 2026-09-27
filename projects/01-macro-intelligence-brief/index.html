@@ -66,10 +66,12 @@
           <dd>
             <div class="note note--accent">
               <p>
-                <span class="prose emphasis">In development.</span> The project is currently being rebuilt.
-                An earlier prototype produced briefs through a no-code automation platform; that approach
-                has been retired and is preserved only as reference material. Nothing described below is
-                running in production, and no brief is currently being distributed.
+                <span class="prose emphasis">In development.</span> The collection, normalisation,
+                calculation and validation stages are implemented and have been run against the live
+                source. The synthesis, brief and review stages do not exist yet, so
+                <span class="emphasis">no brief is produced or distributed</span>, and nothing here runs
+                on a schedule. An earlier prototype produced briefs through a no-code automation
+                platform; that approach has been retired and is preserved only as reference material.
               </p>
             </div>
           </dd>
@@ -171,7 +173,7 @@
                 </div>
               </li>
             </ol>
-            <p class="diagram-caption">Conceptual representation &mdash; not yet implemented</p>
+            <p class="diagram-caption">Stages 01&ndash;05 implemented and run against the live source &middot; stages 06&ndash;08 not yet built</p>
           </dd>
         </div>
 
@@ -216,6 +218,93 @@
             </p>
             <p class="mt-3">
               <a class="link-rule" href="README.md">Read the full specification <span aria-hidden="true">&#8594;</span></a>
+            </p>
+          </dd>
+        </div>
+
+
+        <!-- First validated real-data run -->
+        <div class="def-row">
+          <dt>First Validated Run</dt>
+          <dd>
+            <p class="prose mb-3">
+              The collection and validation pipeline was run against the live source for the first time
+              on 27 September 2026. The validation gate reported no hard failures. These are the five
+              derived statistics from that run.
+            </p>
+
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <caption>
+                  Data snapshot &mdash; not a forecast, not investment advice. Computed by this project
+                  from the source series shown. Verify against the primary release before any use.
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Indicator</th>
+                    <th scope="col">Series</th>
+                    <th scope="col">Period</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Previous</th>
+                    <th scope="col">Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">CPI inflation, YoY</td>
+                    <td class="series">CPIAUCNS</td>
+                    <td class="num">2026-08</td>
+                    <td class="num">3.40%</td>
+                    <td class="num">3.36%</td>
+                    <td class="num">+0.03 pp</td>
+                  </tr>
+                  <tr>
+                    <td class="name">Unemployment rate</td>
+                    <td class="series">UNRATE</td>
+                    <td class="num">2026-08</td>
+                    <td class="num">4.1%</td>
+                    <td class="num">4.1%</td>
+                    <td class="num">0.00 pp</td>
+                  </tr>
+                  <tr>
+                    <td class="name">Effective federal funds rate</td>
+                    <td class="series">DFF</td>
+                    <td class="num">2026-09-24</td>
+                    <td class="num">3.88%</td>
+                    <td class="num">3.88%</td>
+                    <td class="num">0.00 pp</td>
+                  </tr>
+                  <tr>
+                    <td class="name">Real GDP growth, QoQ annualised</td>
+                    <td class="series">GDPC1</td>
+                    <td class="num">2026-Q2</td>
+                    <td class="num">1.48%</td>
+                    <td class="num">2.09%</td>
+                    <td class="num">&minus;0.61 pp</td>
+                  </tr>
+                  <tr>
+                    <td class="name">Retail sales, MoM</td>
+                    <td class="series">RSAFS</td>
+                    <td class="num">2026-08</td>
+                    <td class="num">1.24%</td>
+                    <td class="num">&minus;0.54%</td>
+                    <td class="num">+1.78 pp</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p class="prose mt-4">
+              Every figure was computed from the raw source series by the tested transformations, not
+              read from a pre-transformed feed. Two of the five are derived rather than published
+              directly, and both were checked against the originating agency: CPI inflation matches the
+              Bureau of Labor Statistics index exactly, and real GDP growth agrees with the Bureau of
+              Economic Analysis published figure to within its one-decimal publication rounding.
+            </p>
+            <p class="small-print mt-3">
+              Source: Federal Reserve Bank of St. Louis (FRED), retrieved 2026-09-27. Raw payloads,
+              validation report and spot-check notes are stored alongside the pipeline. Displayed values
+              are rounded; the pipeline retains full precision.
             </p>
           </dd>
         </div>

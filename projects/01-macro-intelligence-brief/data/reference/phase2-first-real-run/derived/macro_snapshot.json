@@ -1,0 +1,122 @@
+{
+  "run_id": "phase2-20260927T000634Z-b7ea4089",
+  "retrieved_at_utc": "2026-09-27T00:06:34.170846+00:00",
+  "economy": "US",
+  "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+  "content": "derived macroeconomic statistics",
+  "disclaimer": "Data snapshot only. No forecast, no interpretation, no investment advice. Figures are computed by this project from the source series named in each record and must be verified against the primary release before any use.",
+  "observations": [
+    {
+      "indicator_id": "us_cpi_inflation_yoy",
+      "economy": "US",
+      "display_name": "CPI Inflation (YoY)",
+      "period": "2026-08-01",
+      "frequency": "monthly",
+      "value": 3.3965,
+      "unit": "percent",
+      "previous_value": 3.3648,
+      "change": 0.0317,
+      "change_unit": "percentage points",
+      "direction": "increased",
+      "source_series": "CPIAUCNS",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00"
+    },
+    {
+      "indicator_id": "us_unemployment_rate",
+      "economy": "US",
+      "display_name": "Unemployment Rate",
+      "period": "2026-08-01",
+      "frequency": "monthly",
+      "value": 4.1,
+      "unit": "percent",
+      "previous_value": 4.1,
+      "change": 0.0,
+      "change_unit": "percentage points",
+      "direction": "unchanged",
+      "source_series": "UNRATE",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00"
+    },
+    {
+      "indicator_id": "us_effective_fed_funds_rate",
+      "economy": "US",
+      "display_name": "Effective Federal Funds Rate",
+      "period": "2026-09-24",
+      "frequency": "daily",
+      "value": 3.88,
+      "unit": "percent",
+      "previous_value": 3.88,
+      "change": 0.0,
+      "change_unit": "percentage points",
+      "direction": "unchanged",
+      "source_series": "DFF",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00"
+    },
+    {
+      "indicator_id": "us_real_gdp_growth_qoq_ann",
+      "economy": "US",
+      "display_name": "Real GDP Growth (QoQ, annualised)",
+      "period": "2026-04-01",
+      "frequency": "quarterly",
+      "value": 1.4837,
+      "unit": "percent, annual rate",
+      "previous_value": 2.0892,
+      "change": -0.6055,
+      "change_unit": "percentage points",
+      "direction": "decreased",
+      "source_series": "GDPC1",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00"
+    },
+    {
+      "indicator_id": "us_retail_sales_mom",
+      "economy": "US",
+      "display_name": "Retail Sales (MoM)",
+      "period": "2026-08-01",
+      "frequency": "monthly",
+      "value": 1.2407,
+      "unit": "percent",
+      "previous_value": -0.5367,
+      "change": 1.7774,
+      "change_unit": "percentage points",
+      "direction": "increased",
+      "source_series": "RSAFS",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00"
+    }
+  ],
+  "observations_full_precision": [
+    {
+      "indicator_id": "us_cpi_inflation_yoy",
+      "value": 3.3965478924364856,
+      "previous_value": 3.364825041479902,
+      "change": 0.03172285095658367
+    },
+    {
+      "indicator_id": "us_unemployment_rate",
+      "value": 4.1,
+      "previous_value": 4.1,
+      "change": 0.0
+    },
+    {
+      "indicator_id": "us_effective_fed_funds_rate",
+      "value": 3.88,
+      "previous_value": 3.88,
+      "change": 0.0
+    },
+    {
+      "indicator_id": "us_real_gdp_growth_qoq_ann",
+      "value": 1.4836587880023622,
+      "previous_value": 2.0891889857350465,
+      "change": -0.6055301977326843
+    },
+    {
+      "indicator_id": "us_retail_sales_mom",
+      "value": 1.2407418550562266,
+      "previous_value": -0.5366991635299634,
+      "change": 1.77744101858619
+    }
+  ]
+}

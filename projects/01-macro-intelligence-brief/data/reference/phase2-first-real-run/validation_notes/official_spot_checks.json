@@ -1,0 +1,59 @@
+{
+  "artefact": "Independent spot checks against the originating statistical agencies",
+  "purpose": "Validate the METHODOLOGY of this project's transformations against figures published by the agencies that produce the data. This is a one-off recorded check, not automated application logic, and no external value here is hard-coded into the pipeline.",
+  "performed_on": "2026-09-27",
+  "run_id": "phase2-20260927T000634Z-b7ea4089",
+  "scope_note": "These checks validate the method as of this run. They do not validate future releases, and they are not re-executed by the collector or by the test suite.",
+
+  "checks": [
+    {
+      "statistic": "CPI-U All Items, 12-month percent change, not seasonally adjusted",
+      "our_indicator_id": "us_cpi_inflation_yoy",
+      "period": "2026-08",
+      "our_calculated_value": 3.3965478924364856,
+      "our_value_rounded_1dp": 3.4,
+      "official_published_value": 3.396548,
+      "official_value_basis": "Computed from the official BLS index values for series CUUR0000SA0 using the standard twelve-month comparison (index_2026-08 / index_2025-08 - 1) * 100",
+      "official_source": "U.S. Bureau of Labor Statistics, public API v1, series CUUR0000SA0 (Consumer Price Index for All Urban Consumers: All Items in U.S. City Average, not seasonally adjusted)",
+      "official_source_endpoint": "https://api.bls.gov/publicAPI/v1/timeseries/data/CUUR0000SA0",
+      "official_credential_required": false,
+      "source_last_updated": "FRED CPIAUCNS metadata reports 2026-09-11 08:37:49-05",
+      "comparison_result": "exact_match",
+      "difference": 0.0,
+      "difference_unit": "percentage points",
+      "independence_note": "Different agency, different endpoint and a different series identifier from the one the pipeline uses. The BLS index values were found to be identical to FRED's CPIAUCNS for all four periods examined (2025-07, 2025-08, 2026-07, 2026-08), which confirms both that CPIAUCNS redistributes CUUR0000SA0 unchanged and that our transformation is the conventional one.",
+      "vintage_caveat": "The NSA index is not subject to the annual seasonal-factor revisions that affect the adjusted series, so this comparison is unusually stable. A future revision to the index would change both sides identically."
+    },
+    {
+      "statistic": "Real GDP, percent change from preceding quarter, seasonally adjusted annual rate",
+      "our_indicator_id": "us_real_gdp_growth_qoq_ann",
+      "period": "2026-Q2 (labelled 2026-04-01)",
+      "our_calculated_value": 1.4836587880023622,
+      "our_value_rounded_1dp": 1.5,
+      "official_published_value": 1.5,
+      "official_value_basis": "BEA's own published growth rate, taken as published. This is NOT a transformation computed by FRED from the level series.",
+      "official_source": "U.S. Bureau of Economic Analysis, series A191RL1Q225SBEA (Real Gross Domestic Product, Percent Change from Preceding Period, quarterly, SAAR), obtained via FRED as redistributor",
+      "official_publication_last_updated": "2026-07-30 10:09:19-05",
+      "comparison_result": "agrees_within_publication_rounding",
+      "difference": -0.0163412119976378,
+      "difference_unit": "percentage points",
+      "difference_explanation": "BEA publishes this statistic to one decimal place. Our unrounded 1.4837% rounds to 1.5%, which is exactly the published figure. The residual is publication rounding, NOT an arithmetic disagreement.",
+      "secondary_period_checked": {
+        "period": "2026-Q1 (labelled 2026-01-01)",
+        "our_calculated_value": 2.0892,
+        "official_published_value": 2.1,
+        "our_value_rounded_1dp": 2.1,
+        "comparison_result": "agrees_within_publication_rounding"
+      },
+      "independence_note": "The figure is BEA's own published statistic rather than a FRED-side transformation of GDPC1, so this tests the compounding convention against the agency that defines it. FRED is only the transport; provenance is BEA.",
+      "vintage_caveat": "A genuine vintage mismatch exists and is not an error: the level series GDPC1 reports last_updated 2026-08-26, while the published growth series A191RL1Q225SBEA reports 2026-07-30. The level may therefore already incorporate a revision that the published growth rate does not. The two nonetheless agree after rounding. Real GDP is revised across advance, second and third estimates and again in annual revisions, so a future comparison may differ for vintage reasons alone. Any such difference must be identified as a vintage or revision difference, never reported as an arithmetic failure."
+    }
+  ],
+
+  "not_checked": {
+    "series": ["UNRATE", "DFF", "RSAFS"],
+    "reason": "The primary value for each is reported exactly as published, with no transformation, so there is no derived statistic to validate against an agency. Their percentage-point changes are arithmetic on published figures."
+  },
+
+  "conclusion": "Both derived statistics agree with the originating agencies. CPI matches exactly. Real GDP growth agrees to within publication rounding, with the residual fully explained. The compounding convention used for annualised quarterly growth is confirmed to be the one BEA uses."
+}

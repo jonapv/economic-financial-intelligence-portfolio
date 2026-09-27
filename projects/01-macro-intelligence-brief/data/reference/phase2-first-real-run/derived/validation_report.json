@@ -1,0 +1,512 @@
+{
+  "run_id": "phase2-20260927T000634Z-b7ea4089",
+  "generated_at": "2026-09-27T00:06:34.170846+00:00",
+  "status": "passed_with_warnings",
+  "publication_ready": true,
+  "counts": {
+    "hard_failures": 0,
+    "warnings": 2,
+    "checks_passed": 42
+  },
+  "hard_failures": [],
+  "warnings": [
+    {
+      "code": "series.unusual_gaps",
+      "severity": "warning",
+      "message": "CPIAUCNS: 1 gap(s) longer than 40 days between consecutive observations",
+      "series_id": "CPIAUCNS",
+      "detail": {
+        "threshold_days": 40,
+        "gaps": [
+          {
+            "from": "2025-09-01",
+            "to": "2025-11-01",
+            "days": 61
+          }
+        ]
+      }
+    },
+    {
+      "code": "series.unusual_gaps",
+      "severity": "warning",
+      "message": "UNRATE: 1 gap(s) longer than 40 days between consecutive observations",
+      "series_id": "UNRATE",
+      "detail": {
+        "threshold_days": 40,
+        "gaps": [
+          {
+            "from": "2025-09-01",
+            "to": "2025-11-01",
+            "days": 61
+          }
+        ]
+      }
+    }
+  ],
+  "checks": [
+    {
+      "code": "metadata.series_id",
+      "severity": "pass",
+      "message": "series id confirmed as CPIAUCNS",
+      "series_id": "CPIAUCNS"
+    },
+    {
+      "code": "metadata.frequency",
+      "severity": "pass",
+      "message": "CPIAUCNS: frequency confirmed as monthly",
+      "series_id": "CPIAUCNS",
+      "detail": {
+        "source_label": "Monthly"
+      }
+    },
+    {
+      "code": "metadata.seasonal_adjustment",
+      "severity": "pass",
+      "message": "CPIAUCNS: seasonal-adjustment basis confirmed as NSA",
+      "series_id": "CPIAUCNS",
+      "detail": {
+        "source_label": "Not Seasonally Adjusted"
+      }
+    },
+    {
+      "code": "series.sufficient_history",
+      "severity": "pass",
+      "message": "CPIAUCNS: 23 valid observations, 14 required",
+      "series_id": "CPIAUCNS",
+      "detail": {
+        "valid": 23,
+        "required": 14
+      }
+    },
+    {
+      "code": "series.ordered_unique",
+      "severity": "pass",
+      "message": "CPIAUCNS: chronological, no duplicate dates",
+      "series_id": "CPIAUCNS"
+    },
+    {
+      "code": "series.fresh",
+      "severity": "pass",
+      "message": "CPIAUCNS: latest observation 2026-08-01 is 57 days old, within the 95-day tolerance",
+      "series_id": "CPIAUCNS",
+      "detail": {
+        "latest_period": "2026-08-01",
+        "age_days": 57,
+        "tolerance_days": 95
+      }
+    },
+    {
+      "code": "series.unusual_gaps",
+      "severity": "warning",
+      "message": "CPIAUCNS: 1 gap(s) longer than 40 days between consecutive observations",
+      "series_id": "CPIAUCNS",
+      "detail": {
+        "threshold_days": 40,
+        "gaps": [
+          {
+            "from": "2025-09-01",
+            "to": "2025-11-01",
+            "days": 61
+          }
+        ]
+      }
+    },
+    {
+      "code": "series.source_last_updated",
+      "severity": "pass",
+      "message": "CPIAUCNS: source reports last_updated 2026-09-11 08:37:49-05",
+      "series_id": "CPIAUCNS",
+      "detail": {
+        "last_updated": "2026-09-11 08:37:49-05"
+      }
+    },
+    {
+      "code": "derived.consistent",
+      "severity": "pass",
+      "message": "CPIAUCNS: derived result finite and internally consistent (us_cpi_inflation_yoy)",
+      "series_id": "CPIAUCNS"
+    },
+    {
+      "code": "metadata.series_id",
+      "severity": "pass",
+      "message": "series id confirmed as UNRATE",
+      "series_id": "UNRATE"
+    },
+    {
+      "code": "metadata.frequency",
+      "severity": "pass",
+      "message": "UNRATE: frequency confirmed as monthly",
+      "series_id": "UNRATE",
+      "detail": {
+        "source_label": "Monthly"
+      }
+    },
+    {
+      "code": "metadata.seasonal_adjustment",
+      "severity": "pass",
+      "message": "UNRATE: seasonal-adjustment basis confirmed as SA",
+      "series_id": "UNRATE",
+      "detail": {
+        "source_label": "Seasonally Adjusted"
+      }
+    },
+    {
+      "code": "series.sufficient_history",
+      "severity": "pass",
+      "message": "UNRATE: 11 valid observations, 2 required",
+      "series_id": "UNRATE",
+      "detail": {
+        "valid": 11,
+        "required": 2
+      }
+    },
+    {
+      "code": "series.ordered_unique",
+      "severity": "pass",
+      "message": "UNRATE: chronological, no duplicate dates",
+      "series_id": "UNRATE"
+    },
+    {
+      "code": "series.fresh",
+      "severity": "pass",
+      "message": "UNRATE: latest observation 2026-08-01 is 57 days old, within the 95-day tolerance",
+      "series_id": "UNRATE",
+      "detail": {
+        "latest_period": "2026-08-01",
+        "age_days": 57,
+        "tolerance_days": 95
+      }
+    },
+    {
+      "code": "series.unusual_gaps",
+      "severity": "warning",
+      "message": "UNRATE: 1 gap(s) longer than 40 days between consecutive observations",
+      "series_id": "UNRATE",
+      "detail": {
+        "threshold_days": 40,
+        "gaps": [
+          {
+            "from": "2025-09-01",
+            "to": "2025-11-01",
+            "days": 61
+          }
+        ]
+      }
+    },
+    {
+      "code": "series.source_last_updated",
+      "severity": "pass",
+      "message": "UNRATE: source reports last_updated 2026-09-04 08:27:31-05",
+      "series_id": "UNRATE",
+      "detail": {
+        "last_updated": "2026-09-04 08:27:31-05"
+      }
+    },
+    {
+      "code": "derived.consistent",
+      "severity": "pass",
+      "message": "UNRATE: derived result finite and internally consistent (us_unemployment_rate)",
+      "series_id": "UNRATE"
+    },
+    {
+      "code": "metadata.series_id",
+      "severity": "pass",
+      "message": "series id confirmed as DFF",
+      "series_id": "DFF"
+    },
+    {
+      "code": "metadata.frequency",
+      "severity": "pass",
+      "message": "DFF: frequency confirmed as daily",
+      "series_id": "DFF",
+      "detail": {
+        "source_label": "Daily, 7-Day"
+      }
+    },
+    {
+      "code": "metadata.seasonal_adjustment_not_applicable",
+      "severity": "pass",
+      "message": "DFF: specification declares seasonal adjustment inapplicable; source reports NSA (recorded, not enforced)",
+      "series_id": "DFF",
+      "detail": {
+        "source_code": "NSA",
+        "source_label": "Not Seasonally Adjusted"
+      }
+    },
+    {
+      "code": "series.sufficient_history",
+      "severity": "pass",
+      "message": "DFF: 40 valid observations, 2 required",
+      "series_id": "DFF",
+      "detail": {
+        "valid": 40,
+        "required": 2
+      }
+    },
+    {
+      "code": "series.ordered_unique",
+      "severity": "pass",
+      "message": "DFF: chronological, no duplicate dates",
+      "series_id": "DFF"
+    },
+    {
+      "code": "series.fresh",
+      "severity": "pass",
+      "message": "DFF: latest observation 2026-09-24 is 3 days old, within the 10-day tolerance",
+      "series_id": "DFF",
+      "detail": {
+        "latest_period": "2026-09-24",
+        "age_days": 3,
+        "tolerance_days": 10
+      }
+    },
+    {
+      "code": "series.source_last_updated",
+      "severity": "pass",
+      "message": "DFF: source reports last_updated 2026-09-25 15:16:33-05",
+      "series_id": "DFF",
+      "detail": {
+        "last_updated": "2026-09-25 15:16:33-05"
+      }
+    },
+    {
+      "code": "derived.consistent",
+      "severity": "pass",
+      "message": "DFF: derived result finite and internally consistent (us_effective_fed_funds_rate)",
+      "series_id": "DFF"
+    },
+    {
+      "code": "metadata.series_id",
+      "severity": "pass",
+      "message": "series id confirmed as GDPC1",
+      "series_id": "GDPC1"
+    },
+    {
+      "code": "metadata.frequency",
+      "severity": "pass",
+      "message": "GDPC1: frequency confirmed as quarterly",
+      "series_id": "GDPC1",
+      "detail": {
+        "source_label": "Quarterly"
+      }
+    },
+    {
+      "code": "metadata.seasonal_adjustment",
+      "severity": "pass",
+      "message": "GDPC1: seasonal-adjustment basis confirmed as SAAR",
+      "series_id": "GDPC1",
+      "detail": {
+        "source_label": "Seasonally Adjusted Annual Rate"
+      }
+    },
+    {
+      "code": "series.sufficient_history",
+      "severity": "pass",
+      "message": "GDPC1: 8 valid observations, 3 required",
+      "series_id": "GDPC1",
+      "detail": {
+        "valid": 8,
+        "required": 3
+      }
+    },
+    {
+      "code": "series.ordered_unique",
+      "severity": "pass",
+      "message": "GDPC1: chronological, no duplicate dates",
+      "series_id": "GDPC1"
+    },
+    {
+      "code": "series.fresh",
+      "severity": "pass",
+      "message": "GDPC1: latest observation 2026-04-01 is 179 days old, within the 220-day tolerance",
+      "series_id": "GDPC1",
+      "detail": {
+        "latest_period": "2026-04-01",
+        "age_days": 179,
+        "tolerance_days": 220
+      }
+    },
+    {
+      "code": "series.source_last_updated",
+      "severity": "pass",
+      "message": "GDPC1: source reports last_updated 2026-08-26 07:49:02-05",
+      "series_id": "GDPC1",
+      "detail": {
+        "last_updated": "2026-08-26 07:49:02-05"
+      }
+    },
+    {
+      "code": "derived.consistent",
+      "severity": "pass",
+      "message": "GDPC1: derived result finite and internally consistent (us_real_gdp_growth_qoq_ann)",
+      "series_id": "GDPC1"
+    },
+    {
+      "code": "metadata.series_id",
+      "severity": "pass",
+      "message": "series id confirmed as RSAFS",
+      "series_id": "RSAFS"
+    },
+    {
+      "code": "metadata.frequency",
+      "severity": "pass",
+      "message": "RSAFS: frequency confirmed as monthly",
+      "series_id": "RSAFS",
+      "detail": {
+        "source_label": "Monthly"
+      }
+    },
+    {
+      "code": "metadata.seasonal_adjustment",
+      "severity": "pass",
+      "message": "RSAFS: seasonal-adjustment basis confirmed as SA",
+      "series_id": "RSAFS",
+      "detail": {
+        "source_label": "Seasonally Adjusted"
+      }
+    },
+    {
+      "code": "series.sufficient_history",
+      "severity": "pass",
+      "message": "RSAFS: 12 valid observations, 3 required",
+      "series_id": "RSAFS",
+      "detail": {
+        "valid": 12,
+        "required": 3
+      }
+    },
+    {
+      "code": "series.ordered_unique",
+      "severity": "pass",
+      "message": "RSAFS: chronological, no duplicate dates",
+      "series_id": "RSAFS"
+    },
+    {
+      "code": "series.fresh",
+      "severity": "pass",
+      "message": "RSAFS: latest observation 2026-08-01 is 57 days old, within the 95-day tolerance",
+      "series_id": "RSAFS",
+      "detail": {
+        "latest_period": "2026-08-01",
+        "age_days": 57,
+        "tolerance_days": 95
+      }
+    },
+    {
+      "code": "series.source_last_updated",
+      "severity": "pass",
+      "message": "RSAFS: source reports last_updated 2026-09-16 07:39:53-05",
+      "series_id": "RSAFS",
+      "detail": {
+        "last_updated": "2026-09-16 07:39:53-05"
+      }
+    },
+    {
+      "code": "derived.consistent",
+      "severity": "pass",
+      "message": "RSAFS: derived result finite and internally consistent (us_retail_sales_mom)",
+      "series_id": "RSAFS"
+    },
+    {
+      "code": "crosscheck.agrees",
+      "severity": "pass",
+      "message": "CPIAUCNS 2026-08-01: ours 3.396548 vs FRED pc1 3.396550, difference -0.000002 (tolerance 0.05)",
+      "series_id": "CPIAUCNS",
+      "detail": {
+        "our_value": 3.3965478924364856,
+        "fred_value": 3.39655,
+        "difference": -2.1075635143752436e-06
+      }
+    },
+    {
+      "code": "crosscheck.agrees",
+      "severity": "pass",
+      "message": "GDPC1 2026-04-01: ours 1.483659 vs FRED pca 1.483660, difference -0.000001 (tolerance 0.05)",
+      "series_id": "GDPC1",
+      "detail": {
+        "our_value": 1.4836587880023622,
+        "fred_value": 1.48366,
+        "difference": -1.211997637806661e-06
+      }
+    }
+  ],
+  "series_results": {
+    "CPIAUCNS": {
+      "series_id": "CPIAUCNS",
+      "raw_count": 24,
+      "valid_count": 23,
+      "missing_count": 1,
+      "missing_dates": [
+        "2025-10-01"
+      ],
+      "earliest_period": "2024-09-01",
+      "latest_period": "2026-08-01"
+    },
+    "UNRATE": {
+      "series_id": "UNRATE",
+      "raw_count": 12,
+      "valid_count": 11,
+      "missing_count": 1,
+      "missing_dates": [
+        "2025-10-01"
+      ],
+      "earliest_period": "2025-09-01",
+      "latest_period": "2026-08-01"
+    },
+    "DFF": {
+      "series_id": "DFF",
+      "raw_count": 40,
+      "valid_count": 40,
+      "missing_count": 0,
+      "missing_dates": [],
+      "earliest_period": "2026-08-16",
+      "latest_period": "2026-09-24"
+    },
+    "GDPC1": {
+      "series_id": "GDPC1",
+      "raw_count": 8,
+      "valid_count": 8,
+      "missing_count": 0,
+      "missing_dates": [],
+      "earliest_period": "2024-07-01",
+      "latest_period": "2026-04-01"
+    },
+    "RSAFS": {
+      "series_id": "RSAFS",
+      "raw_count": 12,
+      "valid_count": 12,
+      "missing_count": 0,
+      "missing_dates": [],
+      "earliest_period": "2025-09-01",
+      "latest_period": "2026-08-01"
+    }
+  },
+  "cross_checks": [
+    {
+      "series_id": "CPIAUCNS",
+      "our_indicator_id": "us_cpi_inflation_yoy",
+      "fred_transformation": "pc1",
+      "fred_transformation_meaning": "percent change from year ago",
+      "role": "secondary cross-check only; never the primary calculation",
+      "period": "2026-08-01",
+      "our_value": 3.3965478924364856,
+      "fred_value": 3.39655,
+      "difference": -2.1075635143752436e-06,
+      "tolerance": 0.05,
+      "status": "agrees"
+    },
+    {
+      "series_id": "GDPC1",
+      "our_indicator_id": "us_real_gdp_growth_qoq_ann",
+      "fred_transformation": "pca",
+      "fred_transformation_meaning": "compounded annual rate of change",
+      "role": "secondary cross-check only; never the primary calculation",
+      "period": "2026-04-01",
+      "our_value": 1.4836587880023622,
+      "fred_value": 1.48366,
+      "difference": -1.211997637806661e-06,
+      "tolerance": 0.05,
+      "status": "agrees"
+    }
+  ]
+}

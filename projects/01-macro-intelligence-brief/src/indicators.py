@@ -23,6 +23,7 @@ from .calculations import (
 )
 from .errors import InsufficientHistoryError
 from .models import Frequency, MacroObservation, RawObservation, Unit
+from .periods import add_months, add_quarters, index_by_period, require_period
 
 ECONOMY = "US"
 SOURCE_NAME = "Federal Reserve Bank of St. Louis (FRED)"
@@ -67,7 +68,11 @@ CPI_INFLATION = IndicatorSpec(
     seasonal_adjustment="Not seasonally adjusted",
     transformation="Year-over-year percentage change of the index: ((CPI_t / CPI_t-12) - 1) * 100",
     output_unit=Unit.PERCENT,
-    comparison="Against the same calculation one month earlier (t-1 vs t-13), differenced in percentage points",
+    comparison=(
+        "Against the same calculation one calendar month earlier (t-1 vs t-13), "
+        "differenced in percentage points. Periods are selected by calendar date, "
+        "never by list position"
+    ),
     minimum_history_required=14,
     interpretation=(
         "The rate at which consumer prices are rising over twelve months. The "
@@ -97,7 +102,10 @@ UNEMPLOYMENT_RATE = IndicatorSpec(
     seasonal_adjustment="Seasonally adjusted",
     transformation="None. The series is already a rate and is reported as published.",
     output_unit=Unit.PERCENT,
-    comparison="Difference against the previous month, in percentage points",
+    comparison=(
+        "Difference against the previous calendar month, in percentage points. "
+        "The preceding month must be present; a gap is not bridged"
+    ),
     minimum_history_required=2,
     interpretation=(
         "Labour market slack. Already a rate, so the change is a "
@@ -155,7 +163,10 @@ REAL_GDP_GROWTH = IndicatorSpec(
     seasonal_adjustment="Seasonally adjusted annual rate",
     transformation="Compounded quarterly change: (((GDP_t / GDP_t-1) ** 4) - 1) * 100",
     output_unit=Unit.PERCENT_ANNUALISED,
-    comparison="Against the same calculation for the prior quarter (t-1 vs t-2), differenced in percentage points",
+    comparison=(
+        "Against the same calculation for the prior calendar quarter (t-1 vs t-2), "
+        "differenced in percentage points. Quarters are selected by calendar date"
+    ),
     minimum_history_required=3,
     interpretation=(
         "The headline United States growth number, quoted at a seasonally "
@@ -182,7 +193,10 @@ RETAIL_SALES = IndicatorSpec(
     seasonal_adjustment="Seasonally adjusted",
     transformation="Month-over-month percentage change: ((Sales_t / Sales_t-1) - 1) * 100",
     output_unit=Unit.PERCENT,
-    comparison="Against the prior month's month-over-month change (t-1 vs t-2), differenced in percentage points",
+    comparison=(
+        "Against the prior calendar month's month-over-month change (t-1 vs t-2), "
+        "differenced in percentage points. Months are selected by calendar date"
+    ),
     minimum_history_required=3,
     interpretation=(
         "Momentum in consumer spending. The raw level is a dollar amount and "
@@ -263,8 +277,16 @@ def compute_cpi_inflation(
     """
     spec = CPI_INFLATION
     _check_history(spec, series)
-    current = percentage_change(series[-1].value, series[-13].value)
-    previous = percentage_change(series[-2].value, series[-14].value)
+    index = index_by_period(series)
+    latest = series[-1].period
+    t_12 = require_period(index, add_months(latest, -12),
+                          series_id=spec.source_series, role="CPI_t-12")
+    t_1 = require_period(index, add_months(latest, -1),
+                         series_id=spec.source_series, role="CPI_t-1")
+    t_13 = require_period(index, add_months(latest, -13),
+                          series_id=spec.source_series, role="CPI_t-13")
+    current = percentage_change(series[-1].value, t_12.value)
+    previous = percentage_change(t_1.value, t_13.value)
     return _build(
         spec,
         period=series[-1].period,
@@ -281,8 +303,12 @@ def compute_unemployment_rate(
     """Latest unemployment rate as published, differenced in percentage points."""
     spec = UNEMPLOYMENT_RATE
     _check_history(spec, series)
+    index = index_by_period(series)
+    latest = series[-1].period
     current = series[-1].value
-    previous = series[-2].value
+    previous = require_period(index, add_months(latest, -1),
+                              series_id=spec.source_series,
+                              role="previous month").value
     return _build(
         spec,
         period=series[-1].period,
@@ -328,8 +354,14 @@ def compute_real_gdp_growth(
     """
     spec = REAL_GDP_GROWTH
     _check_history(spec, series)
-    current = qoq_annualized_change(series[-1].value, series[-2].value)
-    previous = qoq_annualized_change(series[-2].value, series[-3].value)
+    index = index_by_period(series)
+    latest = series[-1].period
+    q_1 = require_period(index, add_quarters(latest, -1),
+                         series_id=spec.source_series, role="GDP_t-1")
+    q_2 = require_period(index, add_quarters(latest, -2),
+                         series_id=spec.source_series, role="GDP_t-2")
+    current = qoq_annualized_change(series[-1].value, q_1.value)
+    previous = qoq_annualized_change(q_1.value, q_2.value)
     return _build(
         spec,
         period=series[-1].period,
@@ -346,8 +378,14 @@ def compute_retail_sales_growth(
     """Month-over-month retail sales growth, and the change in that momentum."""
     spec = RETAIL_SALES
     _check_history(spec, series)
-    current = percentage_change(series[-1].value, series[-2].value)
-    previous = percentage_change(series[-2].value, series[-3].value)
+    index = index_by_period(series)
+    latest = series[-1].period
+    m_1 = require_period(index, add_months(latest, -1),
+                         series_id=spec.source_series, role="Sales_t-1")
+    m_2 = require_period(index, add_months(latest, -2),
+                         series_id=spec.source_series, role="Sales_t-2")
+    current = percentage_change(series[-1].value, m_1.value)
+    previous = percentage_change(m_1.value, m_2.value)
     return _build(
         spec,
         period=series[-1].period,

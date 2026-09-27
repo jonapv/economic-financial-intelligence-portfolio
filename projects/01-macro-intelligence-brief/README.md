@@ -1,7 +1,8 @@
 # Project 01 — Macro Intelligence Brief
 
-**Status: in development.** Nothing described here is running in production. No brief is currently
-being produced or distributed.
+**Status: in development.** Collection, normalisation, calculation and validation are implemented and
+have been run against live data. Synthesis, the brief itself and human review do not exist yet, so **no
+brief is produced or distributed**, and nothing runs on a schedule. This is not production-ready.
 
 A reproducible weekly reading of the United States macroeconomic picture. Automation handles
 collection and computation; a language model drafts the surrounding prose; a person reviews and
@@ -304,9 +305,11 @@ adjusted. V1 uses the NSA series, because:
 
 - **It is the conventional basis for the headline figure.** The twelve-month CPI change that is
   published and quoted is computed from the unadjusted index.
-- **A twelve-month comparison already spans a full seasonal cycle.** Comparing February with the
-  previous February controls for seasonality by construction, so adjusting first adds nothing and
-  introduces a processing step between the source and the published figure.
+- **Seasonal adjustment is not required for the headline twelve-month CPI measure used in this
+  project.** A twelve-month comparison already spans a full seasonal cycle: comparing February with
+  the previous February controls for seasonality by construction. This says nothing about seasonal
+  adjustment in general, which is necessary and appropriate for other purposes — including
+  short-term monthly CPI analysis, where the adjusted series is the correct choice.
 - **The NSA index is effectively final once published.** The adjusted series is revised when seasonal
   factors are re-estimated annually, which can move recent history. The unadjusted index is not, so a
   figure computed from it is more reproducible — which matters for a project whose stated aim is that
@@ -314,9 +317,10 @@ adjusted. V1 uses the NSA series, because:
 
 **The corollary is a constraint, not a bonus:** because this series is unadjusted, it must **not** be
 used for month-over-month inflation. A single month's unadjusted change mixes the price signal with
-the seasonal pattern. V1 computes only the twelve-month change, so the constraint is respected; if a
-month-over-month inflation figure is ever wanted, it needs the adjusted series and a separate
-specification.
+the seasonal pattern, which is precisely the problem seasonal adjustment exists to solve. V1 computes
+only the twelve-month change, so the constraint is respected. Short-term monthly CPI analysis is a
+legitimate exercise and would appropriately use `CPIAUCSL`, under its own specification — the two
+series serve different questions rather than one being better than the other.
 
 `CPIAUCNS` remains an **index level**. It is never itself an inflation rate.
 
@@ -419,6 +423,264 @@ python3 -m unittest discover -s tests -t . -v
 
 ---
 
+## Phase 2 — collection, validation and the first real-data run
+
+**Status: complete.** The pipeline from the official source through the validation gate is implemented
+and has been run against live data. Stages 06–08 of the conceptual pipeline (synthesis, brief, review)
+do **not** exist. No brief is produced, nothing runs on a schedule, and no language model is involved.
+
+### Collector boundary
+
+One module opens a network connection: [`src/fred_client.py`](src/fred_client.py). Everything else is
+pure.
+
+| Module | Role | I/O |
+| --- | --- | --- |
+| [`src/fred_client.py`](src/fred_client.py) | HTTPS requests to FRED via `urllib` | network |
+| [`src/normalisation.py`](src/normalisation.py) | Wire format → clean observations | none |
+| [`src/periods.py`](src/periods.py) | Calendar period arithmetic and lookup | none |
+| [`src/validation.py`](src/validation.py) | The gate: hard failures vs warnings | none |
+| [`src/snapshot.py`](src/snapshot.py) | Writes artefacts, refuses leaky payloads | filesystem |
+| [`src/run_collection.py`](src/run_collection.py) | Entry point, wiring only | orchestration |
+
+**The collector never calculates an economic statistic.** It retrieves and normalises; every figure
+comes from `src/indicators.py`. A test asserts that the collector modules contain no formula.
+
+**Credential handling.** `FRED_API_KEY` is read from the process environment only — never from source,
+never from a file the application parses. It is never written to a log, an exception, a snapshot, an
+output file or any stored URL. The manifest records each request as an endpoint name plus its
+parameters *with `api_key` removed*, and stores no URL at all. `_scrub()` removes the key from every
+error message, including the body of a 4xx response. `write_json()` refuses to write any payload
+containing the key or the substring `api_key=`, and writes nothing if it finds one.
+
+Run it manually:
+
+```sh
+cd projects/01-macro-intelligence-brief
+export FRED_API_KEY="$(sed -n 's/^FRED_API_KEY=//p' ../../.env | tr -d '[:space:]')"
+python3 -m src.run_collection
+```
+
+Exit status is non-zero when the gate reports `publication_ready = false`. The test suite never invokes
+this command and never touches the network.
+
+### Real source metadata checks
+
+Live metadata from `fred/series` is compared against each `IndicatorSpec`. Comparisons are **semantic**,
+against FRED's coded fields (`frequency_short`, `seasonal_adjustment_short`) rather than its
+human-readable labels, which may be worded differently without any material disagreement. A mismatch in
+series identity, frequency or seasonal-adjustment basis is a **hard failure**.
+
+Confirmed by the source on the first run:
+
+| Series | FRED frequency | FRED seasonal adjustment | Matches spec |
+| --- | --- | --- | --- |
+| `CPIAUCNS` | Monthly | Not Seasonally Adjusted | yes |
+| `UNRATE` | Monthly | Seasonally Adjusted | yes |
+| `DFF` | **Daily, 7-Day** | Not Seasonally Adjusted | yes (basis not enforced) |
+| `GDPC1` | Quarterly | Seasonally Adjusted Annual Rate | yes |
+| `RSAFS` | Monthly | Seasonally Adjusted | yes |
+
+`DFF` declares seasonal adjustment inapplicable in our spec, so the source's value is recorded rather
+than enforced — there is no meaningful check to impose.
+
+### Raw snapshot policy
+
+Every payload is written to disk exactly as received, **before** anything transforms it, under
+[`data/reference/phase2-first-real-run/`](data/reference/phase2-first-real-run/):
+
+```
+manifest.json                      run id, UTC timestamp, git commit, endpoints, request
+                                   descriptions with no credential
+raw/<SERIES>.metadata.json         source metadata as received
+raw/<SERIES>.observations.json     source observations as received, sentinels intact
+raw/<SERIES>.crosscheck.*.json     FRED server-side transformations used as cross-checks
+derived/macro_snapshot.json        the five derived statistics
+derived/validation_report.json     structured gate output
+validation_notes/official_spot_checks.json   agency comparisons
+```
+
+This is a reproducibility artefact and is tracked in Git, having been confirmed free of credentials.
+It is a record of one run, not a live dataset: it is not refreshed and must not be read as current.
+
+### Missing-value handling
+
+FRED delivers observation values as **strings** and uses `"."` for a missing observation. Both are
+handled at the normalisation boundary and nowhere else.
+
+- `"."` is recognised as **missing**. It never becomes `0`, `NaN` or an empty string. It is excluded
+  from the series passed downstream, and the dates on which it occurred are recorded in the validation
+  report so that nothing disappears silently.
+- Any other non-numeric value is a **hard error**. Nothing is coerced.
+- Sufficient-history checks count observations **after** filtering, so a gap cannot leave a series
+  short without the gate noticing.
+
+The first run found a real gap: **October 2025 is absent from both `CPIAUCNS` and `UNRATE`** — 23 of 24
+and 11 of 12 observations valid respectively. `RSAFS`, produced by the Census Bureau rather than the
+BLS, has no such gap.
+
+### Validation gate
+
+Two severities, kept strictly apart. Any hard failure sets `publication_ready = false` and the run exits
+non-zero.
+
+**Hard failures:** wrong series id · unexpected frequency · unexpected seasonal-adjustment basis ·
+malformed date · malformed numeric value · duplicate date · insufficient valid history · a required
+calendar period absent · transformation failure · non-finite derived result · derived result
+inconsistent with its own components · derived result claiming the wrong source series.
+
+**Warnings** — never block publication, never remove an observation: stale latest observation · unusual
+observation gaps · a cross-check that disagrees or is unavailable.
+
+No economic forecasts and no anomaly thresholds. The gate checks that data matches its declared
+specification; it does not judge whether a figure is economically plausible.
+
+#### Freshness tolerances
+
+Deliberately generous, and **not** a release calendar. The subtlety is that a period is labelled by its
+*first* day: a quarterly observation for Q2 is dated 1 April and is already ~120 days old at its advance
+estimate, reaching ~210 days just before the next quarter's. Tolerances must clear that whole cycle.
+
+| Frequency | Tolerance | Reasoning |
+| --- | --- | --- |
+| Daily | 10 days | `DFF` publishes every calendar day; 10 clears any holiday |
+| Monthly | 95 days | label + month length (31) + publication lag (~45) + buffer |
+| Quarterly | 220 days | label + quarter length (92) + lag to the next advance estimate (~120) |
+
+An earlier quarterly setting of 160 days was wrong and warned on `GDPC1` at 179 days while the series
+was perfectly current. It was corrected for that reason.
+
+### FRED secondary cross-check methodology
+
+FRED's server-side transformations are used **only** as secondary cross-checks. The primary calculation
+always requests `units=lin` — the raw source values — and computes everything in
+`src/indicators.py`.
+
+| Series | FRED `units` | Meaning | Maps cleanly? |
+| --- | --- | --- | --- |
+| `CPIAUCNS` | `pc1` | Percent change from year ago | yes — identical concept to our YoY |
+| `GDPC1` | `pca` | Compounded annual rate of change | yes — for a quarterly series this is annualised QoQ growth |
+
+`UNRATE`, `DFF` and `RSAFS` have no cross-check: the first two are reported as published, and forcing a
+comparison where the concepts are not identical would be worse than having none.
+
+A disagreement is **reported as a warning**, never silently reconciled, and our calculation is never
+altered to match FRED. Tolerance is 0.05 in the unit of the figure, because FRED rounds its transformed
+output.
+
+First-run results — both agree, to within FRED's five-decimal rounding:
+
+| Series | Period | Ours | FRED | Difference |
+| --- | --- | --- | --- | --- |
+| `CPIAUCNS` | 2026-08 | 3.3965479 | 3.39655 | −2.1×10⁻⁶ |
+| `GDPC1` | 2026-Q2 | 1.4836588 | 1.48366 | −1.2×10⁻⁶ |
+
+### A methodological defect the cross-check caught
+
+**This is the most important result of Phase 2.** On the first run the CPI cross-check disagreed by
+0.297pp — ours 3.6936% against FRED's 3.3965%. FRED was right.
+
+The transformations selected comparison periods **by list position**: `series[-13]` for the observation
+twelve months earlier. That is correct only when the series has no gaps. With October 2025 filtered out,
+position −13 was **2025-07**, thirteen months before 2026-08:
+
+| | Periods compared | Result |
+| --- | --- | --- |
+| Positional (defective) | 2026-08 vs **2025-07** | 3.6936% |
+| Calendar (correct) | 2026-08 vs **2025-08** | 3.3965% |
+
+The figure was wrong by a third of a percentage point and looked entirely plausible. Nothing in the data
+was malformed; no exception was raised.
+
+**The fix does not change any formula.** The arithmetic is identical; only the selection of operands
+changed. Periods are now resolved by calendar date via [`src/periods.py`](src/periods.py), and a missing
+required period raises `MissingRequiredPeriodError` — the pipeline refuses to produce a figure rather
+than substituting a neighbouring observation.
+
+| Series | Comparison basis |
+| --- | --- |
+| `CPIAUCNS` | calendar: `t` vs `t−12` months; previous `t−1` vs `t−13` |
+| `UNRATE` | calendar: previous calendar month |
+| `GDPC1` | calendar: previous and second-previous calendar quarter |
+| `RSAFS` | calendar: previous and second-previous calendar month |
+| `DFF` | **positional, by design** — the previous *available* observation, as its specification states |
+
+`DFF` is deliberately the exception: its specification defines "previous" as the preceding available
+observation, so a calendar gap must not cause a failure there.
+
+Two lessons recorded rather than glossed over. First, a cross-check against an independent computation
+of the same concept is worth more than any number of internal consistency checks — self-consistent code
+was producing a confidently wrong number. Second, real data breaks assumptions that synthetic fixtures
+cannot: the fixtures had no gaps, so 119 passing tests said nothing about this.
+
+### BLS / BEA independent spot-check methodology
+
+The FRED cross-checks share a provider with the primary data, so the methodology is also checked against
+the **originating agencies**. These are one-off recorded checks, not automated application logic, and no
+external value is hard-coded into the pipeline. Full detail:
+[`validation_notes/official_spot_checks.json`](data/reference/phase2-first-real-run/validation_notes/official_spot_checks.json).
+
+**CPI — U.S. Bureau of Labor Statistics.** Series `CUUR0000SA0` via the BLS public API, which needs no
+credential: a different agency, endpoint and series identifier. The BLS index values proved **identical**
+to FRED's `CPIAUCNS` for all four periods examined, and the twelve-month change is **3.396548%** against
+our **3.396548%** — an exact match, 0.000000pp.
+
+**Real GDP — Bureau of Economic Analysis.** Series `A191RL1Q225SBEA`, which is BEA's **own published
+growth rate**, not a FRED transformation of the level series (FRED is only the redistributor here). BEA
+publishes **1.5%** for 2026-Q2 against our **1.4837%**, a difference of −0.0163pp. Our unrounded figure
+rounds to exactly 1.5%, so the residual is **publication rounding, not an arithmetic disagreement**. The
+same holds for 2026-Q1: BEA 2.1%, ours 2.0892%.
+
+A genuine vintage mismatch exists and is identified as such rather than treated as a failure: `GDPC1`
+reports `last_updated` 2026-08-26 while the published growth series reports 2026-07-30, so the level may
+already incorporate a revision the published rate does not. They agree after rounding regardless.
+
+`UNRATE`, `DFF` and `RSAFS` need no agency check: each primary value is reported exactly as published.
+
+### DFF observed calendar behaviour
+
+Phase 1.1 deliberately made no assumption about the publication calendar. The question is now answered
+empirically, and two independent findings agree:
+
+- **Observed:** 40 consecutive observations, **every gap exactly 1 day**, including **11 weekend
+  observations**. No weekend or holiday is omitted.
+- **Declared:** FRED's metadata gives the frequency as **"Daily, 7-Day"**.
+
+So `DFF` publishes on a **seven-day calendar, carrying the rate forward** across weekends rather than
+omitting them. The "previous available observation" rule is therefore equivalent to a one-day lag *in
+practice* for this series — but the rule is kept as stated, because it is correct either way and does not
+depend on the calendar continuing to behave this way. A policy move is visible in the retrieved window:
+3.63% to 3.88% on 2026-09-17.
+
+### First real-data run
+
+`run_id` `phase2-20260927T000634Z-b7ea4089`, retrieved 2026-09-27T00:06:34Z.
+
+```
+status             passed_with_warnings
+publication_ready  true
+hard failures      0
+warnings           2
+checks passed      42
+derived records    5 of 5
+```
+
+| Indicator | Series | Period | Value | Previous | Change |
+| --- | --- | --- | --- | --- | --- |
+| CPI inflation, YoY | `CPIAUCNS` | 2026-08 | 3.3965% | 3.3648% | +0.0317 pp |
+| Unemployment rate | `UNRATE` | 2026-08 | 4.1% | 4.1% | 0.0000 pp |
+| Effective federal funds rate | `DFF` | 2026-09-24 | 3.88% | 3.88% | 0.0000 pp |
+| Real GDP growth, QoQ annualised | `GDPC1` | 2026-Q2 | 1.4837% | 2.0892% | −0.6055 pp |
+| Retail sales, MoM | `RSAFS` | 2026-08 | 1.2407% | −0.5367% | +1.7774 pp |
+
+Both warnings are the same genuine finding: a 61-day gap between 2025-09 and 2025-11 in `CPIAUCNS` and
+`UNRATE`, caused by the missing October 2025 observation. Flagging it is correct behaviour.
+
+**This is a data snapshot, not a forecast and not investment advice.** No interpretation of these figures
+is offered anywhere in this project.
+
+---
+
 ## Legacy prototype
 
 The first version of this project was built on [n8n](https://n8n.io), a no-code automation platform.
@@ -438,55 +700,51 @@ A sanitised copy is preserved at [`../../legacy/n8n/`](../../legacy/n8n/) as a h
 
 ## Known limitations
 
-- **The economic definitions are implemented; the pipeline is not.** The five transformations are
-  written, documented and covered by 119 tests. There is still **no data collection**, no validation
-  gate, no synthesis step and no LLM integration. Nothing produces a brief.
-- **Only synthetic data has been used.** Every fixture in `data/samples/` is invented. The
-  transformations have never been run against a real observation, so they are verified as *arithmetic*
-  but not yet validated as *economics*.
-- **The two derived figures have not been cross-validated.** Real GDP QoQ annualised and CPI YoY are
-  both computed rather than read. Neither has been checked against an independently published
-  equivalent; see [Cross-validation required in Phase 2](#cross-validation-required-in-phase-2). The
-  GDP check is the higher-risk one — the synthetic fixtures verify the arithmetic, not the convention.
-- **Coverage is deliberately narrow** — five United States series. Not a complete macroeconomic
-  picture. No euro-area data.
-- **Retail sales are nominal.** No deflation is applied, so the figure conflates price and volume
-  effects.
-- **Revisions are acknowledged but not handled.** V1 uses latest-vintage data and records the
-  retrieval date. It cannot reconstruct what was known at an earlier date, and real GDP in particular
-  is revised substantially.
-- **AI-generated text can be wrong** even when the input figures are correct. Human review is the
-  mitigation, and it is a required step.
-- **Not investment advice.** This is a research exercise.
+- **No brief exists.** Stages 06–08 of the pipeline — AI-assisted synthesis, the structured brief and
+  human review — are not built. The project computes validated statistics and stops there.
+- **One run, one moment.** The stored dataset is a single snapshot from 2026-09-27. It is not refreshed,
+  there is no scheduling, and it must not be read as current.
+- **A silent-wrong-answer class of bug reached real data before being caught.** Positional period
+  selection produced a plausible CPI figure that was wrong by 0.30pp, and 119 passing tests did not
+  detect it because the synthetic fixtures had no gaps. It was caught only by an independent
+  cross-check. Similar assumptions may remain elsewhere; the lesson is that internal consistency proves
+  much less than external comparison.
+- **Only latest-vintage data.** Each run reads the most recent published value. There is no vintage
+  reconstruction, so a past figure cannot be reproduced once the source revises. The raw snapshot
+  mitigates this only for runs actually performed.
+- **Real GDP is revised substantially**, across advance, second and third estimates and again annually.
+  The first run already shows a vintage mismatch between the level series and the published growth rate.
+- **Retail sales are nominal.** No deflation, so price and volume effects are conflated.
+- **The cross-check tolerance (0.05) is reasoned, not calibrated.** It is loose enough to absorb FRED's
+  rounding and tight enough to have caught a 0.30pp error, but it has not been tested against a range of
+  real disagreements.
+- **The freshness tolerances are not release calendars.** They detect a series that has stopped
+  updating, nothing finer. One of them was already found to be mis-set on first contact with real data.
+- **Two of five indicators are cross-checked.** `UNRATE`, `DFF` and `RSAFS` are reported as published,
+  so there is no derived statistic to verify — but that also means no independent check on the retrieval
+  path for those three beyond the metadata comparison.
+- **Coverage is deliberately narrow:** five United States series. Not a macroeconomic picture. No
+  euro-area data.
+- **Not investment advice.** No interpretation of any figure is offered.
 
 ## Development phases
 
-**Phase 0 — foundation.** Complete. Portfolio structure, shared visual system, documentation,
-sanitised legacy material.
+**Phase 0 — foundation.** Complete. Portfolio structure, shared visual system, documentation, sanitised
+legacy material.
 
-**Phase 1 — economic definitions.** Complete. The five transformations are defined, implemented as
-pure functions, documented in the specification table above, and covered by tests against synthetic
-fixtures. No network access, no API key, no LLM.
+**Phase 1 — economic definitions.** Complete. Five transformations defined, implemented as pure
+functions and tested against synthetic fixtures.
 
-**Phase 1.1 — source-series refinement.** Complete. Two source series were corrected before any real
-data entered the system: `CPIAUCSL` → `CPIAUCNS` for headline YoY inflation, and `FEDFUNDS` → `DFF`
-for the effective rate at daily frequency. No arithmetic changed. Rationale in
-[Why these source series](#why-these-source-series).
+**Phase 1.1 — source-series refinement.** Complete. `CPIAUCSL` → `CPIAUCNS`; `FEDFUNDS` → `DFF`.
 
-**Phase 2 — collection and validation.** Next. Still no language model:
+**Phase 2 — collection and validation.** Complete. FRED collector, normalisation boundary, validation
+gate, raw snapshot preservation, FRED cross-checks, BLS/BEA spot checks, and one validated real-data run.
+A methodological defect in period selection was found and fixed. 207 tests, none touching the network.
 
-1. Implement a FRED collector reading `FRED_API_KEY` from the environment, converting FRED's string
-   values and its `"."` missing-observation sentinel to floats at the boundary.
-2. Persist the raw payload per run, so a published figure can be traced to what was retrieved.
-3. Run the existing transformations against real observations for the first time.
-4. **Perform both cross-validations** — CPI YoY and, above all, real GDP QoQ annualised against the
-   BEA published figure. See
-   [Cross-validation required in Phase 2](#cross-validation-required-in-phase-2). These are the checks
-   the synthetic fixtures structurally cannot provide.
-5. Implement the validation gate: range, sign, staleness and internal-consistency checks, refusing to
-   publish rather than publishing something wrong.
-6. Show a computed dataset on the project page.
+**Phase 3 — synthesis and review.** Not started. AI-assisted drafting from validated figures, plus the
+human review step. Deliberately last: there was no point drafting prose until the figures underneath it
+were correct, and Phase 2 demonstrated exactly why — a confidently wrong figure would have been written
+up in fluent prose.
 
-**Phase 3 — synthesis and review.** AI-assisted drafting from validated figures, plus the human
-review step. Deliberately last: there is no point drafting prose until the figures underneath it are
-correct.
+Before Phase 3, two things are worth doing: re-examining the remaining transformations for assumptions
+that real data could break, and deciding how a brief cites the vintage of every figure it quotes.

@@ -1,0 +1,88 @@
+{
+  "realtime_start": "2026-09-26",
+  "realtime_end": "2026-09-26",
+  "observation_start": "1600-01-01",
+  "observation_end": "9999-12-31",
+  "units": "lin",
+  "output_type": 1,
+  "file_type": "json",
+  "order_by": "observation_date",
+  "sort_order": "desc",
+  "count": 416,
+  "offset": 0,
+  "limit": 12,
+  "observations": [
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2026-08-01",
+      "value": "773947.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2026-07-01",
+      "value": "764462.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2026-06-01",
+      "value": "768587.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2026-05-01",
+      "value": "766192.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2026-04-01",
+      "value": "759097.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2026-03-01",
+      "value": "754013.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2026-02-01",
+      "value": "741278.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2026-01-01",
+      "value": "734503.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2025-12-01",
+      "value": "734717.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2025-11-01",
+      "value": "734718.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2025-10-01",
+      "value": "731051.0"
+    },
+    {
+      "realtime_start": "2026-09-26",
+      "realtime_end": "2026-09-26",
+      "date": "2025-09-01",
+      "value": "732192.0"
+    }
+  ]
+}

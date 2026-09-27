@@ -30,3 +30,42 @@ class ZeroDenominatorError(CalculationError):
 
 class InsufficientHistoryError(CalculationError):
     """Fewer observations were supplied than the transformation requires."""
+
+
+class CollectionError(Exception):
+    """Base class for failures in the collection boundary.
+
+    Deliberately not a subclass of :class:`CalculationError`: a retrieval or
+    parsing problem is a different kind of fault from a calculation problem,
+    and the two are reported separately.
+    """
+
+
+class MissingCredentialError(CollectionError):
+    """``FRED_API_KEY`` was absent from the process environment."""
+
+
+class SourceRequestError(CollectionError):
+    """The source could not be reached, or returned a non-success status.
+
+    Messages raised from this class are scrubbed of the API key before they
+    reach a log, a report or a traceback.
+    """
+
+
+class SourcePayloadError(CollectionError):
+    """The source returned something that is not a usable payload.
+
+    Malformed JSON, a missing expected key, or an observation value that is
+    neither a valid number nor the documented missing-value sentinel.
+    """
+
+
+class MissingRequiredPeriodError(InsufficientHistoryError):
+    """A specific calendar period required by a transformation is absent.
+
+    Distinct from a plain shortage of observations: the series may hold plenty
+    of data and still be missing the exact period a comparison needs. Raised
+    rather than silently substituting a neighbouring observation, which would
+    produce a figure that looks plausible and is wrong.
+    """
