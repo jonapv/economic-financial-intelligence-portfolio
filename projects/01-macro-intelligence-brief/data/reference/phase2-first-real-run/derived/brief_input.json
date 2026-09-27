@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "run_id": "phase2-20260927T000634Z-b7ea4089",
-  "generated_at": "2026-09-27T00:26:50.121479+00:00",
+  "generated_at": "2026-09-27T08:50:22.834892+00:00",
   "publication_ready": true,
   "economy": "US",
   "content": "validated derived macroeconomic statistics",
@@ -12,6 +12,7 @@
       "display_name": "CPI Inflation (YoY)",
       "economic_category": "Inflation",
       "period": "2026-08-01",
+      "period_label": "August 2026",
       "frequency": "monthly",
       "value": 3.3965478924364856,
       "unit": "percent",
@@ -37,6 +38,7 @@
       "display_name": "Effective Federal Funds Rate",
       "economic_category": "Monetary policy",
       "period": "2026-09-24",
+      "period_label": "24 September 2026",
       "frequency": "daily",
       "value": 3.88,
       "unit": "percent",
@@ -60,6 +62,7 @@
       "display_name": "Real GDP Growth (QoQ, annualised)",
       "economic_category": "Growth",
       "period": "2026-04-01",
+      "period_label": "2026 Q2",
       "frequency": "quarterly",
       "value": 1.4836587880023622,
       "unit": "percent, annual rate",
@@ -83,6 +86,7 @@
       "display_name": "Retail Sales (MoM)",
       "economic_category": "Consumption",
       "period": "2026-08-01",
+      "period_label": "August 2026",
       "frequency": "monthly",
       "value": 1.2407418550562266,
       "unit": "percent",
@@ -106,6 +110,7 @@
       "display_name": "Unemployment Rate",
       "economic_category": "Labour market",
       "period": "2026-08-01",
+      "period_label": "August 2026",
       "frequency": "monthly",
       "value": 4.1,
       "unit": "percent",
@@ -280,14 +285,21 @@
     }
   },
   "period_note": "Indicators carry different periods by design. The latest available observation is not the latest economic period: monthly series may report a month that closed weeks ago, quarterly series a quarter that closed months ago, and a daily series yesterday. These are not normalised to a common period and must not be presented as though they were.",
+  "period_field_contract": {
+    "period": "Canonical machine-readable source period, required for traceability. It is the date the source assigns to the observation, which for monthly and quarterly series is the FIRST day of the period covered.",
+    "period_label": "The human-readable form of the same period, derived deterministically from period plus the declared frequency. MUST be used when referring to an observation period in prose.",
+    "frequency": "The declared frequency the label was derived from.",
+    "why": "The canonical date is unambiguous to a machine and ambiguous to a reader. On a quarterly series 2026-04-01 means 2026 Q2, NOT 'April GDP'. On a monthly series 2026-08-01 means August 2026, NOT activity on the first of the month. A prose layer must not be left to infer either."
+  },
   "usage_contract": {
     "may": [
-      "describe each figure using the value, unit, period and direction given",
+      "describe each figure using the value, unit, period_label and direction given",
       "state the comparison basis and the source series",
       "explain a warning that is present in this file"
     ],
     "must_not": [
       "compute, adjust, infer or recall any economic statistic",
+      "reinterpret the canonical period date, or use it in prose in place of period_label",
       "present figures from different periods as a single common period",
       "suppress or omit a warning present in this file",
       "add a forecast, a market call or investment advice",

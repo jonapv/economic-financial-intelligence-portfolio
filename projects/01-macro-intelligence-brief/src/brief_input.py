@@ -20,6 +20,10 @@ raises and nothing is written. A language model must never get the opportunity
 to write fluent prose about invalid figures — fluency is precisely what makes a
 wrong figure dangerous.
 
+**Period presentation.** Each indicator carries both the canonical ``period``
+and a deterministically generated ``period_label``. Prose must use the label.
+The canonical date stays for traceability and is never reinterpreted.
+
 **Warning propagation.** Machine-generated warnings are carried through in
 structured form. The future prose layer may *explain* a warning; it may not
 suppress one, and it is never asked to invent or infer data-quality caveats of
@@ -31,9 +35,10 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Dict, List, Sequence
 
-from .errors import CollectionError
+from .errors import CollectionError, InvalidPeriodError
 from .indicators import SPECS
 from .models import MacroObservation
+from .periods import period_label
 from .provenance import RunProvenance
 from .validation import ValidationReport
 
@@ -47,6 +52,8 @@ INDICATOR_FIELDS = (
     "display_name",
     "economic_category",
     "period",
+    "period_label",
+    "frequency",
     "value",
     "unit",
     "previous_value",
@@ -81,6 +88,7 @@ def _indicator_entry(
         "display_name": observation.display_name,
         "economic_category": spec.economic_category,
         "period": observation.period.isoformat(),
+        "period_label": period_label(observation.period, observation.frequency),
         "frequency": observation.frequency.value,
         "value": observation.value,
         "unit": observation.unit.value,
@@ -130,10 +138,17 @@ def build_brief_input(
             f"would invite a brief that silently omits an indicator."
         )
 
-    indicators = [
-        _indicator_entry(obs, provenance, report)
-        for obs in sorted(observations, key=lambda o: o.indicator_id)
-    ]
+    try:
+        indicators = [
+            _indicator_entry(obs, provenance, report)
+            for obs in sorted(observations, key=lambda o: o.indicator_id)
+        ]
+    except InvalidPeriodError as exc:
+        # A period that cannot be labelled deterministically would force the
+        # prose layer to guess, which is the ambiguity this contract removes.
+        raise PublicationBlockedError(
+            f"refusing to build a brief input: {exc}"
+        ) from None
 
     warnings: List[Dict[str, Any]] = [
         {
@@ -164,14 +179,37 @@ def build_brief_input(
             "normalised to a common period and must not be presented as though "
             "they were."
         ),
+        "period_field_contract": {
+            "period": (
+                "Canonical machine-readable source period, required for "
+                "traceability. It is the date the source assigns to the "
+                "observation, which for monthly and quarterly series is the "
+                "FIRST day of the period covered."
+            ),
+            "period_label": (
+                "The human-readable form of the same period, derived "
+                "deterministically from period plus the declared frequency. "
+                "MUST be used when referring to an observation period in prose."
+            ),
+            "frequency": "The declared frequency the label was derived from.",
+            "why": (
+                "The canonical date is unambiguous to a machine and ambiguous to "
+                "a reader. On a quarterly series 2026-04-01 means 2026 Q2, NOT "
+                "'April GDP'. On a monthly series 2026-08-01 means August 2026, "
+                "NOT activity on the first of the month. A prose layer must not "
+                "be left to infer either."
+            ),
+        },
         "usage_contract": {
             "may": [
-                "describe each figure using the value, unit, period and direction given",
+                "describe each figure using the value, unit, period_label and direction given",
                 "state the comparison basis and the source series",
                 "explain a warning that is present in this file",
             ],
             "must_not": [
                 "compute, adjust, infer or recall any economic statistic",
+                "reinterpret the canonical period date, or use it in prose in "
+                "place of period_label",
                 "present figures from different periods as a single common period",
                 "suppress or omit a warning present in this file",
                 "add a forecast, a market call or investment advice",

@@ -69,3 +69,12 @@ class MissingRequiredPeriodError(InsufficientHistoryError):
     rather than silently substituting a neighbouring observation, which would
     produce a figure that looks plausible and is wrong.
     """
+
+
+class InvalidPeriodError(CalculationError):
+    """A period does not conform to the convention its frequency requires.
+
+    Raised rather than guessing: a quarterly observation dated in, say, May has
+    no defined quarter under this project's convention, and inventing one would
+    put a wrong period label on a correct figure.
+    """
