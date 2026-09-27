@@ -27,7 +27,7 @@
     "CPIAUCNS": "pc1",
     "GDPC1": "pca"
   },
-  "git_commit_before_run": "8083c141401dc90506f4d7f1f79126ac3ea8f687",
+  "git_commit_before_run": "9042097428afa4e583aef1ab282acbff2b026716",
   "requests": [
     {
       "endpoint": "series",

@@ -36,6 +36,11 @@ from src.synthesize import synthesise
 BRIEF_INPUT_PATH = (pathlib.Path(__file__).resolve().parent.parent / "derived"
                     / "brief_input.json")
 FAKE_KEY = "test-fake-gemini-key-not-a-real-credential"
+#: Deliberately unlike any provider key format, so that publishing this
+#: repository cannot trip a secret scanner on a value that is not a secret.
+#: The scrubbing tests below are unaffected: what they prove is that whatever
+#: string is configured as the credential never reaches an error message, an
+#: artefact or a URL — the string's shape is irrelevant to that guarantee.
 
 
 def load_input():

@@ -100,7 +100,7 @@ def build_fixture_run(*, extra_findings=(), gapless=False):
         run_id="test-run", retrieved_at=RETRIEVED,
         source_name="Federal Reserve Bank of St. Louis (FRED)",
         snapshot_directory="data/reference/test-run",
-        git_commit="8083c141401dc90506f4d7f1f79126ac3ea8f687",
+        git_commit="deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",  # synthetic,
         series=provenance_series)
     return observations, report, provenance
 

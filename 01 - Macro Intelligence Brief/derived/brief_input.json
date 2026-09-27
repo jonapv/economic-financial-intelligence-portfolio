@@ -207,7 +207,7 @@
     "retrieved_at_utc": "2026-09-27T00:06:34.170846+00:00",
     "source_name": "Federal Reserve Bank of St. Louis (FRED)",
     "raw_snapshot_directory": "data/reference/phase2-first-real-run",
-    "git_commit_at_run": "8083c141401dc90506f4d7f1f79126ac3ea8f687",
+    "git_commit_at_run": "9042097428afa4e583aef1ab282acbff2b026716",
     "vintage_policy": "Latest-vintage data. Each figure reports the most recently published value for its own period at retrieved_at. The latest AVAILABLE observation is not the latest economic period: indicators legitimately carry different periods, and these are never normalised to a common one.",
     "reproducibility": "Every figure is recomputable from the raw payloads stored in raw_snapshot_directory by the transformations in src/indicators.py. The stored run is a fixed record, not a live dataset.",
     "series": {
