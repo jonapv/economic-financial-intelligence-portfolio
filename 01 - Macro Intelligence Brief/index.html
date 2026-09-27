@@ -50,6 +50,7 @@
   </header>
 
   <main id="main">
+    <span id="top"></span>
 
     <!-- ==================================================================
          1. PROJECT HERO
@@ -77,20 +78,26 @@
         <aside class="panel panel--raised" aria-label="Pipeline at a glance">
           <div class="panel__head">
             <span class="label">Pipeline at a glance</span>
-            <span class="panel__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="label">9 stages</span>
           </div>
           <div class="panel__body">
+            <ol class="stage-bar" aria-label="Stages 01 to 09 by type">
+              <li title="01 Deterministic"><span class="visually-hidden">01 deterministic</span></li>
+              <li title="02 Deterministic"><span class="visually-hidden">02 deterministic</span></li>
+              <li title="03 Deterministic"><span class="visually-hidden">03 deterministic</span></li>
+              <li title="04 Deterministic"><span class="visually-hidden">04 deterministic</span></li>
+              <li title="05 Deterministic"><span class="visually-hidden">05 deterministic</span></li>
+              <li title="06 Deterministic"><span class="visually-hidden">06 deterministic</span></li>
+              <li class="is-ai" title="07 Model-assisted"><span class="visually-hidden">07 model-assisted</span></li>
+              <li title="08 Deterministic"><span class="visually-hidden">08 deterministic</span></li>
+              <li class="is-human" title="09 Human review"><span class="visually-hidden">09 human review</span></li>
+            </ol>
+            <dl class="stage-mix">
+              <div class="is-det"><dt>Deterministic</dt><dd class="figure">7 / 9</dd></div>
+              <div class="is-ai"><dt>Model-assisted</dt><dd class="figure">1 / 9</dd></div>
+              <div class="is-human"><dt>Human review</dt><dd class="figure">1 / 9</dd></div>
+            </dl>
             <ul class="metric-list">
-              <li class="metric-row">
-                <span class="metric-row__name">Deterministic stages</span>
-                <span class="metric-row__meta">Collect &middot; calculate &middot; validate</span>
-                <span class="metric-row__value"><span class="figure metric-row__figure">7 / 9</span></span>
-              </li>
-              <li class="metric-row">
-                <span class="metric-row__name">Model-assisted stages</span>
-                <span class="metric-row__meta">Prose only, checked afterwards</span>
-                <span class="metric-row__value"><span class="figure metric-row__figure">1 / 9</span></span>
-              </li>
               <li class="metric-row">
                 <span class="metric-row__name">Test suite</span>
                 <span class="metric-row__meta">Standard library only</span>
@@ -98,17 +105,9 @@
               </li>
               <li class="metric-row">
                 <span class="metric-row__name">Factual audit</span>
-                <span class="metric-row__meta">0 unsupported claims</span>
+                <span class="metric-row__meta">19/19 supported &middot; 0 unsupported claims</span>
                 <span class="metric-row__value"><span class="figure metric-row__figure">19 / 19</span></span>
               </li>
-            </ul>
-          </div>
-          <div class="panel__foot">
-            <ul class="flow" aria-label="Pipeline summary">
-              <li class="flow__det">Official data</li>
-              <li class="flow__det">Validated</li>
-              <li class="flow__ai">AI prose</li>
-              <li class="flow__human">Human review</li>
             </ul>
           </div>
         </aside>
@@ -116,18 +115,23 @@
     </section>
 
     <!-- ==================================================================
-         2. QUICK FACTS
+         2. QUICK FACTS — primary figures, then context
          ================================================================== -->
     <div class="container">
-      <dl class="facts" aria-label="Quick facts" data-reveal>
-        <div class="fact"><dt>Domain</dt><dd>US Macroeconomics</dd></div>
-        <div class="fact"><dt>Indicators</dt><dd class="fact__big tnum">5</dd></div>
-        <div class="fact"><dt>Sources</dt><dd>FRED / BLS / BEA</dd></div>
-        <div class="fact"><dt>Calculation</dt><dd>Deterministic Python</dd></div>
-        <div class="fact"><dt>AI role</dt><dd>Language synthesis only</dd></div>
-        <div class="fact"><dt>Validation</dt><dd>431 tests + factual audit</dd></div>
-        <div class="fact"><dt>Output</dt><dd>Human-reviewed macro brief</dd></div>
-      </dl>
+      <div class="facts facts--tiered" data-reveal>
+        <dl class="facts__primary" aria-label="Key figures">
+          <div class="kpi"><dt>Indicators</dt><dd><span class="kpi__figure">5</span><span class="kpi__sub">US macro series</span></dd></div>
+          <div class="kpi"><dt>Tests</dt><dd><span class="kpi__figure">431</span><span class="kpi__sub">All passing</span></dd></div>
+          <div class="kpi"><dt>Factual audit</dt><dd><span class="kpi__figure">19/19</span><span class="kpi__sub">0 unsupported claims</span></dd></div>
+        </dl>
+        <dl class="facts__secondary" aria-label="Context">
+          <div class="fact"><dt>Domain</dt><dd>US Macroeconomics</dd></div>
+          <div class="fact"><dt>Sources</dt><dd>FRED / BLS / BEA</dd></div>
+          <div class="fact"><dt>Calculation</dt><dd>Deterministic Python</dd></div>
+          <div class="fact"><dt>AI role</dt><dd>Language synthesis only</dd></div>
+          <div class="fact"><dt>Output</dt><dd>Human-reviewed macro brief</dd></div>
+        </dl>
+      </div>
     </div>
 
     <!-- ==================================================================
@@ -135,22 +139,16 @@
          ================================================================== -->
     <section class="section section--flush" aria-labelledby="problem-title">
       <div class="container">
-        <div class="section-head" data-reveal>
-          <p class="eyebrow eyebrow--gold eyebrow--rule">Context</p>
-          <h2 class="display-lg mt-2" id="problem-title">Problem and approach</h2>
-        </div>
-        <div class="duo">
-          <div class="duo__col" data-reveal>
+        <h2 class="visually-hidden" id="problem-title">Problem and approach</h2>
+        <div class="duo duo--asym">
+          <div class="duo__col duo__col--plain" data-reveal>
             <span class="label">The problem</span>
             <h3 class="duo__title">Repetitive to do, and easy to do badly.</h3>
             <p class="body">
-              Reading the macroeconomic picture means consulting several official sources by hand,
-              retrieving each indicator separately, and comparing the latest print with its
-              previous reading. The work adds no analytical value in itself.
-            </p>
-            <p class="body">
-              Most published series are levels or indices, not rates. A consumer price index
-              rising is not the same statement as inflation accelerating.
+              Reading the macro picture means consulting several official sources by hand and
+              comparing each latest print with the previous one &mdash; work that adds no
+              analytical value. And most series are levels or indices, not rates: a price index
+              rising is not inflation accelerating.
             </p>
           </div>
           <div class="duo__col duo__col--accent" data-reveal>
@@ -158,8 +156,7 @@
             <h3 class="duo__title">Delegate collection and computation to tested code.</h3>
             <p class="body">
               Then test whether a language model can turn already-validated statistics into a
-              concise briefing. The question is deliberately narrow &mdash; not &ldquo;can a model
-              analyse the economy?&rdquo;, but:
+              concise briefing. The question is deliberately narrow:
             </p>
             <p class="duo__quote">Given correct figures, can it describe them accurately without introducing numbers of its own?</p>
           </div>
@@ -170,7 +167,7 @@
     <!-- ==================================================================
          4. CORE PRINCIPLE
          ================================================================== -->
-    <section class="section section--flush" aria-labelledby="principle-title">
+    <section class="section section--flush section--pt0" aria-labelledby="principle-title">
       <div class="container">
         <div class="principle" data-reveal>
           <div class="principle__grid">
@@ -207,6 +204,11 @@
           <li class="pill pill--human"><span class="pill__dot" aria-hidden="true"></span>Human</li>
         </ul>
 
+        <ol class="pipeline-rail" aria-hidden="true">
+          <li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>06</li>
+          <li class="is-ai">07</li><li>08</li><li class="is-human">09</li>
+        </ol>
+
         <ol class="pipeline" data-reveal>
           <li class="stage stage--det">
             <div class="stage__top"><span class="stage__num">01</span><span class="stage__kind">Deterministic</span></div>
@@ -216,27 +218,27 @@
           <li class="stage stage--det">
             <div class="stage__top"><span class="stage__num">02</span><span class="stage__kind">Deterministic</span></div>
             <p class="stage__name">Collection</p>
-            <p class="stage__desc">Raw values with enough history for every comparison. Live metadata checked against the specification.</p>
+            <p class="stage__desc">Raw values with enough history for every comparison; metadata checked against the specification.</p>
           </li>
           <li class="stage stage--det">
             <div class="stage__top"><span class="stage__num">03</span><span class="stage__kind">Deterministic</span></div>
             <p class="stage__name">Normalisation</p>
-            <p class="stage__desc">String values parsed, missing-value sentinels recorded rather than coerced, chronological order enforced.</p>
+            <p class="stage__desc">Values parsed, missing-value sentinels recorded rather than coerced, order enforced.</p>
           </li>
           <li class="stage stage--det">
             <div class="stage__top"><span class="stage__num">04</span><span class="stage__kind">Deterministic</span></div>
             <p class="stage__name">Economic Calculations</p>
-            <p class="stage__desc">The conventional statistic for each series, from tested pure functions. Periods selected by calendar date.</p>
+            <p class="stage__desc">The conventional statistic per series, from tested functions. Periods selected by calendar date.</p>
           </li>
           <li class="stage stage--det">
             <div class="stage__top"><span class="stage__num">05</span><span class="stage__kind">Deterministic</span></div>
             <p class="stage__name">Validation &amp; Cross-Checks</p>
-            <p class="stage__desc">Metadata, history, freshness and consistency, plus comparison against the provider's own computation and the originating agencies.</p>
+            <p class="stage__desc">Metadata, freshness and consistency, checked against the provider's computation and the agencies.</p>
           </li>
           <li class="stage stage--det">
             <div class="stage__top"><span class="stage__num">06</span><span class="stage__kind">Deterministic</span></div>
             <p class="stage__name">Validated Brief Input</p>
-            <p class="stage__desc">A frozen file of validated figures with units, periods, provenance and warnings. The only economic data the model may read.</p>
+            <p class="stage__desc">Frozen figures with units, periods and provenance &mdash; the only data the model may read.</p>
           </li>
           <li class="stage stage--ai">
             <div class="stage__top"><span class="stage__num">07</span><span class="stage__kind">AI-assisted</span></div>
@@ -246,7 +248,7 @@
           <li class="stage stage--det">
             <div class="stage__top"><span class="stage__num">08</span><span class="stage__kind">Deterministic</span></div>
             <p class="stage__name">Deterministic Output Validation</p>
-            <p class="stage__desc">Every number, unit, period and direction claim is checked back against the input. A failing draft is rejected, never corrected.</p>
+            <p class="stage__desc">Every number, unit, period and direction re-checked. A failing draft is rejected, never corrected.</p>
           </li>
           <li class="stage stage--human">
             <div class="stage__top"><span class="stage__num">09</span><span class="stage__kind">Human</span></div>
@@ -254,37 +256,35 @@
             <p class="stage__desc">A person reads, corrects and approves. Required, and not automated.</p>
           </li>
         </ol>
-        <p class="pipeline-caption">Stages 01&ndash;06 and 08 are deterministic &middot; only stage 07 involves a model</p>
+        <p class="pipeline-caption">Stages 01&ndash;06 and 08 are deterministic &middot; only stage 07 involves a model &middot; stage 09 is human</p>
 
-        <div class="mt-4" data-reveal>
-          <details class="accordion">
-            <summary>Validation methodology in detail</summary>
-            <div class="accordion__body">
-              <div class="grid grid--2">
-                <div class="method-card">
-                  <span class="pill pill--det">Data</span>
-                  <p class="method-card__title">On the data</p>
-                  <p class="method-card__body">Source metadata must match the declared frequency and seasonal-adjustment basis. Required calendar periods must exist. Values must be finite, dates unique and ordered.</p>
-                </div>
-                <div class="method-card">
-                  <span class="pill pill--det">Cross-check</span>
-                  <p class="method-card__title">Same-source cross-check</p>
-                  <p class="method-card__body">Our figure against the provider's own transformation of the same series, to 0.001 percentage points. A wider gap blocks publication.</p>
-                </div>
-                <div class="method-card">
-                  <span class="pill pill--det">Agencies</span>
-                  <p class="method-card__title">Independent agency spot-check</p>
-                  <p class="method-card__body">CPI matched the BLS index exactly. Real GDP growth agreed with BEA to within its one-decimal publication rounding.</p>
-                </div>
-                <div class="method-card">
-                  <span class="pill pill--ai">Prose</span>
-                  <p class="method-card__title">On the prose</p>
-                  <p class="method-card__body">Every number must match a supplied display value, periods must use the readable label, percent and percentage points may not be interchanged, warnings must be carried through, and forecasting, causal claims, market commentary and advice are rejected.</p>
-                </div>
+        <details class="accordion mt-3">
+          <summary>Validation methodology in detail</summary>
+          <div class="accordion__body">
+            <div class="grid grid--2">
+              <div class="method-card">
+                <span class="pill pill--det">Data</span>
+                <p class="method-card__title">On the data</p>
+                <p class="method-card__body">Source metadata must match the declared frequency and seasonal-adjustment basis. Required calendar periods must exist. Values must be finite, dates unique and ordered.</p>
+              </div>
+              <div class="method-card">
+                <span class="pill pill--det">Cross-check</span>
+                <p class="method-card__title">Same-source cross-check</p>
+                <p class="method-card__body">Our figure against the provider's own transformation of the same series, to 0.001 percentage points. A wider gap blocks publication.</p>
+              </div>
+              <div class="method-card">
+                <span class="pill pill--det">Agencies</span>
+                <p class="method-card__title">Independent agency spot-check</p>
+                <p class="method-card__body">CPI matched the BLS index exactly. Real GDP growth agreed with BEA to within its one-decimal publication rounding.</p>
+              </div>
+              <div class="method-card">
+                <span class="pill pill--ai">Prose</span>
+                <p class="method-card__title">On the prose</p>
+                <p class="method-card__body">Every number must match a supplied display value, periods must use the readable label, percent and percentage points may not be interchanged, warnings must be carried through, and forecasting, causal claims, market commentary and advice are rejected.</p>
               </div>
             </div>
-          </details>
-        </div>
+          </div>
+        </details>
       </div>
     </section>
 
@@ -307,35 +307,35 @@
             <h3 class="indicator__name">CPI inflation</h3>
             <p class="figure indicator__value">3.4%</p>
             <p class="indicator__period">August 2026 &middot; +0.03 pp</p>
-            <p class="indicator__transform">Year-over-year % change of the index</p>
+            <p class="indicator__transform"><span class="indicator__label">Transformation</span>Year-over-year % change of the index</p>
           </article>
           <article class="indicator" data-reveal>
             <div class="indicator__top"><span class="indicator__series">DFF</span><span class="indicator__freq">Daily</span></div>
             <h3 class="indicator__name">Effective federal funds rate</h3>
             <p class="figure indicator__value">3.88%</p>
             <p class="indicator__period">24 September 2026 &middot; 0.00 pp</p>
-            <p class="indicator__transform">None &mdash; already a rate</p>
+            <p class="indicator__transform"><span class="indicator__label">Transformation</span>None &mdash; already a rate</p>
           </article>
           <article class="indicator" data-reveal>
             <div class="indicator__top"><span class="indicator__series">GDPC1</span><span class="indicator__freq">Quarterly</span></div>
             <h3 class="indicator__name">Real GDP growth</h3>
             <p class="figure indicator__value">1.5%</p>
             <p class="indicator__period">2026 Q2 &middot; &minus;0.61 pp</p>
-            <p class="indicator__transform">Compounded quarterly change, annualised</p>
+            <p class="indicator__transform"><span class="indicator__label">Transformation</span>Compounded quarterly change, annualised</p>
           </article>
           <article class="indicator" data-reveal>
             <div class="indicator__top"><span class="indicator__series">UNRATE</span><span class="indicator__freq">Monthly</span></div>
             <h3 class="indicator__name">Unemployment rate</h3>
             <p class="figure indicator__value">4.1%</p>
             <p class="indicator__period">August 2026 &middot; 0.00 pp</p>
-            <p class="indicator__transform">None &mdash; already a rate</p>
+            <p class="indicator__transform"><span class="indicator__label">Transformation</span>None &mdash; already a rate</p>
           </article>
           <article class="indicator" data-reveal>
             <div class="indicator__top"><span class="indicator__series">RSAFS</span><span class="indicator__freq">Monthly</span></div>
             <h3 class="indicator__name">Retail sales</h3>
             <p class="figure indicator__value">1.2%</p>
             <p class="indicator__period">August 2026 &middot; +1.78 pp</p>
-            <p class="indicator__transform">Month-over-month % change</p>
+            <p class="indicator__transform"><span class="indicator__label">Transformation</span>Month-over-month % change</p>
           </article>
         </div>
         <p class="small mt-2">
@@ -344,24 +344,21 @@
           computed from it. The effective federal funds rate is the realised market rate, not the FOMC target range.
         </p>
 
-        <div class="mt-4" data-reveal>
-          <p class="label">Sources &amp; provenance</p>
-          <div class="sources mt-1">
-            <div class="source">
-              <p class="source__code">FRED</p>
-              <p class="source__name">Federal Reserve Bank of St. Louis</p>
-              <p class="source__role">Primary retrieval, requested as raw untransformed values.</p>
-            </div>
-            <div class="source">
-              <p class="source__code">BLS</p>
-              <p class="source__name">Bureau of Labor Statistics</p>
-              <p class="source__role">Independent cross-check for consumer prices.</p>
-            </div>
-            <div class="source">
-              <p class="source__code">BEA</p>
-              <p class="source__name">Bureau of Economic Analysis</p>
-              <p class="source__role">Independent cross-check for real GDP growth.</p>
-            </div>
+        <div class="sources mt-3" data-reveal aria-label="Sources and provenance">
+          <div class="source">
+            <p class="source__code">FRED</p>
+            <p class="source__name">Federal Reserve Bank of St. Louis</p>
+            <p class="source__role">Primary retrieval, requested as raw untransformed values.</p>
+          </div>
+          <div class="source">
+            <p class="source__code">BLS</p>
+            <p class="source__name">Bureau of Labor Statistics</p>
+            <p class="source__role">Independent cross-check for consumer prices.</p>
+          </div>
+          <div class="source">
+            <p class="source__code">BEA</p>
+            <p class="source__name">Bureau of Economic Analysis</p>
+            <p class="source__role">Independent cross-check for real GDP growth.</p>
           </div>
         </div>
       </div>
@@ -380,10 +377,11 @@
           <p class="lede">
             CPI inflation originally selected its comparison period by array position &mdash;
             twelve places back &mdash; which is correct only if the series has no gaps.
+            Plausible did not mean correct.
           </p>
         </div>
 
-        <div class="compare" data-reveal>
+        <div class="compare compare--bridged" data-reveal>
           <div class="compare__col compare__col--superseded">
             <div class="compare__head">
               <span class="compare__method">Positional method</span>
@@ -391,7 +389,13 @@
             </div>
             <p class="compare__periods">Aug 2026 vs Jul 2025</p>
             <p class="figure compare__figure">3.69%</p>
+            <span class="compare__verdict">Wrong comparison &middot; looked plausible</span>
             <p class="compare__note">Thirteen months apart, not twelve. Wrong by a third of a percentage point &mdash; and entirely plausible.</p>
+          </div>
+          <div class="compare__bridge">
+            <span class="compare__bridge-arrow" aria-hidden="true">&#8594;</span>
+            <span>Caught by FRED cross-check</span>
+            <span class="compare__bridge-arrow" aria-hidden="true">&#8594;</span>
           </div>
           <div class="compare__col compare__col--adopted">
             <div class="compare__head">
@@ -400,20 +404,21 @@
             </div>
             <p class="compare__periods">Aug 2026 vs Aug 2025</p>
             <p class="figure compare__figure">3.40%</p>
+            <span class="compare__verdict">Correct calendar period</span>
             <p class="compare__note">Periods resolved by calendar date. The arithmetic was always correct; only the operands were wrong.</p>
           </div>
         </div>
 
-        <ol class="timeline mt-3" data-reveal>
-          <li class="timeline__item"><span><strong>October 2025 was missing</strong> from the official series.</span></li>
-          <li class="timeline__item"><span>Once filtered out, <strong>array position silently selected July</strong> as the comparison month.</span></li>
-          <li class="timeline__item"><span>The output <strong>looked plausible</strong>. No exception was raised; nothing was malformed.</span></li>
-          <li class="timeline__item"><span><strong>Synthetic tests passed</strong>, because the fixtures had no gaps.</span></li>
-          <li class="timeline__item timeline__item--resolve"><span>The <strong>external FRED cross-check caught it</strong>: an independent computation disagreed.</span></li>
-          <li class="timeline__item timeline__item--resolve"><span>Required periods are now <strong>calendar-based</strong>; a missing required period <strong>blocks publication</strong> rather than falling back to a neighbour.</span></li>
+        <ol class="steps mt-3" data-reveal>
+          <li class="step"><p class="step__title">Missing observation</p><p class="step__body">October 2025 was absent from the official series.</p></li>
+          <li class="step"><p class="step__title">Wrong comparison selected</p><p class="step__body">Once filtered out, array position silently selected July as the comparison month.</p></li>
+          <li class="step"><p class="step__title">Output looked plausible</p><p class="step__body">No exception was raised; nothing was malformed.</p></li>
+          <li class="step"><p class="step__title">Synthetic tests passed</p><p class="step__body">The fixtures had no gaps, so they could not expose it.</p></li>
+          <li class="step step--resolve"><p class="step__title">External cross-check failed</p><p class="step__body">An independent FRED computation disagreed &mdash; and caught it.</p></li>
+          <li class="step step--resolve"><p class="step__title">Calendar-based publication rule adopted</p><p class="step__body">Required periods are resolved by calendar date; a missing one blocks publication rather than falling back to a neighbour.</p></li>
         </ol>
 
-        <div class="thesis mt-4" data-reveal>
+        <div class="thesis mt-3" data-reveal>
           <p class="thesis__text">Self-consistent code can be <em>confidently wrong.</em> Only an independent computation revealed it.</p>
         </div>
       </div>
@@ -469,26 +474,24 @@
           </article>
         </div>
 
-        <div class="mt-3" data-reveal>
-          <details class="accordion">
-            <summary>What the model may and may not do</summary>
-            <div class="accordion__body">
-              <div class="table-wrap">
-                <table class="data-table">
-                  <caption>The model receives figures already rounded, with units, periods and provenance attached.</caption>
-                  <thead><tr><th scope="col">It may</th><th scope="col">It may not</th></tr></thead>
-                  <tbody>
-                    <tr><td>Describe a figure using the supplied display string</td><td>Compute, adjust, infer or recall any statistic</td></tr>
-                    <tr><td>State the comparison basis and source series</td><td>Retrieve data, or choose an observation period</td></tr>
-                    <tr><td>Explain a data-quality warning</td><td>Suppress a warning, or invent one</td></tr>
-                    <tr><td>Write within five fixed sections</td><td>Forecast, or give investment advice</td></tr>
-                    <tr><td>&mdash;</td><td>Explain <em>why</em> anything happened</td></tr>
-                  </tbody>
-                </table>
-              </div>
+        <details class="accordion mt-3">
+          <summary>What the model may and may not do</summary>
+          <div class="accordion__body">
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>The model receives figures already rounded, with units, periods and provenance attached.</caption>
+                <thead><tr><th scope="col">It may</th><th scope="col">It may not</th></tr></thead>
+                <tbody>
+                  <tr><td>Describe a figure using the supplied display string</td><td>Compute, adjust, infer or recall any statistic</td></tr>
+                  <tr><td>State the comparison basis and source series</td><td>Retrieve data, or choose an observation period</td></tr>
+                  <tr><td>Explain a data-quality warning</td><td>Suppress a warning, or invent one</td></tr>
+                  <tr><td>Write within five fixed sections</td><td>Forecast, or give investment advice</td></tr>
+                  <tr><td>&mdash;</td><td>Explain <em>why</em> anything happened</td></tr>
+                </tbody>
+              </table>
             </div>
-          </details>
-        </div>
+          </div>
+        </details>
       </div>
     </section>
 
@@ -519,42 +522,40 @@
               </dl>
               <p class="small mt-2">
                 One brief, generated once from the validated dataset and committed as a static file.
-                Data periods differ by design and are not normalised to a common date.
+                Data periods differ by design and are not normalised to a common date. Verify every
+                figure against the primary release before any use.
               </p>
-              <div class="btn-group mt-3">
-                <a class="btn btn--primary" href="derived/brief.html">Open Full Validated Brief <span class="btn__arrow" aria-hidden="true">&#8594;</span></a>
-              </div>
             </div>
           </div>
 
-          <div class="mini-brief" data-reveal aria-label="Excerpt from the validated brief">
-            <div class="panel__head">
+          <a class="mini-brief mini-brief--link" href="derived/brief.html" data-reveal>
+            <span class="panel__head">
               <span class="label">Brief &middot; Executive summary</span>
               <span class="label">As of 27 September 2026</span>
-            </div>
-            <div class="mini-brief__body">
-              <p class="eyebrow">United States &middot; Macro Intelligence Brief</p>
-              <p class="mini-brief__title">United States Macroeconomic Briefing</p>
-              <p class="mini-brief__text">
+            </span>
+            <span class="mini-brief__body">
+              <span class="eyebrow">United States &middot; Macro Intelligence Brief</span>
+              <span class="mini-brief__title">United States Macroeconomic Briefing</span>
+              <span class="mini-brief__text">
                 Headline CPI inflation was broadly stable at 3.4% year-on-year in August 2026, while
                 the unemployment rate stood unchanged at 4.1%. Retail sales increased by 1.2%
                 month-over-month in August 2026 following &minus;0.5% in the prior month. Real GDP
                 expanded at an annualised quarterly rate of 1.5% in 2026 Q2, down from 2.1% in the
                 preceding quarter. The effective federal funds rate was 3.88% on 24 September 2026,
                 unchanged from the previous observation.
-              </p>
-            </div>
-            <div class="panel__foot">
+              </span>
+            </span>
+            <span class="panel__foot panel__foot--cta">
               <span class="label">Descriptive only &middot; no forecast &middot; no advice</span>
-            </div>
-          </div>
+              <span class="panel__cta">Open full validated brief <span class="panel__cta-arrow" aria-hidden="true">&#8599;</span></span>
+            </span>
+          </a>
         </div>
-        <p class="small mt-2">Verify every figure against the primary release before any use.</p>
       </div>
     </section>
 
     <!-- ==================================================================
-         10. LIMITATIONS
+         10. LIMITATIONS — four families
          ================================================================== -->
     <section class="section section--alt" aria-labelledby="limits-title">
       <div class="container">
@@ -562,15 +563,27 @@
           <p class="eyebrow eyebrow--gold eyebrow--rule">Scope</p>
           <h2 class="display-lg mt-2" id="limits-title">Limitations</h2>
         </div>
-        <div class="grid grid--4" data-reveal>
-          <div class="limit"><p class="limit__title">United States only</p><p class="limit__body">Five indicators. Not a complete macroeconomic picture.</p></div>
-          <div class="limit"><p class="limit__title">Five indicators</p><p class="limit__body">Inflation, policy rate, growth, labour market, consumption.</p></div>
-          <div class="limit"><p class="limit__title">Latest-vintage data</p><p class="limit__body">A past figure cannot be reproduced once the source revises it; real GDP is revised substantially.</p></div>
-          <div class="limit"><p class="limit__title">One validated live synthesis</p><p class="limit__body">The pipeline runs end to end; that says little yet about behaviour across datasets.</p></div>
-          <div class="limit"><p class="limit__title">No forecasting</p><p class="limit__body">By design rather than by omission.</p></div>
-          <div class="limit"><p class="limit__title">No investment recommendations</p><p class="limit__body">Descriptive only. No interpretation of causes.</p></div>
-          <div class="limit"><p class="limit__title">Human review required</p><p class="limit__body">Every generated brief remains a draft until a person approves it.</p></div>
-          <div class="limit"><p class="limit__title">Research prototype</p><p class="limit__body">Not production infrastructure: no scheduling, monitoring or operational history.</p></div>
+        <div class="limit-groups" data-reveal>
+          <div class="limit-group">
+            <h3 class="label limit-group__title">Coverage</h3>
+            <div class="limit"><p class="limit__title">United States only</p><p class="limit__body">Not a complete macroeconomic picture.</p></div>
+            <div class="limit"><p class="limit__title">Five indicators</p><p class="limit__body">Inflation, policy rate, growth, labour market, consumption.</p></div>
+          </div>
+          <div class="limit-group">
+            <h3 class="label limit-group__title">Data</h3>
+            <div class="limit"><p class="limit__title">Latest-vintage data</p><p class="limit__body">A past figure cannot be reproduced once the source revises it; real GDP is revised substantially.</p></div>
+            <div class="limit"><p class="limit__title">One validated live synthesis</p><p class="limit__body">The pipeline runs end to end; that says little yet about behaviour across datasets.</p></div>
+          </div>
+          <div class="limit-group">
+            <h3 class="label limit-group__title">Purpose</h3>
+            <div class="limit"><p class="limit__title">No forecasting</p><p class="limit__body">By design rather than by omission.</p></div>
+            <div class="limit"><p class="limit__title">No investment recommendations</p><p class="limit__body">Descriptive only. No interpretation of causes.</p></div>
+          </div>
+          <div class="limit-group">
+            <h3 class="label limit-group__title">Operation</h3>
+            <div class="limit"><p class="limit__title">Human review required</p><p class="limit__body">Every generated brief remains a draft until a person approves it.</p></div>
+            <div class="limit"><p class="limit__title">Research prototype</p><p class="limit__body">Not production infrastructure: no scheduling, monitoring or operational history.</p></div>
+          </div>
         </div>
       </div>
     </section>
@@ -587,42 +600,43 @@
         <ol class="lessons" data-reveal>
           <li class="lesson"><div>
             <h3 class="lesson__title">Levels are not rates.</h3>
-            <p class="lesson__body">Most published series are indices or levels. Choosing the transformation is an economic decision made before any code, and getting it wrong yields a number that resembles the one everyone quotes but isn't it.</p>
+            <p class="lesson__body">Choosing the transformation is an economic decision made before any code. Get it wrong and the number only resembles the one everyone quotes.</p>
           </div></li>
           <li class="lesson"><div>
             <h3 class="lesson__title">Official data has gaps.</h3>
-            <p class="lesson__body">October 2025 is absent from two of the five series. Real data breaks assumptions that clean fixtures cannot expose.</p>
+            <p class="lesson__body">October 2025 is absent from two of the five series. Clean fixtures cannot expose that.</p>
           </div></li>
           <li class="lesson"><div>
             <h3 class="lesson__title">Plausible output can still be wrong.</h3>
-            <p class="lesson__body">The mis-selected CPI figure raised no error and read perfectly well. Plausibility is what lets an error survive review.</p>
+            <p class="lesson__body">The mis-selected CPI figure raised no error and read well. Plausibility is what lets an error survive review.</p>
           </div></li>
           <li class="lesson"><div>
             <h3 class="lesson__title">External cross-checks earn their cost.</h3>
-            <p class="lesson__body">Internal consistency proved almost nothing &mdash; the code agreed with itself while being wrong. An independent computation of the same statistic found the defect.</p>
+            <p class="lesson__body">The code agreed with itself while being wrong. Only an independent computation found the defect.</p>
           </div></li>
           <li class="lesson"><div>
             <h3 class="lesson__title">AI is most useful after validation, not before.</h3>
-            <p class="lesson__body">Placing the model last made it useful and structurally unable to introduce a factual error. Earlier, every downstream check becomes a matter of trust.</p>
+            <p class="lesson__body">Placed last, the model is useful and structurally unable to introduce a factual error.</p>
           </div></li>
           <li class="lesson"><div>
             <h3 class="lesson__title">Provenance and period semantics are research infrastructure.</h3>
-            <p class="lesson__body">Reproducibility needs the retrieval date, the source vintage and the exact period behind every figure. &ldquo;Latest available observation&rdquo; and &ldquo;latest economic period&rdquo; are different things, and conflating them misleads quietly.</p>
+            <p class="lesson__body">Every figure needs its retrieval date, vintage and exact period. The latest available observation is not the latest economic period.</p>
           </div></li>
         </ol>
+        <p class="small mt-2">The full reasoning behind each lesson is in the <a class="inline-link" href="README.md">project methodology</a>.</p>
       </div>
     </section>
 
     <!-- ==================================================================
-         12. TECHNOLOGY & REPOSITORY
+         12. TECHNOLOGY & EVIDENCE
          ================================================================== -->
     <section class="section section--alt" aria-labelledby="tech-title">
       <div class="container">
         <div class="grid grid--2">
           <div data-reveal>
             <p class="eyebrow eyebrow--gold eyebrow--rule">Technology</p>
-            <h2 class="display-md mt-2" id="tech-title">In service of the research</h2>
-            <ul class="chips mt-3">
+            <h2 class="display-md mt-2" id="tech-title">Technology in service of the research</h2>
+            <ul class="chips mt-2">
               <li class="chip">Python standard library</li>
               <li class="chip">FRED API</li>
               <li class="chip">BLS &amp; BEA cross-checks</li>
@@ -637,14 +651,18 @@
             </p>
           </div>
           <div data-reveal>
-            <p class="eyebrow eyebrow--gold eyebrow--rule">Repository</p>
+            <p class="eyebrow eyebrow--gold eyebrow--rule">Evidence</p>
             <h2 class="display-md mt-2">Inspect the evidence</h2>
-            <ul class="chips mt-3">
-              <li class="chip chip--link"><a href="README.md">Full methodology <span aria-hidden="true">&#8594;</span></a></li>
-              <li class="chip chip--link"><a href="src/">Pipeline source <span aria-hidden="true">&#8594;</span></a></li>
-              <li class="chip chip--link"><a href="tests/">Test suite <span aria-hidden="true">&#8594;</span></a></li>
-              <li class="chip chip--link"><a href="data/reference/phase2-first-real-run/">Validated run artefacts <span aria-hidden="true">&#8594;</span></a></li>
-              <li class="chip chip--link"><a href="legacy/README.md">Retired prototype notes <span aria-hidden="true">&#8594;</span></a></li>
+            <div class="btn-group mt-2">
+              <a class="btn btn--primary" href="derived/brief.html">Open validated brief <span class="btn__arrow" aria-hidden="true">&#8594;</span></a>
+              <a class="btn btn--ghost" href="https://github.com/jonapv/economic-financial-intelligence-portfolio" rel="noopener">View repository <span class="btn__arrow" aria-hidden="true">&#8599;</span></a>
+              <a class="btn btn--ghost" href="README.md">Read methodology <span class="btn__arrow" aria-hidden="true">&#8594;</span></a>
+            </div>
+            <ul class="link-list mt-3" aria-label="Further evidence">
+              <li><a href="src/">Pipeline source <span class="link-list__arrow" aria-hidden="true">&#8594;</span></a></li>
+              <li><a href="tests/">Test suite <span class="link-list__arrow" aria-hidden="true">&#8594;</span></a></li>
+              <li><a href="data/reference/phase2-first-real-run/">Validated run artefacts <span class="link-list__arrow" aria-hidden="true">&#8594;</span></a></li>
+              <li><a href="legacy/README.md">Retired prototype notes <span class="link-list__arrow" aria-hidden="true">&#8594;</span></a></li>
             </ul>
           </div>
         </div>
@@ -663,7 +681,8 @@
           <span class="brand__mark" aria-hidden="true">E</span>
           <span class="brand__text">EFI <span>/</span> Projects</span>
         </a>
-        <p class="small mt-2">Project 01 &middot; Macro Intelligence Brief. Research exercise; not investment advice.</p>
+        <p class="small mt-2">Project 01 &middot; Macro Intelligence Brief, by Jonatan Pabón.</p>
+        <p class="legal-note">Research exercise. Not investment advice, no forecast; verify every figure against the primary releases before any use.</p>
       </div>
       <div>
         <p class="label">This case study</p>
@@ -680,14 +699,16 @@
         <ul class="site-footer__links mt-1">
           <li><a href="../index.html">Portfolio home</a></li>
           <li><a href="derived/brief.html">Validated brief</a></li>
-          <li><a href="README.md">Full methodology</a></li>
+          <li><a class="ext" href="https://github.com/jonapv/economic-financial-intelligence-portfolio" rel="noopener">GitHub</a></li>
+          <li><a href="mailto:workspace.jonatanpv@gmail.com">Contact</a></li>
         </ul>
       </div>
     </div>
     <div class="site-footer__bar">
       <div class="container">
-        <span><a href="../index.html">EFI / Projects</a></span>
-        <span class="tnum">&copy; <span data-current-year>2026</span></span>
+        <span><a href="../index.html">EFI / Projects</a> &middot; <span class="tnum">&copy; <span data-current-year>2026</span></span></span>
+        <span>Research exercise &middot; Not investment advice</span>
+        <a class="back-to-top" href="#top">Back to top <span aria-hidden="true">&#8593;</span></a>
       </div>
     </div>
   </footer>

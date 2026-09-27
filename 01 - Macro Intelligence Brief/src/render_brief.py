@@ -24,6 +24,17 @@ from .brief_schema import (
 #: only; an unknown code is shown as-is rather than guessed.
 ECONOMY_NAMES = {"US": "United States"}
 
+#: Short labels for the snapshot strip. Presentation only: the figure beside
+#: each label is the indicator's supplied display value, and an indicator with
+#: no entry here falls back to its full display name.
+SNAPSHOT_LABELS = {
+    "us_cpi_inflation_yoy": "CPI",
+    "us_effective_fed_funds_rate": "Fed Funds",
+    "us_real_gdp_growth_qoq_ann": "Real GDP",
+    "us_unemployment_rate": "Unemployment",
+    "us_retail_sales_mom": "Retail Sales",
+}
+
 
 def _esc(text: Any) -> str:
     return html.escape(str(text), quote=True)
@@ -61,16 +72,25 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
         for indicator_id in SECTION_INDICATORS[sid]
     }
     rows: List[str] = []
+    snapshot: List[str] = []
     for entry in sorted(brief_input["indicators"],
                         key=lambda e: narrative_order.get(e["indicator_id"], 99)):
         pres = entry["presentation"]
+        label = SNAPSHOT_LABELS.get(entry["indicator_id"], entry["display_name"])
+        snapshot.append(
+            '<li class="snapshot__item">'
+            f'<span class="snapshot__label">{_esc(label)}</span>'
+            f'<span class="snapshot__value">{_esc(pres["value_display"])}</span>'
+            f'<span class="snapshot__period">{_esc(entry["period_label"])}</span>'
+            "</li>"
+        )
         rows.append(
             "<tr>"
             f'<td class="name">{_esc(entry["display_name"])}</td>'
             f'<td class="series">{_esc(entry["source_series"])}</td>'
             f'<td class="num period" data-label="Period">{_esc(entry["period_label"])}</td>'
             f'<td class="value num-col" data-label="Value">{_esc(pres["value_display"])}</td>'
-            f'<td class="num num-col" data-label="Previous">{_esc(pres["previous_value_display"])}</td>'
+            f'<td class="num num-col prev" data-label="Previous">{_esc(pres["previous_value_display"])}</td>'
             f'<td class="change num-col" data-label="Change">{_esc(pres["change_display"])}</td>'
             "</tr>"
         )
@@ -167,10 +187,14 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
       <div class="brief-head__meta">
         <dl class="meta-grid">
           <div><dt>As of</dt><dd class="tnum">{_esc(draft["as_of"])}</dd></div>
-          <div><dt>Status</dt><dd class="is-gold">{_esc(DRAFT_STATUS)}</dd></div>
           <div><dt>Source</dt><dd>Official data &middot; {_esc(prov["source_name"])}</dd></div>
           <div><dt>Prose</dt><dd>AI-assisted &middot; {_esc(model)}</dd></div>
+          <div><dt>Coverage</dt><dd class="tnum">{_esc(len(brief_input["indicators"]))} validated indicators</dd></div>
         </dl>
+      </div>
+      <div class="btn-group brief-actions">
+        <a class="btn btn--ghost btn--sm" href="{project_prefix}index.html"><span aria-hidden="true">&#8592;</span> Back to case study</a>
+        <button class="btn btn--ghost btn--sm" type="button" data-print hidden>Print / Save PDF</button>
       </div>
     </div>
 
@@ -190,6 +214,7 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
         <section class="brief-block" id="summary" aria-labelledby="h-summary">
           <div class="brief-block__head"><span class="section-num">A</span><h2 class="brief-block__title" id="h-summary">Executive Summary</h2></div>
           <div class="summary-panel">{_paragraphs(draft["executive_summary"])}</div>
+          <ul class="snapshot" aria-label="Snapshot of the validated figures">{"".join(snapshot)}</ul>
         </section>
 
         <section class="brief-block" id="data" aria-labelledby="h-data">
@@ -214,7 +239,12 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
 
         <section class="brief-block" id="developments" aria-labelledby="h-developments">
           <div class="brief-block__head"><span class="section-num">D</span><h2 class="brief-block__title" id="h-developments">Key Developments</h2></div>
-          <ol class="dev-list">{developments}</ol>
+          <details class="accordion" data-print-open>
+            <summary>At a glance &middot; {len(draft.get("key_developments", []))} developments, restating the figures above</summary>
+            <div class="accordion__body">
+              <ol class="dev-list dev-list--compact">{developments}</ol>
+            </div>
+          </details>
         </section>
 
         <section class="brief-block" id="notes" aria-labelledby="h-notes">
@@ -225,6 +255,13 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
               <ul class="aux__list">{quality}</ul>
             </div>
             <div class="aux">
+              <h3 class="aux__title">Limitations</h3>
+              {_paragraphs(draft["limitations"])}
+              <p><strong>{_esc(DRAFT_STATUS)}.</strong>
+              This document is a research exercise. It is not investment advice, contains no
+              forecast, and must be verified against the primary releases before any use.</p>
+            </div>
+            <div class="aux aux--wide">
               <h3 class="aux__title">Sources &amp; Methodology</h3>
               <ul class="aux__list">{sources}</ul>
               <p>Figures were retrieved from the source, normalised, and transformed
@@ -234,13 +271,6 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
               every number in it corresponds to a supplied presentation value.</p>
               <p class="small">Indicators cover different periods by design. The latest
               available observation is not the latest economic period.</p>
-            </div>
-            <div class="aux">
-              <h3 class="aux__title">Limitations</h3>
-              {_paragraphs(draft["limitations"])}
-              <p><span class="emphasis">{_esc(DRAFT_STATUS)}.</span>
-              This document is a research exercise. It is not investment advice, contains no
-              forecast, and must be verified against the primary releases before any use.</p>
             </div>
           </div>
           <details class="accordion mt-2">
@@ -261,8 +291,9 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
 
   <footer class="site-footer">
     <div class="site-footer__bar"><div class="container">
-      <span><a href="{root_prefix}index.html">EFI / Projects</a></span>
+      <span><a href="{root_prefix}index.html">EFI / Projects</a> &middot; <a href="{project_prefix}index.html">Project 01</a></span>
       <span class="tnum">{_esc(DRAFT_STATUS)}</span>
+      <a class="back-to-top no-print" href="#main">Back to top <span aria-hidden="true">&#8593;</span></a>
     </div></div>
   </footer>
 

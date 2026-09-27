@@ -10,7 +10,8 @@
      - drive the thin reading-progress rule under the header;
      - reveal sections as they enter the viewport (skipped under reduced
        motion, and never applied at all without JavaScript);
-     - highlight the navigation link for the section in view.
+     - highlight the navigation link for the section in view;
+     - wire the brief's Print / Save PDF control to window.print().
    ========================================================================== */
 (function () {
   'use strict';
@@ -65,6 +66,27 @@
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
     revealTargets.forEach(function (el) { revealer.observe(el); });
   }
+
+  /* Print / Save PDF. The button ships hidden and is only revealed here, so a
+     page without JavaScript never shows a control that cannot work. */
+  document.querySelectorAll('[data-print]').forEach(function (btn) {
+    btn.hidden = false;
+    btn.addEventListener('click', function () { window.print(); });
+  });
+
+  /* Collapsed sections marked data-print-open are part of the document of
+     record: open them for printing, then restore what the reader had. */
+  var printOpened = [];
+  window.addEventListener('beforeprint', function () {
+    document.querySelectorAll('details[data-print-open]:not([open])').forEach(function (d) {
+      d.open = true;
+      printOpened.push(d);
+    });
+  });
+  window.addEventListener('afterprint', function () {
+    printOpened.forEach(function (d) { d.open = false; });
+    printOpened = [];
+  });
 
   /* Active navigation state: the link whose target section occupies the band
      just below the header. Applies to every nav that links to in-page ids,
