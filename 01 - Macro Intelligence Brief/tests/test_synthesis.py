@@ -33,8 +33,7 @@ from src.presentation import allowed_numeric_tokens, format_change, format_value
 from src.render_brief import render_html
 from src.synthesize import synthesise
 
-BRIEF_INPUT_PATH = (pathlib.Path(__file__).resolve().parent.parent / "data"
-                    / "reference" / "phase2-first-real-run" / "derived"
+BRIEF_INPUT_PATH = (pathlib.Path(__file__).resolve().parent.parent / "derived"
                     / "brief_input.json")
 FAKE_KEY = "test-fake-gemini-key-not-a-real-credential"
 

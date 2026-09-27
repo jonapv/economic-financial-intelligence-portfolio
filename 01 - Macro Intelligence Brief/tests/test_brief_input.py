@@ -344,8 +344,8 @@ class TestNoSecrets(unittest.TestCase):
 class TestStoredArtefact(unittest.TestCase):
     """The committed first real brief input must satisfy the contract."""
 
-    PATH = (pathlib.Path(__file__).resolve().parent.parent / "data" / "reference"
-            / "phase2-first-real-run" / "derived" / "brief_input.json")
+    PATH = (pathlib.Path(__file__).resolve().parent.parent / "derived"
+            / "brief_input.json")
 
     def setUp(self):
         if not self.PATH.exists():

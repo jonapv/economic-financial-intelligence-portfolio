@@ -461,7 +461,7 @@ containing the key or the substring `api_key=`, and writes nothing if it finds o
 Run it manually:
 
 ```sh
-cd projects/01-macro-intelligence-brief
+cd "01 - Macro Intelligence Brief"
 export FRED_API_KEY="$(sed -n 's/^FRED_API_KEY=//p' ../../.env | tr -d '[:space:]')"
 python3 -m src.run_collection
 ```
@@ -998,9 +998,9 @@ place and supplied a `comparison_note` instructing the model to call it broadly 
 *not* to write that it moved from 3.4% to 3.4%. The model complied and still disclosed the
 `+0.03 pp` change. Without that note, the most likely output was a sentence that read as self-contradictory.
 
-Artefacts: [`derived/brief_draft.json`](data/reference/phase2-first-real-run/derived/brief_draft.json)
+Artefacts: [`derived/brief_draft.json`](derived/brief_draft.json)
 (raw draft, provider metadata, validation result) and
-[`derived/brief.html`](data/reference/phase2-first-real-run/derived/brief.html) (rendered brief).
+[`derived/brief.html`](derived/brief.html) (rendered brief).
 The deterministic input is never overwritten.
 
 ### Example output on the portfolio
@@ -1031,7 +1031,7 @@ It was retired for three reasons:
 3. **Secrets were embedded in the workflow** — API keys were written directly into node URL query
    strings, and one was leaked that way.
 
-A sanitised copy is preserved at [`../../legacy/n8n/`](../../legacy/n8n/) as a historical record.
+A sanitised copy is preserved at [`legacy/`](legacy/) as a historical record.
 **n8n is not the production architecture** and the email workflow is no longer running.
 
 ## Known limitations

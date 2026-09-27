@@ -18,8 +18,8 @@ from src.errors import InvalidPeriodError
 from src.models import Frequency
 from src.periods import period_label
 
-REAL_BRIEF = (pathlib.Path(__file__).resolve().parent.parent / "data" / "reference"
-              / "phase2-first-real-run" / "derived" / "brief_input.json")
+REAL_BRIEF = (pathlib.Path(__file__).resolve().parent.parent / "derived"
+              / "brief_input.json")
 
 
 class TestMonthlyLabels(unittest.TestCase):

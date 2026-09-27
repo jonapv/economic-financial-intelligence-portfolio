@@ -34,13 +34,16 @@ from .snapshot import write_json
 from .synthesis_prompt import PROMPT_VERSION, SYSTEM_PROMPT, build_user_message
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
-DEFAULT_DERIVED = (PROJECT_ROOT / "data" / "reference" / "phase2-first-real-run"
-                   / "derived")
+#: Derived outputs live at the project root, alongside data/ rather than inside
+#: it: data/ holds inputs (synthetic fixtures and the preserved raw snapshot),
+#: derived/ holds what the pipeline produced from them.
+DEFAULT_DERIVED = PROJECT_ROOT / "derived"
 
 
 def _render(draft, brief_input, metadata, derived_dir: pathlib.Path) -> str:
     """Render with link prefixes computed from where the file will actually sit."""
-    repo_root = PROJECT_ROOT.parent.parent
+    # The project directory sits directly under the portfolio root.
+    repo_root = PROJECT_ROOT.parent
     to_root = os.path.relpath(repo_root, derived_dir)
     to_project = os.path.relpath(PROJECT_ROOT, derived_dir)
     return render_html(

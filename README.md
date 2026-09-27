@@ -22,9 +22,9 @@ The question each project addresses is the same:
 
 | # | Project | Domain | Status |
 | --- | --- | --- | --- |
-| 01 | [Macro Intelligence Brief](projects/01-macro-intelligence-brief/) | Macroeconomic monitoring | **Completed** |
-| 02 | [Regulatory Intelligence Monitor](projects/02-regulatory-intelligence-monitor/) | Financial regulation and supervision | Next |
-| 03 | [Geopolitical Risk Monitor](projects/03-geopolitical-risk-monitor/) | Geopolitics and economic transmission | Planned |
+| 01 | [Macro Intelligence Brief](01%20-%20Macro%20Intelligence%20Brief/) | Macroeconomic monitoring | **Completed** |
+| 02 | [Regulatory Intelligence Monitor](02%20-%20Regulatory%20Intelligence%20Monitor/) | Financial regulation and supervision | Next |
+| 03 | [Geopolitical Risk Monitor](03%20-%20Geopolitical%20Risk%20Monitor/) | Geopolitics and economic transmission | Planned |
 
 ## Philosophy
 
@@ -50,7 +50,7 @@ a language model's recollection.
 **The model never does the arithmetic.** Economic statistics are computed and validated in tested
 code *before* a language model sees them. A model may describe a validated figure; it may never
 produce, infer or adjust one. This rule exists because the first prototype of Project 01 violated
-it — see the [Project 01 method note](projects/01-macro-intelligence-brief/README.md#economic-method-a-correction-to-the-prototype).
+it — see the [Project 01 method note](01%20-%20Macro%20Intelligence%20Brief/README.md#economic-method-a-correction-to-the-prototype).
 
 **Human review is a required step, not a courtesy.** No output is considered finished until a person
 has read, corrected and approved it.
@@ -118,7 +118,7 @@ The clearest result was a methodological one. A figure selected by array positio
 date produced a plausible, wrong inflation rate that raised no error and passed every test, because the
 synthetic fixtures had no gaps. An independent cross-check found it. That finding shaped the rest of
 the project and is documented in the
-[case study](projects/01-macro-intelligence-brief/).
+[case study](01%20-%20Macro%20Intelligence%20Brief/).
 
 **Project 02 — Regulatory Intelligence Monitor: next.** Not started.
 

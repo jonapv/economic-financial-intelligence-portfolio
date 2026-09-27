@@ -52,7 +52,12 @@ from .validation import (
 )
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
+#: Raw snapshot location: the preserved source payloads for one run.
 DEFAULT_OUTPUT = PROJECT_ROOT / "data" / "reference" / "phase2-first-real-run"
+
+#: Derived outputs: separated from the raw snapshot so that inputs and results
+#: are distinguishable at a glance.
+DEFAULT_DERIVED = PROJECT_ROOT / "derived"
 
 #: Observations requested per series. Comfortably above the engine's minimum so
 #: that missing-value filtering cannot leave the series short.
@@ -91,7 +96,9 @@ def _git_commit(root: pathlib.Path) -> Optional[str]:
         return None
 
 
-def run(output_dir: pathlib.Path = DEFAULT_OUTPUT, *, client: Optional[FredClient] = None) -> int:
+def run(output_dir: pathlib.Path = DEFAULT_OUTPUT, *,
+        derived_dir: Optional[pathlib.Path] = None,
+        client: Optional[FredClient] = None) -> int:
     api_key = None
     if client is None:
         api_key = read_api_key()
@@ -103,7 +110,7 @@ def run(output_dir: pathlib.Path = DEFAULT_OUTPUT, *, client: Optional[FredClien
 
     report = ValidationReport(run_id=run_id, generated_at=retrieved_at)
     raw_dir = output_dir / "raw"
-    derived_dir = output_dir / "derived"
+    derived_dir = derived_dir if derived_dir is not None else DEFAULT_DERIVED
 
     print(f"run_id         {run_id}")
     print(f"retrieved_at   {retrieved_at.isoformat()}")

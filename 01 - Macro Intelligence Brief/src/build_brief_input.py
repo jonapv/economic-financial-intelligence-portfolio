@@ -1,6 +1,7 @@
 """Rebuild the brief input from a stored run, offline.
 
     python3 -m src.build_brief_input [--run-dir data/reference/phase2-first-real-run]
+                                     [--derived-dir derived]
 
 Reads the raw payloads a previous run preserved, re-runs normalisation,
 validation and the transformations, and writes ``derived/brief_input.json``.
@@ -45,6 +46,7 @@ from .validation import (
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
 DEFAULT_RUN_DIR = PROJECT_ROOT / "data" / "reference" / "phase2-first-real-run"
+DEFAULT_DERIVED_DIR = PROJECT_ROOT / "derived"
 
 #: Recomputed figures must match the stored ones to this absolute tolerance.
 #: Not a tolerance for economic agreement — a guard against a stored artefact
@@ -56,10 +58,11 @@ def _load(path: pathlib.Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def rebuild(run_dir: pathlib.Path, *, verbose: bool = True) -> int:
+def rebuild(run_dir: pathlib.Path, *,
+            derived_dir: pathlib.Path = None, verbose: bool = True) -> int:
     manifest = _load(run_dir / "manifest.json")
     raw_dir = run_dir / "raw"
-    derived_dir = run_dir / "derived"
+    derived_dir = derived_dir if derived_dir is not None else DEFAULT_DERIVED_DIR
 
     run_id = manifest["run_id"]
     retrieved_at = _dt.datetime.fromisoformat(manifest["retrieved_at_utc"])
@@ -213,9 +216,10 @@ def main(argv=None) -> int:
         description="Rebuild brief_input.json from a stored run. No network access."
     )
     parser.add_argument("--run-dir", type=pathlib.Path, default=DEFAULT_RUN_DIR)
+    parser.add_argument("--derived-dir", type=pathlib.Path, default=DEFAULT_DERIVED_DIR)
     args = parser.parse_args(argv)
     try:
-        return rebuild(args.run_dir)
+        return rebuild(args.run_dir, derived_dir=args.derived_dir)
     except (CollectionError, OSError, KeyError, ValueError) as exc:
         print(f"rebuild failed: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2

@@ -20,7 +20,7 @@ Three reasons, in order of importance.
    difference as a change. For an index such as CPIAUCSL or a level such as GDPC1, that does not
    produce the statistic an economist would quote. This is the substantive reason, and it is
    documented in full in
-   [`../../projects/01-macro-intelligence-brief/README.md`](../../projects/01-macro-intelligence-brief/README.md).
+   [`../README.md`](../README.md).
 
 > **Series identifiers in this file are historical.** The workflow reads `CPIAUCSL` and `FEDFUNDS`.
 > V1 has since superseded both: `CPIAUCSL` → `CPIAUCNS` (the unadjusted index, the conventional basis
@@ -40,7 +40,7 @@ A code-based pipeline: explicit, version-controlled transformations with automat
 economic statistics are computed and validated before a language model is involved at all. The
 language model drafts prose from figures that have already been verified; it never calculates them.
 
-See the [Project 01 README](../../projects/01-macro-intelligence-brief/README.md) for the intended
+See the [Project 01 README](../README.md) for the intended
 architecture.
 
 ## Sanitisation
