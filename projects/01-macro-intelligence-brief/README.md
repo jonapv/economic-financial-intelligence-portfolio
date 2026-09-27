@@ -1,8 +1,10 @@
 # Project 01 — Macro Intelligence Brief
 
-**Status: in development.** The full pipeline has been run end to end once, producing one validated
-example brief. Nothing runs on a schedule, no brief is distributed, and every generated brief remains a
-**draft pending human review**. This is not production-ready.
+**Status: complete.** The pipeline runs end to end and the validated example brief is committed. This
+document is the deep methodology; the [case study page](index.html) is the five-minute version.
+
+Nothing runs on a schedule, no brief is distributed, and every generated brief remains a **draft
+pending human review**. This is a research exercise, not a production research system.
 
 A reproducible weekly reading of the United States macroeconomic picture. Automation handles
 collection and computation; a language model drafts the surrounding prose; a person reviews and
@@ -1102,6 +1104,10 @@ contract frozen behind a publication invariant. 275 tests, none touching the net
 canonical `period` and a deterministically generated `period_label`, removing the last semantic ambiguity
 before a model reads the file. All five numeric values verified bit-identical across the change. 313
 tests.
+
+**Phase 4 — portfolio finalisation.** Complete. The project page was rewritten as a case study in
+narrative order, the architecture diagram updated to the nine implemented stages, the technology
+section corrected, and the validation finding written up as a methodological lesson.
 
 **Phase 3 — AI-assisted synthesis.** Complete for one brief. Constrained Gemini synthesis from
 `brief_input.json`, deterministic draft validation, rendered HTML, and a required human-review status.

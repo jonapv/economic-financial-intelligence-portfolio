@@ -585,3 +585,9 @@ a.card:hover .card__cta { color: var(--navy-700); }
 .data-table .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .data-table .series { color: var(--ink-400); }
 .data-table .name { color: var(--ink-900); }
+
+/* A stacked variant of the data grid, for label/description pairs that need
+   room to breathe rather than five narrow columns. */
+.indicators--stacked { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+.indicators--stacked dt { color: var(--ink-900); font-weight: 500; }
+.indicators--stacked dd { color: var(--ink-500); line-height: 1.6; margin-top: 0.25rem; }

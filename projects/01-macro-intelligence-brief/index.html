@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Macro Intelligence Brief — Economic &amp; Financial Intelligence Projects</title>
-  <meta name="description" content="Project 01: a reproducible weekly reading of the macroeconomic picture, where economic transformations are computed and validated before any language model is involved.">
+  <meta name="description" content="Project 01 case study: a reproducible reading of the United States macroeconomic picture, where every statistic is computed and validated deterministically before a language model writes a word.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,9 +35,9 @@
         <div>
           <p class="eyebrow">Project 01</p>
           <h1 class="title-lg mt-1">Macro Intelligence Brief</h1>
-          <p class="meta mt-1">Economic data <span class="arrow" aria-hidden="true">&#8594;</span> Structured insight</p>
+          <p class="meta mt-1">Official data <span class="arrow" aria-hidden="true">&#8594;</span> Deterministic calculation <span class="arrow" aria-hidden="true">&#8594;</span> AI-assisted synthesis</p>
         </div>
-        <span class="pill pill--active"><span class="pill__dot" aria-hidden="true"></span>In Development</span>
+        <span class="pill pill--active"><span class="pill__dot" aria-hidden="true"></span>Completed</span>
       </div>
     </div>
 
@@ -47,384 +47,366 @@
     <div class="container page-body">
       <dl class="defs">
 
-        <!-- Overview -->
-        <div class="def-row">
-          <dt>Overview</dt>
-          <dd>
-            <p class="prose">
-              A reproducible weekly reading of the United States macroeconomic picture. The objective is
-              to automate the collection and preparation of the underlying data, compute the conventional
-              economic transformations explicitly, and use a language model only for the final
-              write-up &mdash; never for the arithmetic.
-            </p>
-          </dd>
-        </div>
-
-        <!-- Status -->
-        <div class="def-row">
-          <dt>Status</dt>
-          <dd>
-            <div class="note note--accent">
-              <p>
-                <span class="prose emphasis">In development.</span> The full pipeline has been run
-                once end to end, producing the example brief below. Nothing runs on a schedule, no
-                brief is distributed, and every generated brief remains a draft until a person reviews
-                it. An earlier prototype produced briefs through a no-code automation platform; that
-                approach has been retired and is preserved only as reference material.
-              </p>
-            </div>
-          </dd>
-        </div>
-
-        <!-- The Problem -->
+        <!-- 1. THE PROBLEM -->
         <div class="def-row">
           <dt>The Problem</dt>
           <dd>
             <p class="prose">
-              Monitoring the macroeconomic picture typically means consulting several sources by hand,
-              retrieving each indicator separately and comparing the latest print with its previous
-              reading. The work is repetitive, time-consuming and adds little analytical value in itself.
+              Reading the macroeconomic picture means consulting several official sources by hand,
+              retrieving each indicator separately, and comparing the latest print with its previous
+              reading. The work is repetitive and adds no analytical value in itself.
             </p>
             <p class="prose">
-              It is also easy to do badly. Most published series are levels or indices, not rates, so a
-              naive comparison of two adjacent observations does not produce the statistic an economist
-              would actually quote.
+              It is also easy to do badly. Most published series are levels or indices, not rates, so
+              comparing two adjacent observations does not produce the statistic an economist would
+              quote. A consumer price index rising is not the same statement as inflation
+              accelerating.
             </p>
           </dd>
         </div>
 
-        <!-- The Experiment -->
+        <!-- 2. THE EXPERIMENT -->
         <div class="def-row">
           <dt>The Experiment</dt>
           <dd>
             <p class="prose">
-              Delegate the collection and computation layers entirely to code, and test whether a language
-              model can turn a set of already-validated statistics into a concise, structured briefing
-              suitable for a first read of the week.
+              Delegate collection and computation entirely to tested code, then test whether a
+              language model can turn already-validated statistics into a concise briefing.
             </p>
             <p class="prose">
-              The question is deliberately narrow: not &ldquo;can a model analyse the economy?&rdquo;, but
-              &ldquo;given correct figures, can it describe them accurately and usefully without
-              introducing numbers of its own?&rdquo;
+              The question is deliberately narrow. Not &ldquo;can a model analyse the economy?&rdquo;,
+              but: <span class="emphasis">given correct figures, can it describe them accurately
+              without introducing numbers of its own?</span>
             </p>
           </dd>
         </div>
 
-        <!-- Method / pipeline -->
+        <!-- 3. WHY CALCULATION PRECEDES AI -->
         <div class="def-row">
-          <dt>Intended Method</dt>
+          <dt>Why Calculation Precedes AI</dt>
           <dd>
-            <ol class="stages">
-              <li class="stage stage--terminal">
-                <span class="stage__num">01</span>
-                <div>
-                  <p class="stage__name">Primary Sources</p>
-                  <p class="stage__desc">Official statistical releases and institutional data providers, cited explicitly so every figure can be traced back to its publisher.</p>
-                </div>
-              </li>
-              <li class="stage">
-                <span class="stage__num">02</span>
-                <div>
-                  <p class="stage__name">Collection</p>
-                  <p class="stage__desc">Scheduled retrieval of the required series, with the full observation history needed to compute period-over-period and year-over-year transformations.</p>
-                </div>
-              </li>
-              <li class="stage">
-                <span class="stage__num">03</span>
-                <div>
-                  <p class="stage__name">Normalisation</p>
-                  <p class="stage__desc">Alignment of frequencies, units, vintages and release dates into one internally consistent dataset.</p>
-                </div>
-              </li>
-              <li class="stage">
-                <span class="stage__num">04</span>
-                <div>
-                  <p class="stage__name">Economic Calculations</p>
-                  <p class="stage__desc">Explicit, tested computation of the conventional statistics &mdash; inflation rates rather than index levels, annualised growth rather than level differences.</p>
-                </div>
-              </li>
-              <li class="stage">
-                <span class="stage__num">05</span>
-                <div>
-                  <p class="stage__name">Validation</p>
-                  <p class="stage__desc">Automated checks on ranges, signs, staleness and internal consistency. A figure that fails validation is not passed downstream.</p>
-                </div>
-              </li>
-              <li class="stage">
-                <span class="stage__num">06</span>
-                <div>
-                  <p class="stage__name">AI-Assisted Synthesis</p>
-                  <p class="stage__desc">A language model drafts the narrative from validated figures supplied to it. It does not calculate, infer or retrieve any statistic.</p>
-                </div>
-              </li>
-              <li class="stage">
-                <span class="stage__num">07</span>
-                <div>
-                  <p class="stage__name">Structured Brief</p>
-                  <p class="stage__desc">A consistent document structure, with each claim tied to the figure and source underlying it.</p>
-                </div>
-              </li>
-              <li class="stage stage--terminal">
-                <span class="stage__num">08</span>
-                <div>
-                  <p class="stage__name">Human Review</p>
-                  <p class="stage__desc">A person reads, corrects and approves the brief before it is considered finished. This step is not optional and is not automated.</p>
-                </div>
-              </li>
-            </ol>
-            <p class="diagram-caption">All eight stages implemented &middot; stages 01&ndash;05 deterministic, 06&ndash;07 AI-assisted, 08 human and required</p>
+            <div class="note note--accent">
+              <p><span class="prose emphasis">AI is not the source of economic facts.</span></p>
+              <p>
+                The pipeline retrieves official data, computes and validates every statistic in tested
+                code, and only then passes finished figures to a language model as a constrained
+                language layer. The model never calculates, never retrieves, never selects a period and
+                never sees unvalidated data.
+              </p>
+            </div>
+            <p class="prose mt-4">
+              The reasoning is practical. A wrong figure from a language model is a
+              <span class="emphasis">fluent</span> wrong figure, and fluency is what makes it
+              dangerous &mdash; the reader gets no cue. Arithmetic is cheap to make deterministic and
+              cheap to test, so it is settled first, and the prose is then checked back against it.
+            </p>
           </dd>
         </div>
 
-        <!-- Indicators -->
+        <!-- 4. DATA SOURCES -->
         <div class="def-row">
-          <dt>Indicators Under Review</dt>
+          <dt>Data Sources</dt>
           <dd>
             <p class="prose mb-3">
-              Five United States series. Each label below names the transformation applied, not the raw
-              series: an index or a dollar level is not itself a rate. The definitions are specified and
-              tested; no figures are published yet.
+              All figures come from official statistical sources, and none is accepted without
+              provenance.
             </p>
-            <dl class="indicators">
-              <div><dt>CPIAUCNS</dt><dd>CPI inflation, YoY</dd></div>
-              <div><dt>DFF</dt><dd>Effective federal funds rate, daily</dd></div>
-              <div><dt>GDPC1</dt><dd>Real GDP, QoQ annualised</dd></div>
-              <div><dt>RSAFS</dt><dd>Retail sales, MoM</dd></div>
-              <div><dt>UNRATE</dt><dd>Unemployment rate</dd></div>
+            <dl class="indicators indicators--stacked">
+              <div><dt>FRED &mdash; Federal Reserve Bank of St. Louis</dt>
+              <dd>Primary retrieval, requested as raw untransformed values.</dd></div>
+              <div><dt>BLS &mdash; Bureau of Labor Statistics</dt>
+              <dd>Independent cross-check for consumer prices.</dd></div>
+              <div><dt>BEA &mdash; Bureau of Economic Analysis</dt>
+              <dd>Independent cross-check for real GDP growth.</dd></div>
             </dl>
           </dd>
         </div>
 
-        <!-- Economic method note -->
+        <!-- 5. THE FIVE INDICATORS -->
         <div class="def-row">
-          <dt>Economic Method</dt>
-          <dd>
-            <p class="prose">
-              A central design rule governs this rebuild: the transformations that turn published series
-              into interpretable statistics are defined, computed and validated in code
-              <span class="emphasis">before</span> any model sees the data.
-            </p>
-            <p class="prose">
-              A consumer price index rising is not the same statement as the inflation rate increasing. A
-              real GDP level differing from the previous quarter is not a conventional growth rate. Each
-              series requires a stated transformation, and the language model is never responsible for
-              producing or inferring one.
-            </p>
-            <p class="prose">
-              Each series now has one stated transformation, implemented as a tested pure function.
-              Changes in rates are reported in percentage points, changes in levels as percentage
-              changes, and the two are never interchanged.
-            </p>
-            <p class="mt-3">
-              <a class="link-rule" href="README.md">Read the full specification <span aria-hidden="true">&#8594;</span></a>
-            </p>
-          </dd>
-        </div>
-
-
-        <!-- First validated real-data run -->
-        <div class="def-row">
-          <dt>First Validated Run</dt>
+          <dt>The Five Indicators</dt>
           <dd>
             <p class="prose mb-3">
-              The collection and validation pipeline was run against the live source for the first time
-              on 27 September 2026. The validation gate reported no hard failures. These are the five
-              derived statistics from that run.
+              United States only. Each label names the <span class="emphasis">transformation</span>,
+              not the raw series: an index or a dollar level is never itself a rate.
             </p>
-
             <div class="data-table-wrap">
               <table class="data-table">
-                <caption>
-                  Data snapshot &mdash; not a forecast, not investment advice. Computed by this project
-                  from the source series shown. Verify against the primary release before any use.
-                </caption>
+                <caption>Each transformation is a tested function. Changes in rates are reported in percentage points, changes in levels as percentage changes.</caption>
                 <thead>
                   <tr>
-                    <th scope="col">Indicator</th>
-                    <th scope="col">Series</th>
-                    <th scope="col">Period</th>
-                    <th scope="col">Value</th>
-                    <th scope="col">Previous</th>
-                    <th scope="col">Change</th>
+                    <th scope="col">Indicator</th><th scope="col">Series</th>
+                    <th scope="col">Transformation</th><th scope="col">Frequency</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td class="name">CPI inflation, YoY</td>
-                    <td class="series">CPIAUCNS</td>
-                    <td class="num">2026-08</td>
-                    <td class="num">3.40%</td>
-                    <td class="num">3.36%</td>
-                    <td class="num">+0.03 pp</td>
-                  </tr>
-                  <tr>
-                    <td class="name">Unemployment rate</td>
-                    <td class="series">UNRATE</td>
-                    <td class="num">2026-08</td>
-                    <td class="num">4.1%</td>
-                    <td class="num">4.1%</td>
-                    <td class="num">0.00 pp</td>
-                  </tr>
-                  <tr>
-                    <td class="name">Effective federal funds rate</td>
-                    <td class="series">DFF</td>
-                    <td class="num">2026-09-24</td>
-                    <td class="num">3.88%</td>
-                    <td class="num">3.88%</td>
-                    <td class="num">0.00 pp</td>
-                  </tr>
-                  <tr>
-                    <td class="name">Real GDP growth, QoQ annualised</td>
-                    <td class="series">GDPC1</td>
-                    <td class="num">2026-Q2</td>
-                    <td class="num">1.48%</td>
-                    <td class="num">2.09%</td>
-                    <td class="num">&minus;0.61 pp</td>
-                  </tr>
-                  <tr>
-                    <td class="name">Retail sales, MoM</td>
-                    <td class="series">RSAFS</td>
-                    <td class="num">2026-08</td>
-                    <td class="num">1.24%</td>
-                    <td class="num">&minus;0.54%</td>
-                    <td class="num">+1.78 pp</td>
-                  </tr>
+                  <tr><td class="name">CPI inflation</td><td class="series">CPIAUCNS</td><td>Year-over-year % change of the index</td><td class="num">Monthly</td></tr>
+                  <tr><td class="name">Effective federal funds rate</td><td class="series">DFF</td><td>None &mdash; already a rate</td><td class="num">Daily</td></tr>
+                  <tr><td class="name">Real GDP growth</td><td class="series">GDPC1</td><td>Compounded quarterly change, annualised</td><td class="num">Quarterly</td></tr>
+                  <tr><td class="name">Unemployment rate</td><td class="series">UNRATE</td><td>None &mdash; already a rate</td><td class="num">Monthly</td></tr>
+                  <tr><td class="name">Retail sales</td><td class="series">RSAFS</td><td>Month-over-month % change</td><td class="num">Monthly</td></tr>
                 </tbody>
               </table>
             </div>
-
-            <p class="prose mt-4">
-              Every figure was computed from the raw source series by the tested transformations, not
-              read from a pre-transformed feed. Two of the five are derived rather than published
-              directly, and both were checked against the originating agency: CPI inflation matches the
-              Bureau of Labor Statistics index exactly, and real GDP growth agrees with the Bureau of
-              Economic Analysis published figure to within its one-decimal publication rounding.
-            </p>
-            <p class="prose mt-4">
-              The validated figures are then frozen into a deterministic input file, which is the only
-              economic data a later AI-assisted synthesis step will be allowed to read. Validated data
-              <span class="arrow" aria-hidden="true">&#8594;</span> deterministic brief input
-              <span class="arrow" aria-hidden="true">&#8594;</span> AI-assisted synthesis. The synthesis
-              step is not built, so no generated prose appears anywhere in this project; the model will
-              never compute a figure, and cannot receive data that failed validation.
-            </p>
             <p class="small-print mt-3">
-              Source: Federal Reserve Bank of St. Louis (FRED), retrieved 2026-09-27. Raw payloads,
-              validation report, provenance and spot-check notes are stored alongside the pipeline.
-              Displayed values are rounded; the pipeline retains full precision.
+              The unadjusted CPI index is used because the headline twelve-month figure is
+              conventionally computed from it. The effective federal funds rate is the realised market
+              rate, not the FOMC target range.</p>
+          </dd>
+        </div>
+
+        <!-- 6. ARCHITECTURE -->
+        <div class="def-row">
+          <dt>Architecture</dt>
+          <dd>
+            <ol class="stages">
+              <li class="stage stage--terminal">
+                <span class="stage__num">01</span>
+                <div><p class="stage__name">Official Data Sources</p>
+                <p class="stage__desc">Statistical agencies, cited so every figure is traceable to its publisher.</p></div>
+              </li>
+              <li class="stage">
+                <span class="stage__num">02</span>
+                <div><p class="stage__name">Collection</p>
+                <p class="stage__desc">Retrieval of raw values with enough history for every comparison. Live metadata is checked against the specification.</p></div>
+              </li>
+              <li class="stage">
+                <span class="stage__num">03</span>
+                <div><p class="stage__name">Normalisation</p>
+                <p class="stage__desc">String values parsed, missing-value sentinels recorded rather than coerced, chronological order enforced.</p></div>
+              </li>
+              <li class="stage">
+                <span class="stage__num">04</span>
+                <div><p class="stage__name">Economic Calculations</p>
+                <p class="stage__desc">The conventional statistic for each series, from tested pure functions. Periods selected by calendar date.</p></div>
+              </li>
+              <li class="stage">
+                <span class="stage__num">05</span>
+                <div><p class="stage__name">Validation &amp; Cross-Checks</p>
+                <p class="stage__desc">Metadata, history, freshness and consistency, plus comparison against the provider's own computation and the originating agencies.</p></div>
+              </li>
+              <li class="stage">
+                <span class="stage__num">06</span>
+                <div><p class="stage__name">Validated Brief Input</p>
+                <p class="stage__desc">A frozen file of validated figures with units, periods, provenance and warnings. The only economic data the model may read.</p></div>
+              </li>
+              <li class="stage">
+                <span class="stage__num">07</span>
+                <div><p class="stage__name">AI-Assisted Synthesis</p>
+                <p class="stage__desc">A language model drafts prose from those figures under a fixed schema. It calculates nothing.</p></div>
+              </li>
+              <li class="stage">
+                <span class="stage__num">08</span>
+                <div><p class="stage__name">Deterministic Output Validation</p>
+                <p class="stage__desc">Every number, unit, period and direction claim is checked back against the input. A failing draft is rejected, never corrected.</p></div>
+              </li>
+              <li class="stage stage--terminal">
+                <span class="stage__num">09</span>
+                <div><p class="stage__name">Human Review</p>
+                <p class="stage__desc">A person reads, corrects and approves. Required, and not automated.</p></div>
+              </li>
+            </ol>
+            <p class="diagram-caption">Stages 01&ndash;06 and 08 are deterministic &middot; only stage 07 involves a model</p>
+          </dd>
+        </div>
+
+        <!-- 7. VALIDATION METHODOLOGY -->
+        <div class="def-row">
+          <dt>Validation Methodology</dt>
+          <dd>
+            <p class="prose mb-3">
+              Validation runs on the data and again on the prose. Both refuse rather than repair: if the
+              data fails, no brief input exists; if the prose fails, no brief is rendered.
+            </p>
+            <dl class="indicators indicators--stacked">
+              <div><dt>On the data</dt>
+              <dd>Source metadata must match the declared frequency and seasonal-adjustment basis. Required calendar periods must exist. Values must be finite, dates unique and ordered.</dd></div>
+              <div><dt>Same-source cross-check</dt>
+              <dd>Our figure against the provider's own transformation of the same series, to 0.001 percentage points. A wider gap blocks publication.</dd></div>
+              <div><dt>Independent agency spot-check</dt>
+              <dd>CPI matched the BLS index exactly. Real GDP growth agreed with BEA to within its one-decimal publication rounding.</dd></div>
+              <div><dt>On the prose</dt>
+              <dd>Every number must match a supplied display value, periods must use the readable label, percent and percentage points may not be interchanged, warnings must be carried through, and forecasting, causal claims, market commentary and advice are rejected.</dd></div>
+            </dl>
+          </dd>
+        </div>
+
+        <!-- The bug story -->
+        <div class="def-row">
+          <dt>What Validation Caught</dt>
+          <dd>
+            <p class="prose">
+              CPI inflation originally selected its comparison period by <span class="emphasis">array
+              position</span> &mdash; twelve places back in the list &mdash; which is correct only if the
+              series has no gaps. The real data is missing <span class="emphasis">October 2025</span>, so
+              once that observation was filtered out, position twelve landed on July: thirteen months
+              earlier, not twelve.
+            </p>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <caption>Nothing was malformed. No value was missing where the code looked. The arithmetic was correct; only the operands were wrong.</caption>
+                <thead><tr><th scope="col">Period selection</th><th scope="col">Compared</th><th scope="col">Result</th></tr></thead>
+                <tbody>
+                  <tr><td class="name">By array position</td><td class="num">Aug 2026 vs Jul 2025</td><td class="num">3.69%</td></tr>
+                  <tr><td class="name">By calendar date</td><td class="num">Aug 2026 vs Aug 2025</td><td class="num">3.40%</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="prose mt-4">
+              The figure was wrong by a third of a percentage point and
+              <span class="emphasis">entirely plausible</span>. No exception was raised and the tests
+              passed, because the synthetic fixtures had no gaps. The FRED cross-check caught it.
+            </p>
+            <p class="prose">
+              Periods are now resolved by calendar date, and a missing required period blocks
+              publication rather than falling back to a neighbouring observation. The lesson
+              generalises: self-consistent code can be confidently wrong, and only an independent
+              computation revealed it.
             </p>
           </dd>
         </div>
 
+        <!-- 8. WHAT THE AI ACTUALLY DOES -->
+        <div class="def-row">
+          <dt>What the AI Actually Does</dt>
+          <dd>
+            <p class="prose mb-3">
+              One constrained request from the frozen input file, returning structured JSON.
+            </p>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <caption>The model receives figures already rounded, with units, periods and provenance attached.</caption>
+                <thead><tr><th scope="col">It may</th><th scope="col">It may not</th></tr></thead>
+                <tbody>
+                  <tr><td>Describe a figure using the supplied display string</td><td>Compute, adjust, infer or recall any statistic</td></tr>
+                  <tr><td>State the comparison basis and source series</td><td>Retrieve data, or choose an observation period</td></tr>
+                  <tr><td>Explain a data-quality warning</td><td>Suppress a warning, or invent one</td></tr>
+                  <tr><td>Write within five fixed sections</td><td>Forecast, or give investment advice</td></tr>
+                  <tr><td>&nbsp;</td><td>Explain <em>why</em> anything happened</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="prose mt-4">
+              Its contribution is wording and readability. That is real work, but it is not analysis,
+              and the project does not present it as analysis.
+            </p>
+          </dd>
+        </div>
 
-        <!-- Example validated output -->
+        <!-- 9. EXAMPLE VALIDATED OUTPUT -->
         <div class="def-row">
           <dt>Example Validated Output</dt>
           <dd>
             <p class="prose mb-3">
-              <span class="emphasis">Example validated output.</span> One brief, generated once from
-              the validated dataset above and committed as a static file. The page you are reading
-              makes no request to any AI provider, and neither does opening the brief &mdash; visiting
-              this portfolio never triggers a paid model call.
-            </p>
-
+              One brief, generated once from the validated dataset and committed as a static file.
+              Opening it makes no request to any provider.</p>
             <div class="data-table-wrap">
               <table class="data-table">
-                <caption>
-                  Generated 27 September 2026 from run <code>phase2-20260927T000634Z-b7ea4089</code>.
-                  Data periods differ by design and are not normalised.
-                </caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Property</th>
-                    <th scope="col">Value</th>
-                  </tr>
-                </thead>
+                <caption>Data periods differ by design and are not normalised to a common date.</caption>
                 <tbody>
-                  <tr><td class="name">Review status</td><td>DRAFT &mdash; HUMAN REVIEW REQUIRED</td></tr>
+                  <tr><td class="name">Status</td><td>DRAFT &mdash; HUMAN REVIEW REQUIRED</td></tr>
                   <tr><td class="name">Generated</td><td class="num">27 September 2026</td></tr>
-                  <tr><td class="name">Data periods</td><td class="num">August 2026 (CPI, unemployment, retail) &middot; 2026 Q2 (GDP) &middot; 24 September 2026 (effective rate)</td></tr>
-                  <tr><td class="name">Source</td><td>Federal Reserve Bank of St. Louis (FRED)</td></tr>
-                  <tr><td class="name">Language model</td><td class="num">gemini-3.8-flash</td></tr>
-                  <tr><td class="name">Validation</td><td>Accepted &mdash; 0 hard failures</td></tr>
-                  <tr><td class="name">Factual audit</td><td>19 sentences, 0 unsupported claims</td></tr>
+                  <tr><td class="name">Model</td><td class="num">Gemini 3.8 Flash</td></tr>
+                  <tr><td class="name">Validation</td><td class="num">Accepted</td></tr>
+                  <tr><td class="name">Factual audit</td><td class="num">19/19 supported &middot; 0 unsupported claims</td></tr>
+                  <tr><td class="name">Data sources</td><td class="num">FRED &middot; BLS &middot; BEA</td></tr>
                 </tbody>
               </table>
             </div>
-
-            <p class="prose mt-4">
-              The model received only the validated figures, already rounded for presentation, with
-              their units, periods and provenance attached. It performed no calculation, chose no
-              period and never saw the raw source data. Its output was then checked programmatically
-              against that input: every number, unit, period and direction-of-change claim had to
-              correspond to a supplied value, and both data-quality warnings had to be carried
-              through. A draft that failed any of those checks would have been rejected rather than
-              corrected, and no brief would exist.
-            </p>
-
-            <p class="mt-3">
+            <p class="mt-4">
               <a class="link-rule" href="data/reference/phase2-first-real-run/derived/brief.html">
                 Read the example brief <span aria-hidden="true">&#8594;</span>
               </a>
             </p>
             <p class="small-print mt-3">
-              The brief remains a draft pending human review. It is descriptive only: no forecast, no
-              interpretation of causes, no investment advice. Verify every figure against the primary
-              release before any use.
+              Descriptive only: no forecast, no interpretation of causes, no investment advice. Verify
+              every figure against the primary release before any use.
             </p>
           </dd>
         </div>
 
-        <!-- Technology -->
-        <div class="def-row">
-          <dt>Technology</dt>
-          <dd>
-            <p class="prose mb-2">
-              Intended stack. The pipeline will be code-based and version-controlled so that each figure
-              is reproducible from its source.
-            </p>
-            <ul class="chips">
-              <li class="chip">Python</li>
-              <li class="chip">Static site</li>
-              <li class="chip">Official statistical APIs</li>
-              <li class="chip">Automated tests</li>
-              <li class="chip chip--legacy">n8n &mdash; retired prototype</li>
-            </ul>
-            <p class="small-print mt-3">
-              The dashed entry marks the earlier no-code prototype. It is retained for reference only and
-              is not part of the intended architecture.
-            </p>
-          </dd>
-        </div>
-
-        <!-- Limitations -->
+        <!-- 10. LIMITATIONS -->
         <div class="def-row">
           <dt>Limitations</dt>
           <dd>
             <div class="note">
-              <p>
-                This project is an experimental proof of concept. AI-generated text may contain errors and
-                must not replace professional judgement or primary-source verification.
-              </p>
-              <p>
-                The economic transformations described above are documented as a design rule but are not
-                yet implemented. Until they are, no output from this project should be treated as a
-                reliable reading of any indicator.
-              </p>
-              <p>
-                Nothing here constitutes investment advice.
-              </p>
+              <p>United States only, five indicators. Not a macroeconomic picture.</p>
+              <p>Latest-vintage data. A past figure cannot be reproduced once the source revises it,
+              and real GDP is revised substantially.</p>
+              <p>One validated live synthesis so far. The pipeline runs end to end; that says little
+              yet about behaviour across datasets.</p>
+              <p>No forecasting and no investment recommendations, by design rather than by omission.</p>
+              <p>Human review is required. Every generated brief remains a draft until a person
+              approves it.</p>
+              <p>This is a research exercise, not a production research system. There is no
+              scheduling, monitoring or operational history.</p>
             </div>
           </dd>
         </div>
 
-        <!-- Documentation -->
+        <!-- 11. WHAT I LEARNED -->
         <div class="def-row">
-          <dt>Documentation</dt>
+          <dt>What I Learned</dt>
+          <dd>
+            <dl class="indicators indicators--stacked">
+              <div>
+                <dt>Levels are not rates</dt>
+                <dd>Most published series are indices or levels. Choosing the transformation is an economic decision made before any code, and getting it wrong yields a number that resembles the one everyone quotes but isn't it.</dd>
+              </div>
+              <div>
+                <dt>Official data has gaps</dt>
+                <dd>October 2025 is absent from two of the five series. Real data breaks assumptions that clean fixtures cannot expose.</dd>
+              </div>
+              <div>
+                <dt>Plausible output can still be wrong</dt>
+                <dd>The mis-selected CPI figure raised no error and read perfectly well. Plausibility is what lets an error survive review.</dd>
+              </div>
+              <div>
+                <dt>External cross-checks earn their cost</dt>
+                <dd>Internal consistency proved almost nothing &mdash; the code agreed with itself while being wrong. An independent computation of the same statistic found the defect.</dd>
+              </div>
+              <div>
+                <dt>AI is most useful after validation, not before</dt>
+                <dd>Placing the model last made it useful and structurally unable to introduce a factual error. Earlier, every downstream check becomes a matter of trust.</dd>
+              </div>
+              <div>
+                <dt>Provenance and period semantics are research infrastructure</dt>
+                <dd>Reproducibility needs the retrieval date, the source vintage and the exact period behind every figure. &ldquo;Latest available observation&rdquo; and &ldquo;latest economic period&rdquo; are different things, and conflating them misleads quietly.</dd>
+              </div>
+            </dl>
+          </dd>
+        </div>
+
+        <!-- TECHNOLOGY -->
+        <div class="def-row">
+          <dt>Technology</dt>
           <dd>
             <ul class="chips">
-              <li class="chip"><a href="README.md">Project README</a></li>
-              <li class="chip"><a href="../../legacy/n8n/README.md">Legacy prototype notes</a></li>
+              <li class="chip">Python standard library</li>
+              <li class="chip">FRED API</li>
+              <li class="chip">BLS &amp; BEA cross-checks</li>
+              <li class="chip">Google Gemini API</li>
+              <li class="chip">HTML / CSS / JavaScript</li>
+              <li class="chip">Git</li>
+            </ul>
+            <p class="small-print mt-3">
+              No frameworks, no database, no third-party Python packages: the pipeline and its 431 tests
+              run on the standard library alone. The technology supports an economic research workflow,
+              not the reverse.
+            </p>
+          </dd>
+        </div>
+
+        <!-- REPOSITORY -->
+        <div class="def-row">
+          <dt>Repository</dt>
+          <dd>
+            <ul class="chips">
+              <li class="chip"><a href="README.md">Full methodology</a></li>
+              <li class="chip"><a href="src/">Pipeline source</a></li>
+              <li class="chip"><a href="tests/">Test suite</a></li>
+              <li class="chip"><a href="data/reference/phase2-first-real-run/">Validated run artefacts</a></li>
+              <li class="chip"><a href="../../legacy/n8n/README.md">Retired prototype notes</a></li>
             </ul>
           </dd>
         </div>

@@ -22,11 +22,23 @@ The question each project addresses is the same:
 
 | # | Project | Domain | Status |
 | --- | --- | --- | --- |
-| 01 | [Macro Intelligence Brief](projects/01-macro-intelligence-brief/) | Macroeconomic monitoring | **In development** |
-| 02 | [Regulatory Intelligence Monitor](projects/02-regulatory-intelligence-monitor/) | Financial regulation and supervision | Planned |
+| 01 | [Macro Intelligence Brief](projects/01-macro-intelligence-brief/) | Macroeconomic monitoring | **Completed** |
+| 02 | [Regulatory Intelligence Monitor](projects/02-regulatory-intelligence-monitor/) | Financial regulation and supervision | Next |
 | 03 | [Geopolitical Risk Monitor](projects/03-geopolitical-risk-monitor/) | Geopolitics and economic transmission | Planned |
 
 ## Philosophy
+
+The portfolio rests on one combination:
+
+> **domain knowledge + deterministic analysis + AI-assisted information workflows**
+
+Domain knowledge decides *which* statistic answers the question. Deterministic code computes and
+validates it. AI is used afterwards, for the part it is actually good at — turning validated figures
+into readable prose.
+
+**AI is not the source of economic facts.** This is the load-bearing principle. Data comes from
+official statistical sources, every statistic is computed and validated in tested code, and only then
+does a language model see finished figures. It never calculates, retrieves, or selects a period.
 
 **Automate collection, not judgement.** Automation belongs in the retrieval, normalisation and
 computation layers. The economic reasoning and the final interpretation stay with a person.
@@ -96,10 +108,19 @@ python3 -m http.server 8000
 
 ## Current status
 
-Phase 0 — foundation. The portfolio structure, shared visual system, landing page and Project 01
-documentation are in place. **No data pipeline has been implemented yet**, no external API is called,
-and no language model is integrated. Project 01's detail page describes an intended architecture, not
-a running system.
+**Project 01 — Macro Intelligence Brief: complete.** The pipeline retrieves five United States series
+from official sources, computes and validates the conventional transformations deterministically,
+cross-checks them against the provider's own computation and against the originating agencies, and
+uses a language model as a constrained final step. It has been run end to end, and the validated
+example brief is committed as a static file. 431 tests, standard library only.
+
+The clearest result was a methodological one. A figure selected by array position rather than calendar
+date produced a plausible, wrong inflation rate that raised no error and passed every test, because the
+synthetic fixtures had no gaps. An independent cross-check found it. That finding shaped the rest of
+the project and is documented in the
+[case study](projects/01-macro-intelligence-brief/).
+
+**Project 02 — Regulatory Intelligence Monitor: next.** Not started.
 
 ## Disclaimer
 
