@@ -409,9 +409,12 @@ figures.
 | [`src/calculations.py`](src/calculations.py) | Pure functions: `percentage_change`, `percentage_point_change`, `yoy_change`, `qoq_annualized_change`, `require_number` |
 | [`src/indicators.py`](src/indicators.py) | `IndicatorSpec` for each of the five indicators, plus their transformations |
 | [`src/models.py`](src/models.py) | `RawObservation`, `MacroObservation`, `Frequency`, `Unit`, `Direction`, `parse_series` |
-| [`src/errors.py`](src/errors.py) | `MissingValueError`, `NonNumericValueError`, `ZeroDenominatorError`, `InsufficientHistoryError` |
+| [`src/periods.py`](src/periods.py) | Calendar period arithmetic and exact lookup |
+| [`src/provenance.py`](src/provenance.py) | `RunProvenance`, `SeriesProvenance` |
+| [`src/brief_input.py`](src/brief_input.py) | The brief input contract and the publication invariant |
+| [`src/errors.py`](src/errors.py) | `MissingValueError`, `NonNumericValueError`, `ZeroDenominatorError`, `InsufficientHistoryError`, `MissingRequiredPeriodError` |
 | [`data/samples/`](data/samples/) | Synthetic fixtures, one per source series — **not real data** |
-| [`tests/`](tests/) | 119 tests covering all five transformations, the source-series choices and their failure modes |
+| [`tests/`](tests/) | 275 tests: transformations, collection boundary, period semantics, the brief input contract |
 
 Standard library only; no third-party dependencies. The `src` package performs no I/O whatsoever.
 
@@ -681,6 +684,166 @@ is offered anywhere in this project.
 
 ---
 
+## Phase 2.1 — hardening and the brief input contract
+
+A deterministic hardening pass, run **before** any language model is allowed near the data. No LLM, no
+scheduling, no email, no new indicators.
+
+The reason for the pass: Phase 2 produced a figure that was wrong by 0.30pp, looked entirely plausible,
+raised no exception, and passed 119 tests. It was caught only by comparison against an independent
+computation. Everything below exists because of that.
+
+### Period-selection semantics, by series
+
+Each indicator now **declares** how it selects the observation it compares against, as a field on its
+`IndicatorSpec` rather than as an implicit property of the code.
+
+| Series | Frequency | Selection | What "previous" means |
+| --- | --- | --- | --- |
+| `CPIAUCNS` | monthly | **calendar** | `t−12` months for the current YoY; `t−1` and `t−13` for the prior YoY |
+| `UNRATE` | monthly | **calendar** | the immediately preceding **calendar month** |
+| `RSAFS` | monthly | **calendar** | the preceding and second-preceding **calendar months** |
+| `GDPC1` | quarterly | **calendar** | the preceding and second-preceding **calendar quarters** |
+| `DFF` | daily | **previous available** | whichever valid observation immediately precedes the latest — deliberate |
+
+If a required calendar period is absent, the transformation raises `MissingRequiredPeriodError`, the gate
+records a hard failure, and `publication_ready` becomes false for the run. **No neighbouring observation
+is ever substituted.**
+
+`DFF` is the single intentional exception. Its specification defines "previous" as the preceding
+*available* observation, so a calendar gap must not cause a failure there. (Phase 2 established
+empirically that `DFF` in fact publishes every calendar day — but the rule is kept as stated, because it
+is correct either way and does not depend on that continuing.)
+
+### Why positional indexing is forbidden for monthly and quarterly transformations
+
+A monthly or quarterly series is published on a calendar grid, so "twelve months earlier" has one exact
+meaning. Counting back a fixed number of **positions** in a list gives the same answer only when the
+series has no gaps — and real series have gaps. October 2025 is absent from both `CPIAUCNS` and `UNRATE`.
+
+Across that gap, position −13 was **2025-07**, thirteen months before 2026-08:
+
+| | Periods compared | Result |
+| --- | --- | --- |
+| Positional | 2026-08 vs 2025-07 | 3.6936% |
+| Calendar | 2026-08 vs 2025-08 | **3.3965%** |
+
+Nothing in the data was malformed. No value was missing where the code looked. The arithmetic was
+correct. Only the operands were wrong, and the result was a confident, publishable, incorrect number.
+
+This is enforced structurally as well as behaviourally: `validate_period_semantics` records a **hard
+failure** if any monthly or quarterly indicator declares positional selection, so a future indicator
+cannot quietly reintroduce the defect.
+
+### Cross-check tolerance distinction
+
+One universal tolerance would be wrong, because the two comparisons answer different questions.
+
+| | (A) Same-source computational | (B) Independent published-official |
+| --- | --- | --- |
+| **Compares** | our calculation vs the provider's own transformation of the same series | our unrounded figure vs an agency's already-rounded published figure |
+| **Examples** | our CPI YoY vs FRED `pc1`; our annualised growth vs FRED `pca` | our 1.4837% vs BEA's published 1.5% |
+| **Tolerance** | **0.001 pp** | **0.05 pp** |
+| **On breach** | **HARD FAILURE** — publication blocked | recorded in the spot-check artefact; not an automated gate |
+| **Rationale** | both sides compute the same statistic from the same observations, so they should agree to the provider's output rounding and no further | BEA publishes to one decimal place, so 1.5% represents anything in [1.45, 1.55); 0.05 is exactly half of one decimal place, the maximum a correct figure can differ from its own published rounding |
+
+Observed differences on real data are ~2×10⁻⁶ pp, roughly five hundred times inside (A). The Phase 2
+defect was 0.297 pp, so **(A) would now block publication outright** rather than emitting a warning.
+
+(B) is deliberately not an automated gate, because that comparison also carries vintage risk: the agency
+figure may reflect an earlier vintage than the level series we read. A difference there needs a human to
+decide whether it is rounding, a revision, or a genuine method error.
+
+### Provenance and vintage policy
+
+Provenance lives in a companion object ([`src/provenance.py`](src/provenance.py)) rather than as extra
+fields on `MacroObservation`. That model describes a *statistic*; provenance describes the *retrieval*
+behind it. Merging them would make the pure calculation engine depend on how data arrived.
+
+Every figure is traceable to: `indicator_id` · `period` · `source_series` · `source_name` ·
+`retrieved_at` · `source_last_updated` · `run_id` · the raw snapshot directory and the specific files
+within it · the git commit at run time.
+
+> **The latest available observation is not the latest economic period.**
+
+These are different things, and conflating them is how a brief ends up implying data it does not have. A
+brief generated in late September 2026 legitimately contains **August** CPI, **August** unemployment, a
+**24 September** effective rate and **second-quarter** GDP, because that is what has been published. The
+periods differ by design and are **never normalised into a single "current" period**. The contract states
+this explicitly in a `period_note` field, so a prose layer cannot claim it was not told.
+
+### Brief input contract
+
+[`src/brief_input.py`](src/brief_input.py) produces `derived/brief_input.json`, which is the **only**
+structured economic input a future synthesis layer may receive. It is assembled from validated
+`MacroObservation` records, the validation report, and the provenance object — **never from raw source
+payloads**. Anything a prose layer might want must therefore have survived the gate first.
+
+Per indicator: `indicator_id`, `display_name`, `economic_category`, `period`, `frequency`, `value`,
+`unit`, `previous_value`, `change`, `change_unit`, `direction`, `comparison_basis`, `period_selection`,
+`transformation`, `source_series`, `source_name`, `source_last_updated`, `retrieved_at`,
+`validation_status`, `warning_codes`, `known_revision_risk`.
+
+Values are carried at **full float precision**. Rounding remains a presentation concern.
+
+Excluded by construction: credentials, any URL, raw payload fields (titles, realtime windows,
+popularity, notes), AI prose, forecasts, market interpretation.
+
+The file also carries a `usage_contract` stating what a consumer may and may not do — most importantly
+that it may not compute, adjust, infer or recall any statistic, may not present figures from different
+periods as one period, and may not introduce a figure that is not in the file.
+
+### Publication invariant
+
+`build_brief_input` **raises** `PublicationBlockedError` and writes nothing unless
+`publication_ready == true`. It also refuses a partial indicator set, which would invite a brief that
+silently omits an indicator.
+
+The point is narrow and deliberate: a language model must never have the opportunity to write fluent
+prose about invalid figures. Fluency is exactly what makes a wrong figure dangerous — the Phase 2 defect
+would have been written up perfectly persuasively.
+
+### Warning propagation rule
+
+Warnings are carried into the contract in structured form, with their code, series, message and detail
+intact, and the affected indicator additionally lists its own `warning_codes`. No warnings gives
+`warnings: []`.
+
+The future prose layer **may explain** a warning. It **may not suppress** one, and it is **never asked to
+invent or infer** a data-quality caveat of its own — data quality is determined by the validator, not by
+a model's impression of the numbers.
+
+### Offline rebuild and the reproducibility guard
+
+[`src/build_brief_input.py`](src/build_brief_input.py) regenerates the contract from a stored run with
+**no network access**:
+
+```sh
+python3 -m src.build_brief_input --run-dir data/reference/phase2-first-real-run
+```
+
+It re-runs normalisation, validation and the transformations from the preserved raw payloads, then
+compares every recomputed figure against the stored snapshot at full precision. A mismatch beyond 1e-12
+aborts the rebuild: a stored artefact that cannot be reproduced from its own raw payloads would not be
+what it claims to be. On the Phase 2 run, all five figures reproduce exactly.
+
+### The lesson, stated plainly
+
+**Synthetic correctness is insufficient.** The synthetic fixtures had no missing periods, so they could
+not have exposed this defect, and no amount of internal-consistency checking would have either — the code
+was perfectly consistent with itself while being wrong. What caught it was comparison against an
+independent computation of the same concept.
+
+Real data contains missing periods, revisions, vintage mismatches and publication rounding. Each of those
+had to be met before the pipeline was trustworthy, and each was met only by actually running against real
+data.
+
+**This is not production-grade infrastructure.** It is a research pipeline with one validated run, no
+scheduling, no monitoring, no alerting and no operational history. What it does have is a gate that
+refuses to publish what it cannot verify.
+
+---
+
 ## Legacy prototype
 
 The first version of this project was built on [n8n](https://n8n.io), a no-code automation platform.
@@ -725,6 +888,15 @@ A sanitised copy is preserved at [`../../legacy/n8n/`](../../legacy/n8n/) as a h
   path for those three beyond the metadata comparison.
 - **Coverage is deliberately narrow:** five United States series. Not a macroeconomic picture. No
   euro-area data.
+- **The publication invariant is enforced in code, not by process.** `build_brief_input` refuses to run
+  on a failed gate, but nothing prevents a future author from reading `macro_snapshot.json` directly and
+  bypassing the contract. The invariant holds only as long as the synthesis layer uses the contract.
+- **The 0.001pp computational tolerance is reasoned from one run.** It is five hundred times looser than
+  the observed differences and five hundred times tighter than the defect it would have caught, which is
+  a comfortable margin — but it has been exercised against exactly two real comparisons.
+- **Only two of five indicators have a computational cross-check.** `UNRATE`, `DFF` and `RSAFS` are
+  reported as published, so there is no derived statistic to verify. Their retrieval path is checked only
+  by metadata comparison and the period-semantics invariant.
 - **Not investment advice.** No interpretation of any figure is offered.
 
 ## Development phases
@@ -741,10 +913,15 @@ functions and tested against synthetic fixtures.
 gate, raw snapshot preservation, FRED cross-checks, BLS/BEA spot checks, and one validated real-data run.
 A methodological defect in period selection was found and fixed. 207 tests, none touching the network.
 
-**Phase 3 — synthesis and review.** Not started. AI-assisted drafting from validated figures, plus the
+**Phase 2.1 — hardening and the brief input contract.** Complete. Period-selection semantics declared
+per series and enforced structurally; cross-check tolerances split into computational (0.001pp, hard
+failure) and published-official (0.05pp, recorded); provenance and vintage policy defined; the brief input
+contract frozen behind a publication invariant. 275 tests, none touching the network.
+
+**Phase 3 — synthesis and review.** Not started. AI-assisted drafting from `brief_input.json`, plus the
 human review step. Deliberately last: there was no point drafting prose until the figures underneath it
 were correct, and Phase 2 demonstrated exactly why — a confidently wrong figure would have been written
 up in fluent prose.
 
-Before Phase 3, two things are worth doing: re-examining the remaining transformations for assumptions
-that real data could break, and deciding how a brief cites the vintage of every figure it quotes.
+The two things worth doing before Phase 3 have now been done: the remaining transformations were audited
+for assumptions real data could break, and the vintage question is answered by the provenance contract.

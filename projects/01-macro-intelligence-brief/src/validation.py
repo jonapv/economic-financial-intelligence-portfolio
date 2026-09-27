@@ -25,7 +25,7 @@ from datetime import date, datetime
 from typing import Any, Dict, List, Mapping, Optional
 
 from .indicators import IndicatorSpec
-from .models import Frequency, MacroObservation
+from .models import Frequency, MacroObservation, PeriodSelection
 from .normalisation import NormalisedSeries, observation_gaps
 
 # ---------------------------------------------------------------------------
@@ -60,6 +60,42 @@ GAP_WARNING_DAYS: Dict[Frequency, int] = {
     Frequency.MONTHLY: 40,
     Frequency.QUARTERLY: 100,
 }
+
+# ---------------------------------------------------------------------------
+# Cross-check tolerances — two distinct categories, never one universal value
+# ---------------------------------------------------------------------------
+#: (A) SAME-SOURCE COMPUTATIONAL CROSS-CHECK, in percentage points.
+#:
+#: Our calculation versus the provider's own server-side transformation of the
+#: SAME underlying series — our CPI YoY against FRED ``pc1``, our annualised
+#: quarterly growth against FRED ``pca``. Both sides are computing the same
+#: statistic from the same observations, so they should agree to within the
+#: provider's output rounding and nothing more. Observed differences on real
+#: data are ~2e-6 pp, roughly five hundred times inside this bound.
+#:
+#: A disagreement beyond this is a HARD FAILURE, not a warning: if two
+#: computations of the same statistic from the same data diverge materially,
+#: one of them is wrong and nothing should be published. This is the check that
+#: caught the Phase 2 period-selection defect, where the gap was 0.297 pp.
+FRED_COMPUTATIONAL_TOLERANCE_PP = 0.001
+
+#: (B) INDEPENDENT PUBLISHED-OFFICIAL SPOT CHECK, in percentage points.
+#:
+#: Our unrounded calculation versus a figure an agency PUBLISHES already
+#: rounded — BEA publishes real GDP growth to one decimal place, so its 1.5%
+#: represents anything in [1.45, 1.55). A tolerance below half of the
+#: publication increment would flag pure rounding as disagreement.
+#:
+#: 0.05 pp is half of one decimal place, which is exactly the maximum a correct
+#: figure can differ from its own published rounding. It is deliberately looser
+#: than (A) because the two checks answer different questions: (A) asks whether
+#: our arithmetic matches another computation, (B) asks whether our method
+#: matches the agency's published convention.
+#:
+#: This category is used only in the recorded spot-check artefact, never as an
+#: automated gate, because the comparison also carries vintage risk: the agency
+#: figure may reflect an earlier vintage than the level series we read.
+OFFICIAL_PUBLICATION_TOLERANCE_PP = 0.05
 
 #: FRED's ``frequency_short`` codes, mapped to our enum.
 FRED_FREQUENCY_CODES: Dict[str, Frequency] = {
@@ -160,6 +196,46 @@ class ValidationReport:
             "series_results": self.series_results,
             "cross_checks": self.cross_checks,
         }
+
+
+# ---------------------------------------------------------------------------
+# Period-selection invariant
+# ---------------------------------------------------------------------------
+
+#: Frequencies for which positional selection is forbidden. A monthly or
+#: quarterly series is published on a calendar grid, so "the previous period"
+#: has an exact meaning and a gap must not be bridged by whatever observation
+#: happens to sit next in the list.
+CALENDAR_REQUIRED_FREQUENCIES = (Frequency.MONTHLY, Frequency.QUARTERLY)
+
+
+def validate_period_semantics(spec: IndicatorSpec) -> List[Finding]:
+    """Assert that each indicator's period-selection semantics are permissible.
+
+    Guards the class of defect found in Phase 2 at the specification level, so
+    that a future indicator cannot quietly reintroduce positional selection for
+    a calendar-grid series.
+    """
+    sid = spec.source_series
+    if (spec.frequency in CALENDAR_REQUIRED_FREQUENCIES
+            and spec.period_selection is not PeriodSelection.CALENDAR):
+        return [Finding(
+            code="semantics.positional_selection_forbidden", severity="hard_failure",
+            series_id=sid,
+            message=(f"{sid}: a {spec.frequency.value} series must use calendar "
+                     f"period selection, but the specification declares "
+                     f"{spec.period_selection.value}. Positional selection "
+                     f"silently compares the wrong periods across a gap."),
+            detail={"frequency": spec.frequency.value,
+                    "period_selection": spec.period_selection.value},
+        )]
+    return [Finding(
+        code="semantics.period_selection", severity="pass", series_id=sid,
+        message=(f"{sid}: {spec.frequency.value} series using "
+                 f"{spec.period_selection.value} selection, as specified"),
+        detail={"frequency": spec.frequency.value,
+                "period_selection": spec.period_selection.value},
+    )]
 
 
 # ---------------------------------------------------------------------------

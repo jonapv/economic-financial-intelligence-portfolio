@@ -6,7 +6,7 @@
   "counts": {
     "hard_failures": 0,
     "warnings": 2,
-    "checks_passed": 42
+    "checks_passed": 47
   },
   "hard_failures": [],
   "warnings": [
@@ -44,6 +44,16 @@
     }
   ],
   "checks": [
+    {
+      "code": "semantics.period_selection",
+      "severity": "pass",
+      "message": "CPIAUCNS: monthly series using calendar selection, as specified",
+      "series_id": "CPIAUCNS",
+      "detail": {
+        "frequency": "monthly",
+        "period_selection": "calendar"
+      }
+    },
     {
       "code": "metadata.series_id",
       "severity": "pass",
@@ -125,6 +135,16 @@
       "severity": "pass",
       "message": "CPIAUCNS: derived result finite and internally consistent (us_cpi_inflation_yoy)",
       "series_id": "CPIAUCNS"
+    },
+    {
+      "code": "semantics.period_selection",
+      "severity": "pass",
+      "message": "UNRATE: monthly series using calendar selection, as specified",
+      "series_id": "UNRATE",
+      "detail": {
+        "frequency": "monthly",
+        "period_selection": "calendar"
+      }
     },
     {
       "code": "metadata.series_id",
@@ -209,6 +229,16 @@
       "series_id": "UNRATE"
     },
     {
+      "code": "semantics.period_selection",
+      "severity": "pass",
+      "message": "DFF: daily series using previous_available selection, as specified",
+      "series_id": "DFF",
+      "detail": {
+        "frequency": "daily",
+        "period_selection": "previous_available"
+      }
+    },
+    {
       "code": "metadata.series_id",
       "severity": "pass",
       "message": "series id confirmed as DFF",
@@ -276,6 +306,16 @@
       "series_id": "DFF"
     },
     {
+      "code": "semantics.period_selection",
+      "severity": "pass",
+      "message": "GDPC1: quarterly series using calendar selection, as specified",
+      "series_id": "GDPC1",
+      "detail": {
+        "frequency": "quarterly",
+        "period_selection": "calendar"
+      }
+    },
+    {
       "code": "metadata.series_id",
       "severity": "pass",
       "message": "series id confirmed as GDPC1",
@@ -340,6 +380,16 @@
       "severity": "pass",
       "message": "GDPC1: derived result finite and internally consistent (us_real_gdp_growth_qoq_ann)",
       "series_id": "GDPC1"
+    },
+    {
+      "code": "semantics.period_selection",
+      "severity": "pass",
+      "message": "RSAFS: monthly series using calendar selection, as specified",
+      "series_id": "RSAFS",
+      "detail": {
+        "frequency": "monthly",
+        "period_selection": "calendar"
+      }
     },
     {
       "code": "metadata.series_id",
@@ -410,23 +460,25 @@
     {
       "code": "crosscheck.agrees",
       "severity": "pass",
-      "message": "CPIAUCNS 2026-08-01: ours 3.396548 vs FRED pc1 3.396550, difference -0.000002 (tolerance 0.05)",
+      "message": "CPIAUCNS 2026-08-01: ours 3.396547892 vs source pc1 3.396550000, difference -2.108e-06 (tolerance 0.001)",
       "series_id": "CPIAUCNS",
       "detail": {
         "our_value": 3.3965478924364856,
-        "fred_value": 3.39655,
-        "difference": -2.1075635143752436e-06
+        "source_value": 3.39655,
+        "difference": -2.1075635143752436e-06,
+        "units": "pc1"
       }
     },
     {
       "code": "crosscheck.agrees",
       "severity": "pass",
-      "message": "GDPC1 2026-04-01: ours 1.483659 vs FRED pca 1.483660, difference -0.000001 (tolerance 0.05)",
+      "message": "GDPC1 2026-04-01: ours 1.483658788 vs source pca 1.483660000, difference -1.212e-06 (tolerance 0.001)",
       "series_id": "GDPC1",
       "detail": {
         "our_value": 1.4836587880023622,
-        "fred_value": 1.48366,
-        "difference": -1.211997637806661e-06
+        "source_value": 1.48366,
+        "difference": -1.211997637806661e-06,
+        "units": "pca"
       }
     }
   ],
@@ -484,29 +536,27 @@
   "cross_checks": [
     {
       "series_id": "CPIAUCNS",
-      "our_indicator_id": "us_cpi_inflation_yoy",
       "fred_transformation": "pc1",
-      "fred_transformation_meaning": "percent change from year ago",
-      "role": "secondary cross-check only; never the primary calculation",
       "period": "2026-08-01",
       "our_value": 3.3965478924364856,
       "fred_value": 3.39655,
       "difference": -2.1075635143752436e-06,
-      "tolerance": 0.05,
-      "status": "agrees"
+      "tolerance": 0.001,
+      "tolerance_category": "same-source computational cross-check",
+      "status": "agrees",
+      "role": "secondary cross-check only; never the primary calculation"
     },
     {
       "series_id": "GDPC1",
-      "our_indicator_id": "us_real_gdp_growth_qoq_ann",
       "fred_transformation": "pca",
-      "fred_transformation_meaning": "compounded annual rate of change",
-      "role": "secondary cross-check only; never the primary calculation",
       "period": "2026-04-01",
       "our_value": 1.4836587880023622,
       "fred_value": 1.48366,
       "difference": -1.211997637806661e-06,
-      "tolerance": 0.05,
-      "status": "agrees"
+      "tolerance": 0.001,
+      "tolerance_category": "same-source computational cross-check",
+      "status": "agrees",
+      "role": "secondary cross-check only; never the primary calculation"
     }
   ]
 }

@@ -24,6 +24,29 @@ class Frequency(str, Enum):
     QUARTERLY = "quarterly"
 
 
+class PeriodSelection(str, Enum):
+    """How a transformation chooses the observation it compares against.
+
+    The distinction is not cosmetic. Phase 2 shipped a defect because it was
+    left implicit: positional selection silently compared the wrong periods
+    across a gap in the source data and produced a plausible, wrong figure.
+    Every indicator now declares its semantics explicitly.
+    """
+
+    #: The comparison observation is identified by its calendar period — the
+    #: same month a year earlier, the preceding calendar quarter, and so on. If
+    #: that exact period is absent the calculation FAILS. No neighbouring
+    #: observation is substituted. Required for every monthly and quarterly
+    #: transformation.
+    CALENDAR = "calendar"
+
+    #: The comparison observation is whichever valid observation immediately
+    #: precedes the latest one, regardless of the calendar distance. Correct
+    #: only where the publication calendar legitimately has gaps and a fixed
+    #: lag would be wrong — in V1, only DFF.
+    PREVIOUS_AVAILABLE = "previous_available"
+
+
 class Unit(str, Enum):
     """Unit of a value or of a change.
 

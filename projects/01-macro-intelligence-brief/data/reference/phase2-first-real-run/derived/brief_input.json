@@ -1,0 +1,298 @@
+{
+  "schema_version": "1.0",
+  "run_id": "phase2-20260927T000634Z-b7ea4089",
+  "generated_at": "2026-09-27T00:26:50.121479+00:00",
+  "publication_ready": true,
+  "economy": "US",
+  "content": "validated derived macroeconomic statistics",
+  "indicator_count": 5,
+  "indicators": [
+    {
+      "indicator_id": "us_cpi_inflation_yoy",
+      "display_name": "CPI Inflation (YoY)",
+      "economic_category": "Inflation",
+      "period": "2026-08-01",
+      "frequency": "monthly",
+      "value": 3.3965478924364856,
+      "unit": "percent",
+      "previous_value": 3.364825041479902,
+      "change": 0.03172285095658367,
+      "change_unit": "percentage points",
+      "direction": "increased",
+      "comparison_basis": "Against the same calculation one calendar month earlier (t-1 vs t-13), differenced in percentage points. Periods are selected by calendar date, never by list position",
+      "period_selection": "calendar",
+      "transformation": "Year-over-year percentage change of the index: ((CPI_t / CPI_t-12) - 1) * 100",
+      "source_series": "CPIAUCNS",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "source_last_updated": "2026-09-11 08:37:49-05",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00",
+      "validation_status": "validated",
+      "warning_codes": [
+        "series.unusual_gaps"
+      ],
+      "known_revision_risk": "Very low. The not-seasonally-adjusted index is not subject to the annual seasonal-factor revisions that alter the adjusted series, so published NSA index values are effectively final."
+    },
+    {
+      "indicator_id": "us_effective_fed_funds_rate",
+      "display_name": "Effective Federal Funds Rate",
+      "economic_category": "Monetary policy",
+      "period": "2026-09-24",
+      "frequency": "daily",
+      "value": 3.88,
+      "unit": "percent",
+      "previous_value": 3.88,
+      "change": 0.0,
+      "change_unit": "percentage points",
+      "direction": "unchanged",
+      "comparison_basis": "Difference against the immediately preceding available daily observation, in percentage points",
+      "period_selection": "previous_available",
+      "transformation": "None. The series is already a rate and is reported as published.",
+      "source_series": "DFF",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "source_last_updated": "2026-09-25 15:16:33-05",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00",
+      "validation_status": "validated",
+      "warning_codes": [],
+      "known_revision_risk": "Very low. A realised market average rather than an estimate, though the most recent daily observations can be revised slightly."
+    },
+    {
+      "indicator_id": "us_real_gdp_growth_qoq_ann",
+      "display_name": "Real GDP Growth (QoQ, annualised)",
+      "economic_category": "Growth",
+      "period": "2026-04-01",
+      "frequency": "quarterly",
+      "value": 1.4836587880023622,
+      "unit": "percent, annual rate",
+      "previous_value": 2.0891889857350465,
+      "change": -0.6055301977326843,
+      "change_unit": "percentage points",
+      "direction": "decreased",
+      "comparison_basis": "Against the same calculation for the prior calendar quarter (t-1 vs t-2), differenced in percentage points. Quarters are selected by calendar date",
+      "period_selection": "calendar",
+      "transformation": "Compounded quarterly change: (((GDP_t / GDP_t-1) ** 4) - 1) * 100",
+      "source_series": "GDPC1",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "source_last_updated": "2026-08-26 07:49:02-05",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00",
+      "validation_status": "validated",
+      "warning_codes": [],
+      "known_revision_risk": "HIGH. Revised across advance, second and third estimates and again in annual and comprehensive revisions. Revisions of several tenths are routine and can change the sign of a weak quarter."
+    },
+    {
+      "indicator_id": "us_retail_sales_mom",
+      "display_name": "Retail Sales (MoM)",
+      "economic_category": "Consumption",
+      "period": "2026-08-01",
+      "frequency": "monthly",
+      "value": 1.2407418550562266,
+      "unit": "percent",
+      "previous_value": -0.5366991635299634,
+      "change": 1.77744101858619,
+      "change_unit": "percentage points",
+      "direction": "increased",
+      "comparison_basis": "Against the prior calendar month's month-over-month change (t-1 vs t-2), differenced in percentage points. Months are selected by calendar date",
+      "period_selection": "calendar",
+      "transformation": "Month-over-month percentage change: ((Sales_t / Sales_t-1) - 1) * 100",
+      "source_series": "RSAFS",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "source_last_updated": "2026-09-16 07:39:53-05",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00",
+      "validation_status": "validated",
+      "warning_codes": [],
+      "known_revision_risk": "MEDIUM. 'Advance' estimates are revised in the following month as more complete survey responses arrive."
+    },
+    {
+      "indicator_id": "us_unemployment_rate",
+      "display_name": "Unemployment Rate",
+      "economic_category": "Labour market",
+      "period": "2026-08-01",
+      "frequency": "monthly",
+      "value": 4.1,
+      "unit": "percent",
+      "previous_value": 4.1,
+      "change": 0.0,
+      "change_unit": "percentage points",
+      "direction": "unchanged",
+      "comparison_basis": "Difference against the previous calendar month, in percentage points. The preceding month must be present; a gap is not bridged",
+      "period_selection": "calendar",
+      "transformation": "None. The series is already a rate and is reported as published.",
+      "source_series": "UNRATE",
+      "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+      "source_last_updated": "2026-09-04 08:27:31-05",
+      "retrieved_at": "2026-09-27T00:06:34.170846+00:00",
+      "validation_status": "validated",
+      "warning_codes": [
+        "series.unusual_gaps"
+      ],
+      "known_revision_risk": "Low. Household survey estimates are not routinely revised, though seasonal factors and annual population controls can shift the series."
+    }
+  ],
+  "warnings": [
+    {
+      "code": "series.unusual_gaps",
+      "series_id": "CPIAUCNS",
+      "message": "CPIAUCNS: 1 gap(s) longer than 40 days between consecutive observations",
+      "detail": {
+        "threshold_days": 40,
+        "gaps": [
+          {
+            "from": "2025-09-01",
+            "to": "2025-11-01",
+            "days": 61
+          }
+        ]
+      }
+    },
+    {
+      "code": "series.unusual_gaps",
+      "series_id": "UNRATE",
+      "message": "UNRATE: 1 gap(s) longer than 40 days between consecutive observations",
+      "detail": {
+        "threshold_days": 40,
+        "gaps": [
+          {
+            "from": "2025-09-01",
+            "to": "2025-11-01",
+            "days": 61
+          }
+        ]
+      }
+    }
+  ],
+  "provenance": {
+    "run_id": "phase2-20260927T000634Z-b7ea4089",
+    "retrieved_at_utc": "2026-09-27T00:06:34.170846+00:00",
+    "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+    "raw_snapshot_directory": "data/reference/phase2-first-real-run",
+    "git_commit_at_run": "8083c141401dc90506f4d7f1f79126ac3ea8f687",
+    "vintage_policy": "Latest-vintage data. Each figure reports the most recently published value for its own period at retrieved_at. The latest AVAILABLE observation is not the latest economic period: indicators legitimately carry different periods, and these are never normalised to a common one.",
+    "reproducibility": "Every figure is recomputable from the raw payloads stored in raw_snapshot_directory by the transformations in src/indicators.py. The stored run is a fixed record, not a live dataset.",
+    "series": {
+      "CPIAUCNS": {
+        "series_id": "CPIAUCNS",
+        "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+        "source_last_updated": "2026-09-11 08:37:49-05",
+        "frequency": "Monthly",
+        "seasonal_adjustment": "Not Seasonally Adjusted",
+        "observation_window": {
+          "earliest_period": "2024-09-01",
+          "latest_period": "2026-08-01"
+        },
+        "observation_counts": {
+          "retrieved": 24,
+          "valid": 23,
+          "missing": 1,
+          "missing_dates": [
+            "2025-10-01"
+          ]
+        },
+        "raw_snapshot_files": {
+          "metadata": "raw/CPIAUCNS.metadata.json",
+          "observations": "raw/CPIAUCNS.observations.json"
+        }
+      },
+      "DFF": {
+        "series_id": "DFF",
+        "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+        "source_last_updated": "2026-09-25 15:16:33-05",
+        "frequency": "Daily, 7-Day",
+        "seasonal_adjustment": "Not Seasonally Adjusted",
+        "observation_window": {
+          "earliest_period": "2026-08-16",
+          "latest_period": "2026-09-24"
+        },
+        "observation_counts": {
+          "retrieved": 40,
+          "valid": 40,
+          "missing": 0,
+          "missing_dates": []
+        },
+        "raw_snapshot_files": {
+          "metadata": "raw/DFF.metadata.json",
+          "observations": "raw/DFF.observations.json"
+        }
+      },
+      "GDPC1": {
+        "series_id": "GDPC1",
+        "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+        "source_last_updated": "2026-08-26 07:49:02-05",
+        "frequency": "Quarterly",
+        "seasonal_adjustment": "Seasonally Adjusted Annual Rate",
+        "observation_window": {
+          "earliest_period": "2024-07-01",
+          "latest_period": "2026-04-01"
+        },
+        "observation_counts": {
+          "retrieved": 8,
+          "valid": 8,
+          "missing": 0,
+          "missing_dates": []
+        },
+        "raw_snapshot_files": {
+          "metadata": "raw/GDPC1.metadata.json",
+          "observations": "raw/GDPC1.observations.json"
+        }
+      },
+      "RSAFS": {
+        "series_id": "RSAFS",
+        "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+        "source_last_updated": "2026-09-16 07:39:53-05",
+        "frequency": "Monthly",
+        "seasonal_adjustment": "Seasonally Adjusted",
+        "observation_window": {
+          "earliest_period": "2025-09-01",
+          "latest_period": "2026-08-01"
+        },
+        "observation_counts": {
+          "retrieved": 12,
+          "valid": 12,
+          "missing": 0,
+          "missing_dates": []
+        },
+        "raw_snapshot_files": {
+          "metadata": "raw/RSAFS.metadata.json",
+          "observations": "raw/RSAFS.observations.json"
+        }
+      },
+      "UNRATE": {
+        "series_id": "UNRATE",
+        "source_name": "Federal Reserve Bank of St. Louis (FRED)",
+        "source_last_updated": "2026-09-04 08:27:31-05",
+        "frequency": "Monthly",
+        "seasonal_adjustment": "Seasonally Adjusted",
+        "observation_window": {
+          "earliest_period": "2025-09-01",
+          "latest_period": "2026-08-01"
+        },
+        "observation_counts": {
+          "retrieved": 12,
+          "valid": 11,
+          "missing": 1,
+          "missing_dates": [
+            "2025-10-01"
+          ]
+        },
+        "raw_snapshot_files": {
+          "metadata": "raw/UNRATE.metadata.json",
+          "observations": "raw/UNRATE.observations.json"
+        }
+      }
+    }
+  },
+  "period_note": "Indicators carry different periods by design. The latest available observation is not the latest economic period: monthly series may report a month that closed weeks ago, quarterly series a quarter that closed months ago, and a daily series yesterday. These are not normalised to a common period and must not be presented as though they were.",
+  "usage_contract": {
+    "may": [
+      "describe each figure using the value, unit, period and direction given",
+      "state the comparison basis and the source series",
+      "explain a warning that is present in this file"
+    ],
+    "must_not": [
+      "compute, adjust, infer or recall any economic statistic",
+      "present figures from different periods as a single common period",
+      "suppress or omit a warning present in this file",
+      "add a forecast, a market call or investment advice",
+      "introduce any figure not present in this file"
+    ]
+  },
+  "disclaimer": "Data snapshot. No forecast, no interpretation, no investment advice. Every figure was computed by this project from the source series named, and must be verified against the primary release before use."
+}

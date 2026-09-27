@@ -22,7 +22,13 @@ from .calculations import (
     qoq_annualized_change,
 )
 from .errors import InsufficientHistoryError
-from .models import Frequency, MacroObservation, RawObservation, Unit
+from .models import (
+    Frequency,
+    MacroObservation,
+    PeriodSelection,
+    RawObservation,
+    Unit,
+)
 from .periods import add_months, add_quarters, index_by_period, require_period
 
 ECONOMY = "US"
@@ -40,6 +46,7 @@ class IndicatorSpec:
     indicator_id: str
     display_name: str
     economic_concept: str
+    economic_category: str
     source_series: str
     frequency: Frequency
     raw_unit: Unit
@@ -47,6 +54,7 @@ class IndicatorSpec:
     transformation: str
     output_unit: Unit
     comparison: str
+    period_selection: PeriodSelection
     minimum_history_required: int
     interpretation: str
     known_revision_risk: str
@@ -62,6 +70,7 @@ CPI_INFLATION = IndicatorSpec(
     indicator_id="us_cpi_inflation_yoy",
     display_name="CPI Inflation (YoY)",
     economic_concept="Headline consumer price inflation rate",
+    economic_category="Inflation",
     source_series="CPIAUCNS",
     frequency=Frequency.MONTHLY,
     raw_unit=Unit.INDEX,
@@ -73,6 +82,7 @@ CPI_INFLATION = IndicatorSpec(
         "differenced in percentage points. Periods are selected by calendar date, "
         "never by list position"
     ),
+    period_selection=PeriodSelection.CALENDAR,
     minimum_history_required=14,
     interpretation=(
         "The rate at which consumer prices are rising over twelve months. The "
@@ -96,6 +106,7 @@ UNEMPLOYMENT_RATE = IndicatorSpec(
     indicator_id="us_unemployment_rate",
     display_name="Unemployment Rate",
     economic_concept="Share of the labour force that is unemployed",
+    economic_category="Labour market",
     source_series="UNRATE",
     frequency=Frequency.MONTHLY,
     raw_unit=Unit.PERCENT,
@@ -106,6 +117,7 @@ UNEMPLOYMENT_RATE = IndicatorSpec(
         "Difference against the previous calendar month, in percentage points. "
         "The preceding month must be present; a gap is not bridged"
     ),
+    period_selection=PeriodSelection.CALENDAR,
     minimum_history_required=2,
     interpretation=(
         "Labour market slack. Already a rate, so the change is a "
@@ -123,6 +135,7 @@ EFFECTIVE_FED_FUNDS = IndicatorSpec(
     indicator_id="us_effective_fed_funds_rate",
     display_name="Effective Federal Funds Rate",
     economic_concept="Realised overnight interbank lending rate, daily",
+    economic_category="Monetary policy",
     source_series="DFF",
     frequency=Frequency.DAILY,
     raw_unit=Unit.PERCENT,
@@ -133,6 +146,7 @@ EFFECTIVE_FED_FUNDS = IndicatorSpec(
         "Difference against the immediately preceding available daily "
         "observation, in percentage points"
     ),
+    period_selection=PeriodSelection.PREVIOUS_AVAILABLE,
     minimum_history_required=2,
     interpretation=(
         "The rate actually realised in the overnight market, at daily "
@@ -157,6 +171,7 @@ REAL_GDP_GROWTH = IndicatorSpec(
     indicator_id="us_real_gdp_growth_qoq_ann",
     display_name="Real GDP Growth (QoQ, annualised)",
     economic_concept="Real output growth at an annual rate",
+    economic_category="Growth",
     source_series="GDPC1",
     frequency=Frequency.QUARTERLY,
     raw_unit=Unit.BILLIONS_CHAINED_USD,
@@ -167,6 +182,7 @@ REAL_GDP_GROWTH = IndicatorSpec(
         "Against the same calculation for the prior calendar quarter (t-1 vs t-2), "
         "differenced in percentage points. Quarters are selected by calendar date"
     ),
+    period_selection=PeriodSelection.CALENDAR,
     minimum_history_required=3,
     interpretation=(
         "The headline United States growth number, quoted at a seasonally "
@@ -187,6 +203,7 @@ RETAIL_SALES = IndicatorSpec(
     indicator_id="us_retail_sales_mom",
     display_name="Retail Sales (MoM)",
     economic_concept="Month-over-month growth in nominal retail and food services sales",
+    economic_category="Consumption",
     source_series="RSAFS",
     frequency=Frequency.MONTHLY,
     raw_unit=Unit.MILLIONS_USD,
@@ -197,6 +214,7 @@ RETAIL_SALES = IndicatorSpec(
         "Against the prior calendar month's month-over-month change (t-1 vs t-2), "
         "differenced in percentage points. Months are selected by calendar date"
     ),
+    period_selection=PeriodSelection.CALENDAR,
     minimum_history_required=3,
     interpretation=(
         "Momentum in consumer spending. The raw level is a dollar amount and "

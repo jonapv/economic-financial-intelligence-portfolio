@@ -301,10 +301,18 @@
               Bureau of Labor Statistics index exactly, and real GDP growth agrees with the Bureau of
               Economic Analysis published figure to within its one-decimal publication rounding.
             </p>
+            <p class="prose mt-4">
+              The validated figures are then frozen into a deterministic input file, which is the only
+              economic data a later AI-assisted synthesis step will be allowed to read. Validated data
+              <span class="arrow" aria-hidden="true">&#8594;</span> deterministic brief input
+              <span class="arrow" aria-hidden="true">&#8594;</span> AI-assisted synthesis. The synthesis
+              step is not built, so no generated prose appears anywhere in this project; the model will
+              never compute a figure, and cannot receive data that failed validation.
+            </p>
             <p class="small-print mt-3">
               Source: Federal Reserve Bank of St. Louis (FRED), retrieved 2026-09-27. Raw payloads,
-              validation report and spot-check notes are stored alongside the pipeline. Displayed values
-              are rounded; the pipeline retains full precision.
+              validation report, provenance and spot-check notes are stored alongside the pipeline.
+              Displayed values are rounded; the pipeline retains full precision.
             </p>
           </dd>
         </div>

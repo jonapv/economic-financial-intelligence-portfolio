@@ -37,13 +37,17 @@ from .fred_client import (
     read_api_key,
 )
 from .indicators import SPECS, compute
+from .brief_input import PublicationBlockedError, build_brief_input
 from .normalisation import normalise_observations
+from .provenance import RunProvenance, series_provenance_from
 from .snapshot import write_json
 from .validation import (
+    FRED_COMPUTATIONAL_TOLERANCE_PP,
     Finding,
     ValidationReport,
     validate_derived,
     validate_metadata,
+    validate_period_semantics,
     validate_series,
 )
 
@@ -69,9 +73,11 @@ CROSS_CHECK_UNITS: Dict[str, str] = {
     "GDPC1": "pca",
 }
 
-#: Agreement tolerance for a cross-check, in the unit of the figure. FRED
-#: rounds its transformed output, so exact equality is not expected.
-CROSS_CHECK_TOLERANCE = 0.05
+#: Tolerance for the same-source computational cross-check, in percentage
+#: points. Defined in src/validation.py alongside the reasoning, and
+#: deliberately tight: both sides compute the same statistic from the same
+#: observations. A disagreement beyond it is a HARD FAILURE.
+CROSS_CHECK_TOLERANCE = FRED_COMPUTATIONAL_TOLERANCE_PP
 
 
 def _git_commit(root: pathlib.Path) -> Optional[str]:
@@ -107,6 +113,7 @@ def run(output_dir: pathlib.Path = DEFAULT_OUTPUT, *, client: Optional[FredClien
 
     requests_made = []
     derived_records = []
+    series_provenance = {}
 
     for spec in SPECS.values():
         sid = spec.source_series
@@ -132,6 +139,8 @@ def run(output_dir: pathlib.Path = DEFAULT_OUTPUT, *, client: Optional[FredClien
             {"series_id": sid, "limit": str(limit), "sort_order": "desc", "units": "lin"},
         ))
 
+        for finding in validate_period_semantics(spec):
+            report.add(finding)
         for finding in validate_metadata(spec, metadata):
             report.add(finding)
 
@@ -148,6 +157,11 @@ def run(output_dir: pathlib.Path = DEFAULT_OUTPUT, *, client: Optional[FredClien
         for finding in validate_series(spec, normalised, now=today, metadata=metadata):
             report.add(finding)
         report.series_results[sid] = normalised.summary()
+        series_provenance[sid] = series_provenance_from(
+            sid, metadata=metadata, normalised=normalised, source_name=SOURCE_NAME,
+            raw_metadata_file=f"raw/{sid}.metadata.json",
+            raw_observations_file=f"raw/{sid}.observations.json",
+        )
 
         if normalised.valid_count < spec.minimum_history_required:
             print(f"INSUFFICIENT ({normalised.valid_count} valid)")
@@ -229,7 +243,7 @@ def run(output_dir: pathlib.Path = DEFAULT_OUTPUT, *, client: Optional[FredClien
                 )
                 report.add(Finding(
                     code="crosscheck.agrees" if agrees else "crosscheck.disagrees",
-                    severity="pass" if agrees else "warning",
+                    severity="pass" if agrees else "hard_failure",
                     series_id=sid,
                     message=(f"{sid} {ours.period}: ours {ours.value:.6f} vs FRED "
                              f"{units} {theirs:.6f}, difference "
@@ -300,6 +314,26 @@ def run(output_dir: pathlib.Path = DEFAULT_OUTPUT, *, client: Optional[FredClien
     }
     write_json(derived_dir / "macro_snapshot.json", snapshot, secret=api_key)
     write_json(derived_dir / "validation_report.json", report.to_dict(), secret=api_key)
+
+    # The brief input is produced only behind the publication gate.
+    provenance = RunProvenance(
+        run_id=run_id,
+        retrieved_at=retrieved_at,
+        source_name=SOURCE_NAME,
+        snapshot_directory=str(output_dir.relative_to(PROJECT_ROOT)),
+        git_commit=manifest["git_commit_before_run"],
+        series=series_provenance,
+    )
+    try:
+        brief = build_brief_input(derived_records, report, provenance,
+                                 generated_at=retrieved_at)
+        write_json(derived_dir / "brief_input.json", brief, secret=api_key)
+        print()
+        print(f"brief input written: {len(brief['indicators'])} indicators, "
+              f"{len(brief['warnings'])} warning(s)")
+    except PublicationBlockedError as exc:
+        print()
+        print(f"brief input NOT produced: {exc}")
 
     # -- summary -----------------------------------------------------------
     print()
