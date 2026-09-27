@@ -416,7 +416,7 @@ figures.
 | [`src/brief_input.py`](src/brief_input.py) | The brief input contract and the publication invariant |
 | [`src/errors.py`](src/errors.py) | `MissingValueError`, `NonNumericValueError`, `ZeroDenominatorError`, `InsufficientHistoryError`, `MissingRequiredPeriodError` |
 | [`data/samples/`](data/samples/) | Synthetic fixtures, one per source series — **not real data** |
-| [`tests/`](tests/) | 431 tests: transformations, collection boundary, period semantics, period labels, the brief input contract, synthesis and rendering |
+| [`tests/`](tests/) | 432 tests: transformations, collection boundary, period semantics, period labels, the brief input contract, synthesis and rendering |
 
 Standard library only; no third-party dependencies. The `src` package performs no I/O whatsoever.
 
@@ -1112,7 +1112,7 @@ section corrected, and the validation finding written up as a methodological les
 **Phase 3 — AI-assisted synthesis.** Complete for one brief. Constrained Gemini synthesis from
 `brief_input.json`, deterministic draft validation, rendered HTML, and a required human-review status.
 One live request produced a draft that passed validation with zero hard failures and a sentence-by-sentence
-factual audit with zero unsupported claims. 431 tests, none touching a provider.
+factual audit with zero unsupported claims. 432 tests, none touching a provider.
 
 Deliberately last, and Phase 2 showed why: a confidently wrong figure would have been written up in
 fluent prose and read perfectly well.

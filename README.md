@@ -112,7 +112,7 @@ python3 -m http.server 8000
 from official sources, computes and validates the conventional transformations deterministically,
 cross-checks them against the provider's own computation and against the originating agencies, and
 uses a language model as a constrained final step. It has been run end to end, and the validated
-example brief is committed as a static file. 431 tests, standard library only.
+example brief is committed as a static file. 432 tests, standard library only.
 
 The clearest result was a methodological one. A figure selected by array position rather than calendar
 date produced a plausible, wrong inflation rate that raised no error and passed every test, because the
