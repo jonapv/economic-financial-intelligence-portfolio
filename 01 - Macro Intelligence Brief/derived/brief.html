@@ -1,112 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>United States Macroeconomic Briefing</title>
   <meta name="description" content="Descriptive macroeconomic briefing generated from validated source data. Draft, pending human review.">
+  <meta name="theme-color" content="#0B0D10">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230B0D10'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' rx='3' fill='none' stroke='%23C6A15B'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='16' fill='%23C6A15B' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/base.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
     <div class="container site-header__inner">
-      <a class="wordmark" href="../../index.html">EFI<span class="wordmark__sep">/</span>Projects</a>
-      <a class="backlink" href="../index.html"><span aria-hidden="true">&#8592;</span> Project 01</a>
+      <a class="backlink" href="../index.html"><span class="backlink__arrow" aria-hidden="true">&#8592;</span> Project 01</a>
+      <a class="brand" href="../../index.html">
+        <span class="brand__mark" aria-hidden="true">E</span>
+        <span class="brand__text">EFI <span>/</span> Projects</span>
+      </a>
     </div>
+    <span class="progress" aria-hidden="true"></span>
   </header>
 
-  <main>
-    <div class="container page-head">
-      <div class="project-head rule-below">
-        <div>
-          <p class="eyebrow">Macro Intelligence Brief</p>
-          <h1 class="title-lg mt-1">United States Macroeconomic Briefing</h1>
-          <p class="meta mt-1">As of 27 September 2026</p>
-        </div>
-        <span class="pill pill--planned">DRAFT — HUMAN REVIEW REQUIRED</span>
+  <main id="main">
+    <div class="container brief-head">
+      <div class="brief-head__top">
+        <p class="eyebrow eyebrow--gold eyebrow--rule">United States &middot; Macro Intelligence Brief</p>
+        <span class="pill pill--draft"><span class="pill__dot" aria-hidden="true"></span>DRAFT — HUMAN REVIEW REQUIRED</span>
+      </div>
+      <h1 class="display-lg brief-head__title">United States Macroeconomic Briefing</h1>
+      <div class="brief-head__meta">
+        <dl class="meta-grid">
+          <div><dt>As of</dt><dd class="tnum">27 September 2026</dd></div>
+          <div><dt>Data</dt><dd>Primary retrieval: Federal Reserve Bank of St. Louis (FRED)<br>Independent checks: BLS / BEA</dd></div>
+          <div><dt>Prose</dt><dd>AI-assisted &middot; gemini-3.8-flash</dd></div>
+          <div><dt>Coverage</dt><dd class="tnum">5 validated indicators</dd></div>
+        </dl>
+      </div>
+      <div class="btn-group brief-actions">
+        <a class="btn btn--ghost btn--sm" href="../index.html"><span aria-hidden="true">&#8592;</span> Back to case study</a>
+        <button class="btn btn--ghost btn--sm" type="button" data-print hidden>Print / Save PDF</button>
       </div>
     </div>
 
-    <div class="container page-body">
-      <dl class="defs">
+    <div class="container brief-layout">
+      <nav class="brief-toc" aria-label="Brief contents">
+        <p class="label">Contents</p>
+        <ol class="mt-1">
+          <li><a href="#summary">Executive Summary</a></li>
+          <li><a href="#data">Validated Data</a></li>
+          <li><a href="#s-inflation">Inflation</a></li><li><a href="#s-monetary-policy">Monetary Policy</a></li><li><a href="#s-growth">Growth</a></li><li><a href="#s-labour-market">Labour Market</a></li><li><a href="#s-consumption">Consumption</a></li>
+          <li><a href="#developments">Key Developments</a></li>
+          <li><a href="#notes">Quality &amp; Methodology</a></li>
+        </ol>
+      </nav>
 
-        <div class="def-row">
-          <dt>Executive Summary</dt>
-          <dd><p class="prose">Headline CPI inflation was broadly stable at 3.4% year-on-year in August 2026, while the unemployment rate stood unchanged at 4.1%. Retail sales increased by 1.2% month-over-month in August 2026 following −0.5% in the prior month. Real GDP expanded at an annualised quarterly rate of 1.5% in 2026 Q2, down from 2.1% in the preceding quarter. The effective federal funds rate was 3.88% on 24 September 2026, unchanged from the previous observation.</p></dd>
-        </div>
+      <div>
+        <section class="brief-block" id="summary" aria-labelledby="h-summary">
+          <div class="brief-block__head"><span class="section-num">A</span><h2 class="brief-block__title" id="h-summary">Executive Summary</h2></div>
+          <div class="summary-panel"><p class="prose">Headline CPI inflation was broadly stable at 3.4% year-on-year in August 2026, while the unemployment rate stood unchanged at 4.1%. Retail sales increased by 1.2% month-over-month in August 2026 following −0.5% in the prior month. Real GDP expanded at an annualised quarterly rate of 1.5% in 2026 Q2, down from 2.1% in the preceding quarter. The effective federal funds rate was 3.88% on 24 September 2026, unchanged from the previous observation.</p></div>
+          <ul class="snapshot" aria-label="Snapshot of the validated figures"><li class="snapshot__item"><span class="snapshot__label">CPI</span><span class="snapshot__value">3.4%</span><span class="snapshot__period">August 2026</span></li><li class="snapshot__item"><span class="snapshot__label">Fed Funds</span><span class="snapshot__value">3.88%</span><span class="snapshot__period">24 September 2026</span></li><li class="snapshot__item"><span class="snapshot__label">Real GDP</span><span class="snapshot__value">1.5%</span><span class="snapshot__period">2026 Q2</span></li><li class="snapshot__item"><span class="snapshot__label">Unemployment</span><span class="snapshot__value">4.1%</span><span class="snapshot__period">August 2026</span></li><li class="snapshot__item"><span class="snapshot__label">Retail Sales</span><span class="snapshot__value">1.2%</span><span class="snapshot__period">August 2026</span></li></ul>
+        </section>
 
-        <div class="def-row">
-          <dt>Validated Data</dt>
-          <dd>
-            <div class="data-table-wrap">
-              <table class="data-table">
-                <caption>Every figure below was computed and validated before this brief was written. Displayed values are rounded deterministically; the pipeline retains full precision.</caption>
-                <thead><tr>
-                  <th scope="col">Indicator</th><th scope="col">Series</th>
-                  <th scope="col">Period</th><th scope="col">Value</th>
-                  <th scope="col">Previous</th><th scope="col">Change</th>
-                </tr></thead>
-                <tbody><tr><td class="name">CPI Inflation (YoY)</td><td class="series">CPIAUCNS</td><td class="num">August 2026</td><td class="num">3.4%</td><td class="num">3.4%</td><td class="num">+0.03 pp</td></tr><tr><td class="name">Effective Federal Funds Rate</td><td class="series">DFF</td><td class="num">24 September 2026</td><td class="num">3.88%</td><td class="num">3.88%</td><td class="num">0.00 pp</td></tr><tr><td class="name">Real GDP Growth (QoQ, annualised)</td><td class="series">GDPC1</td><td class="num">2026 Q2</td><td class="num">1.5%</td><td class="num">2.1%</td><td class="num">−0.61 pp</td></tr><tr><td class="name">Unemployment Rate</td><td class="series">UNRATE</td><td class="num">August 2026</td><td class="num">4.1%</td><td class="num">4.1%</td><td class="num">0.00 pp</td></tr><tr><td class="name">Retail Sales (MoM)</td><td class="series">RSAFS</td><td class="num">August 2026</td><td class="num">1.2%</td><td class="num">−0.5%</td><td class="num">+1.78 pp</td></tr></tbody>
-              </table>
+        <section class="brief-block" id="data" aria-labelledby="h-data">
+          <div class="brief-block__head"><span class="section-num">B</span><h2 class="brief-block__title" id="h-data">Validated Data</h2></div>
+          <div class="table-wrap table-wrap--stack">
+            <table class="data-table data-table--stack">
+              <caption>Every figure below was computed and validated before this brief was written. Displayed values are rounded deterministically; the pipeline retains full precision.</caption>
+              <thead><tr>
+                <th scope="col">Indicator</th><th scope="col">Series</th>
+                <th scope="col">Period</th><th scope="col" class="num-col">Value</th>
+                <th scope="col" class="num-col">Previous</th><th scope="col" class="num-col">Change</th>
+              </tr></thead>
+              <tbody><tr><td class="name">CPI Inflation (YoY)</td><td class="series">CPIAUCNS</td><td class="num period" data-label="Period">August 2026</td><td class="value num-col" data-label="Value">3.4%</td><td class="num num-col prev" data-label="Previous">3.4%</td><td class="change num-col" data-label="Change">+0.03 pp</td></tr><tr><td class="name">Effective Federal Funds Rate</td><td class="series">DFF</td><td class="num period" data-label="Period">24 September 2026</td><td class="value num-col" data-label="Value">3.88%</td><td class="num num-col prev" data-label="Previous">3.88%</td><td class="change num-col" data-label="Change">0.00 pp</td></tr><tr><td class="name">Real GDP Growth (QoQ, annualised)</td><td class="series">GDPC1</td><td class="num period" data-label="Period">2026 Q2</td><td class="value num-col" data-label="Value">1.5%</td><td class="num num-col prev" data-label="Previous">2.1%</td><td class="change num-col" data-label="Change">−0.61 pp</td></tr><tr><td class="name">Unemployment Rate</td><td class="series">UNRATE</td><td class="num period" data-label="Period">August 2026</td><td class="value num-col" data-label="Value">4.1%</td><td class="num num-col prev" data-label="Previous">4.1%</td><td class="change num-col" data-label="Change">0.00 pp</td></tr><tr><td class="name">Retail Sales (MoM)</td><td class="series">RSAFS</td><td class="num period" data-label="Period">August 2026</td><td class="value num-col" data-label="Value">1.2%</td><td class="num num-col prev" data-label="Previous">−0.5%</td><td class="change num-col" data-label="Change">+1.78 pp</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="brief-block" aria-labelledby="h-narrative">
+          <div class="brief-block__head"><span class="section-num">C</span><h2 class="brief-block__title" id="h-narrative">Indicator Briefing</h2></div>
+          <ol class="narrative"><li class="narrative__item" id="s-inflation"><span class="narrative__num" aria-hidden="true">01</span><div><h3 class="narrative__title">Inflation</h3><p class="prose">Headline CPI inflation was broadly stable at 3.4% year-on-year in August 2026, with a change of +0.03 pp compared with 3.4% in the preceding month.</p><p class="narrative__source">Source: CPIAUCNS (August 2026)</p></div><div class="narrative__figure"><span class="narrative__value">3.4%</span><span class="narrative__change">+0.03 pp</span><span class="narrative__period">August 2026</span></div></li><li class="narrative__item" id="s-monetary-policy"><span class="narrative__num" aria-hidden="true">02</span><div><h3 class="narrative__title">Monetary Policy</h3><p class="prose">The effective federal funds rate stood at 3.88% on 24 September 2026, unchanged with a 0.00 pp change from the previous reading of 3.88%.</p><p class="narrative__source">Source: DFF (24 September 2026)</p></div><div class="narrative__figure"><span class="narrative__value">3.88%</span><span class="narrative__change">0.00 pp</span><span class="narrative__period">24 September 2026</span></div></li><li class="narrative__item" id="s-growth"><span class="narrative__num" aria-hidden="true">03</span><div><h3 class="narrative__title">Growth</h3><p class="prose">Real GDP growth decreased to an annualised rate of 1.5% in 2026 Q2, down −0.61 pp from 2.1% in the prior quarter.</p><p class="narrative__source">Source: GDPC1 (2026 Q2)</p></div><div class="narrative__figure"><span class="narrative__value">1.5%</span><span class="narrative__change">−0.61 pp</span><span class="narrative__period">2026 Q2</span></div></li><li class="narrative__item" id="s-labour-market"><span class="narrative__num" aria-hidden="true">04</span><div><h3 class="narrative__title">Labour Market</h3><p class="prose">The unemployment rate stood at 4.1% in August 2026, unchanged with a 0.00 pp change from the 4.1% recorded in the preceding month.</p><p class="narrative__source">Source: UNRATE (August 2026)</p></div><div class="narrative__figure"><span class="narrative__value">4.1%</span><span class="narrative__change">0.00 pp</span><span class="narrative__period">August 2026</span></div></li><li class="narrative__item" id="s-consumption"><span class="narrative__num" aria-hidden="true">05</span><div><h3 class="narrative__title">Consumption</h3><p class="prose">Retail sales increased by 1.2% month-over-month in August 2026, an increase of +1.78 pp compared with −0.5% in the preceding month.</p><p class="narrative__source">Source: RSAFS (August 2026)</p></div><div class="narrative__figure"><span class="narrative__value">1.2%</span><span class="narrative__change">+1.78 pp</span><span class="narrative__period">August 2026</span></div></li></ol>
+        </section>
+
+        <section class="brief-block" id="developments" aria-labelledby="h-developments">
+          <div class="brief-block__head"><span class="section-num">D</span><h2 class="brief-block__title" id="h-developments">Key Developments</h2></div>
+          <details class="accordion" data-print-open>
+            <summary>At a glance &middot; 5 developments, restating the figures above</summary>
+            <div class="accordion__body">
+              <ol class="dev-list dev-list--compact"><li>CPI inflation was broadly stable at 3.4% year-on-year in August 2026 (+0.03 pp change).</li><li>The effective federal funds rate was unchanged at 3.88% on 24 September 2026 (0.00 pp change).</li><li>Real GDP growth decreased to 1.5% annualised in 2026 Q2 (−0.61 pp change from 2.1%).</li><li>The unemployment rate was unchanged at 4.1% in August 2026 (0.00 pp change).</li><li>Retail sales increased by 1.2% month-over-month in August 2026 (+1.78 pp change from −0.5%).</li></ol>
             </div>
-          </dd>
-        </div>
+          </details>
+        </section>
 
-        <div class="def-row"><dt>Inflation</dt><dd><p class="prose">Headline CPI inflation was broadly stable at 3.4% year-on-year in August 2026, with a change of +0.03 pp compared with 3.4% in the preceding month.</p><p class="small-print mt-3">Source: CPIAUCNS (August 2026)</p></dd></div><div class="def-row"><dt>Monetary Policy</dt><dd><p class="prose">The effective federal funds rate stood at 3.88% on 24 September 2026, unchanged with a 0.00 pp change from the previous reading of 3.88%.</p><p class="small-print mt-3">Source: DFF (24 September 2026)</p></dd></div><div class="def-row"><dt>Growth</dt><dd><p class="prose">Real GDP growth decreased to an annualised rate of 1.5% in 2026 Q2, down −0.61 pp from 2.1% in the prior quarter.</p><p class="small-print mt-3">Source: GDPC1 (2026 Q2)</p></dd></div><div class="def-row"><dt>Labour Market</dt><dd><p class="prose">The unemployment rate stood at 4.1% in August 2026, unchanged with a 0.00 pp change from the 4.1% recorded in the preceding month.</p><p class="small-print mt-3">Source: UNRATE (August 2026)</p></dd></div><div class="def-row"><dt>Consumption</dt><dd><p class="prose">Retail sales increased by 1.2% month-over-month in August 2026, an increase of +1.78 pp compared with −0.5% in the preceding month.</p><p class="small-print mt-3">Source: RSAFS (August 2026)</p></dd></div>
-
-        <div class="def-row">
-          <dt>Key Developments</dt>
-          <dd><ul class="chips"><li class="chip">CPI inflation was broadly stable at 3.4% year-on-year in August 2026 (+0.03 pp change).</li><li class="chip">The effective federal funds rate was unchanged at 3.88% on 24 September 2026 (0.00 pp change).</li><li class="chip">Real GDP growth decreased to 1.5% annualised in 2026 Q2 (−0.61 pp change from 2.1%).</li><li class="chip">The unemployment rate was unchanged at 4.1% in August 2026 (0.00 pp change).</li><li class="chip">Retail sales increased by 1.2% month-over-month in August 2026 (+1.78 pp change from −0.5%).</li></ul></dd>
-        </div>
-
-        <div class="def-row">
-          <dt>Data Quality Notes</dt>
-          <dd><div class="note"><p class="prose">CPIAUCNS: 1 gap(s) longer than 40 days between consecutive observations</p><p class="prose">UNRATE: 1 gap(s) longer than 40 days between consecutive observations</p></div></dd>
-        </div>
-
-        <div class="def-row">
-          <dt>Sources &amp; Methodology</dt>
-          <dd>
-            <p class="prose">CPIAUCNS — Federal Reserve Bank of St. Louis (FRED) · DFF — Federal Reserve Bank of St. Louis (FRED) · GDPC1 — Federal Reserve Bank of St. Louis (FRED) · RSAFS — Federal Reserve Bank of St. Louis (FRED) · UNRATE — Federal Reserve Bank of St. Louis (FRED)</p>
-            <p class="prose">Figures were retrieved from the source, normalised, and transformed
-            by tested deterministic code. A language model wrote the prose from those validated
-            figures only: it performed no calculation, chose no period, and received no
-            unvalidated data. The draft was then checked programmatically against its input, and
-            every number in it corresponds to a supplied presentation value.</p>
-            <p class="small-print mt-3">
-              Run phase2-20260927T000634Z-b7ea4089 &middot; retrieved 2026-09-27T00:06:34.170846+00:00 &middot;
-              raw payloads preserved at data/reference/phase2-first-real-run &middot;
-              model gemini-3.8-flash &middot;
-              prompt synthesis-v1
-            </p>
-            <p class="small-print">Indicators cover different periods by design. The latest
-            available observation is not the latest economic period.</p>
-          </dd>
-        </div>
-
-        <div class="def-row">
-          <dt>Limitations</dt>
-          <dd><div class="note"><p class="prose">Data snapshot. No forecast, no interpretation, no investment advice. Every figure was computed from the source series named and covers different observation periods that are not normalised to a common date.</p>
-            <p class="prose"><span class="emphasis">DRAFT — HUMAN REVIEW REQUIRED.</span>
-            This document is a research exercise. It is not investment advice, contains no
-            forecast, and must be verified against the primary releases before any use.</p>
-          </div></dd>
-        </div>
-
-      </dl>
+        <section class="brief-block" id="notes" aria-labelledby="h-notes">
+          <div class="brief-block__head"><span class="section-num">E</span><h2 class="brief-block__title" id="h-notes">Quality &amp; Methodology</h2></div>
+          <div class="aux-grid">
+            <div class="aux">
+              <h3 class="aux__title">Data Quality Notes</h3>
+              <ul class="aux__list"><li>CPIAUCNS: 1 gap(s) longer than 40 days between consecutive observations</li><li>UNRATE: 1 gap(s) longer than 40 days between consecutive observations</li></ul>
+            </div>
+            <div class="aux">
+              <h3 class="aux__title">Limitations</h3>
+              <p class="prose">Data snapshot. No forecast, no interpretation, no investment advice. Every figure was computed from the source series named and covers different observation periods that are not normalised to a common date.</p>
+              <p><strong>DRAFT — HUMAN REVIEW REQUIRED.</strong>
+              This document is a research exercise. It is not investment advice, contains no
+              forecast, and must be verified against the primary releases before any use.</p>
+            </div>
+            <div class="aux aux--wide">
+              <h3 class="aux__title">Sources &amp; Methodology</h3>
+              <h4 class="label">Primary series retrieval</h4>
+              <ul class="aux__list"><li>CPIAUCNS — Federal Reserve Bank of St. Louis (FRED)</li><li>DFF — Federal Reserve Bank of St. Louis (FRED)</li><li>GDPC1 — Federal Reserve Bank of St. Louis (FRED)</li><li>RSAFS — Federal Reserve Bank of St. Louis (FRED)</li><li>UNRATE — Federal Reserve Bank of St. Louis (FRED)</li></ul>
+              <h4 class="label aux__subhead">Independent validation</h4>
+              <ul class="aux__list aux__list--checks"><li><span class="emphasis">BLS</span> — U.S. Bureau of Labor Statistics: Consumer Price Index independent cross-check</li><li><span class="emphasis">BEA</span> — U.S. Bureau of Economic Analysis: Real GDP growth independent cross-check</li></ul>
+              <p>Figures were retrieved from the source, normalised, and transformed
+              by tested deterministic code. A language model wrote the prose from those validated
+              figures only: it performed no calculation, chose no period, and received no
+              unvalidated data. The draft was then checked programmatically against its input, and
+              every number in it corresponds to a supplied presentation value.</p>
+              <p class="small">Indicators cover different periods by design. The latest
+              available observation is not the latest economic period.</p>
+            </div>
+          </div>
+          <details class="accordion mt-2">
+            <summary>Run provenance</summary>
+            <div class="accordion__body">
+              <p class="small">
+                Run phase2-20260927T000634Z-b7ea4089 &middot; retrieved 2026-09-27T00:06:34.170846+00:00 &middot;
+                raw payloads preserved at data/reference/phase2-first-real-run &middot;
+                model gemini-3.8-flash &middot;
+                prompt synthesis-v1
+              </p>
+            </div>
+          </details>
+        </section>
+      </div>
     </div>
   </main>
 
   <footer class="site-footer">
     <div class="site-footer__bar"><div class="container">
-      <span>EFI / Projects</span>
+      <span><a href="../../index.html">EFI / Projects</a> &middot; <a href="../index.html">Project 01</a></span>
       <span class="tnum">DRAFT — HUMAN REVIEW REQUIRED</span>
+      <a class="back-to-top no-print" href="#main">Back to top <span aria-hidden="true">&#8593;</span></a>
     </div></div>
   </footer>
 
+  <script src="../../assets/js/site.js"></script>
 </body>
 </html>

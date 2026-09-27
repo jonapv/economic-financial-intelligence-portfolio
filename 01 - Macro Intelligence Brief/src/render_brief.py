@@ -20,6 +20,31 @@ from .brief_schema import (
     SECTION_TITLES,
 )
 
+#: Display names for the economy code carried in the brief input. Presentation
+#: only; an unknown code is shown as-is rather than guessed.
+ECONOMY_NAMES = {"US": "United States"}
+
+#: Independent validation sources. These describe the methodology's fixed
+#: roles, not the result of any particular run: FRED supplies every primary
+#: series, and these agencies are consulted only to check the transformations.
+INDEPENDENT_CHECKS = (
+    ("BLS", "U.S. Bureau of Labor Statistics",
+     "Consumer Price Index independent cross-check"),
+    ("BEA", "U.S. Bureau of Economic Analysis",
+     "Real GDP growth independent cross-check"),
+)
+
+#: Short labels for the snapshot strip. Presentation only: the figure beside
+#: each label is the indicator's supplied display value, and an indicator with
+#: no entry here falls back to its full display name.
+SNAPSHOT_LABELS = {
+    "us_cpi_inflation_yoy": "CPI",
+    "us_effective_fed_funds_rate": "Fed Funds",
+    "us_real_gdp_growth_qoq_ann": "Real GDP",
+    "us_unemployment_rate": "Unemployment",
+    "us_retail_sales_mom": "Retail Sales",
+}
+
 
 def _esc(text: Any) -> str:
     return html.escape(str(text), quote=True)
@@ -28,6 +53,10 @@ def _esc(text: Any) -> str:
 def _paragraphs(text: str) -> str:
     blocks = [b.strip() for b in str(text).split("\n\n") if b.strip()]
     return "".join(f'<p class="prose">{_esc(b)}</p>' for b in blocks) or ""
+
+
+def _anchor(section_id: str) -> str:
+    return "s-" + section_id.replace("_", "-")
 
 
 def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
@@ -53,162 +82,240 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
         for indicator_id in SECTION_INDICATORS[sid]
     }
     rows: List[str] = []
+    snapshot: List[str] = []
     for entry in sorted(brief_input["indicators"],
                         key=lambda e: narrative_order.get(e["indicator_id"], 99)):
         pres = entry["presentation"]
+        label = SNAPSHOT_LABELS.get(entry["indicator_id"], entry["display_name"])
+        snapshot.append(
+            '<li class="snapshot__item">'
+            f'<span class="snapshot__label">{_esc(label)}</span>'
+            f'<span class="snapshot__value">{_esc(pres["value_display"])}</span>'
+            f'<span class="snapshot__period">{_esc(entry["period_label"])}</span>'
+            "</li>"
+        )
         rows.append(
             "<tr>"
             f'<td class="name">{_esc(entry["display_name"])}</td>'
             f'<td class="series">{_esc(entry["source_series"])}</td>'
-            f'<td class="num">{_esc(entry["period_label"])}</td>'
-            f'<td class="num">{_esc(pres["value_display"])}</td>'
-            f'<td class="num">{_esc(pres["previous_value_display"])}</td>'
-            f'<td class="num">{_esc(pres["change_display"])}</td>'
+            f'<td class="num period" data-label="Period">{_esc(entry["period_label"])}</td>'
+            f'<td class="value num-col" data-label="Value">{_esc(pres["value_display"])}</td>'
+            f'<td class="num num-col prev" data-label="Previous">{_esc(pres["previous_value_display"])}</td>'
+            f'<td class="change num-col" data-label="Change">{_esc(pres["change_display"])}</td>'
             "</tr>"
         )
 
     section_html: List[str] = []
-    for sid in SECTION_IDS:
+    toc: List[str] = []
+    for position, sid in enumerate(SECTION_IDS, start=1):
         section = sections_by_id.get(sid)
         if not section:
             continue
-        cited = section.get("indicator_ids") or []
+        cited = [i for i in (section.get("indicator_ids") or []) if i in by_id]
         provenance = " · ".join(
             f'{_esc(by_id[i]["source_series"])} ({_esc(by_id[i]["period_label"])})'
-            for i in cited if i in by_id
+            for i in cited
         )
+        # The figure beside each section is the first cited indicator's supplied
+        # display value, never a number of the renderer's own.
+        figure = ""
+        if cited:
+            lead = by_id[cited[0]]
+            pres = lead["presentation"]
+            figure = (
+                '<div class="narrative__figure">'
+                f'<span class="narrative__value">{_esc(pres["value_display"])}</span>'
+                f'<span class="narrative__change">{_esc(pres["change_display"])}</span>'
+                f'<span class="narrative__period">{_esc(lead["period_label"])}</span>'
+                "</div>"
+            )
+        title = _esc(SECTION_TITLES[sid])
         section_html.append(
-            '<div class="def-row">'
-            f'<dt>{_esc(SECTION_TITLES[sid])}</dt>'
-            f'<dd>{_paragraphs(section["summary"])}'
-            f'<p class="small-print mt-3">Source: {provenance}</p>'
-            "</dd></div>"
+            f'<li class="narrative__item" id="{_anchor(sid)}">'
+            f'<span class="narrative__num" aria-hidden="true">{position:02d}</span>'
+            "<div>"
+            f'<h3 class="narrative__title">{title}</h3>'
+            f'{_paragraphs(section["summary"])}'
+            f'<p class="narrative__source">Source: {provenance}</p>'
+            "</div>"
+            f"{figure}"
+            "</li>"
         )
+        toc.append(f'<li><a href="#{_anchor(sid)}">{title}</a></li>')
 
     developments = "".join(
-        f'<li class="chip">{_esc(item)}</li>' for item in draft.get("key_developments", [])
+        f"<li>{_esc(item)}</li>" for item in draft.get("key_developments", [])
     )
     quality = "".join(
-        f'<p class="prose">{_esc(item)}</p>' for item in draft.get("data_quality_notes", [])
-    ) or '<p class="prose">No data-quality warnings were raised for this dataset.</p>'
+        f"<li>{_esc(item)}</li>" for item in draft.get("data_quality_notes", [])
+    ) or "<li>No data-quality warnings were raised for this dataset.</li>"
 
-    sources = " · ".join(
-        f'{_esc(e["source_series"])} — {_esc(e["source_name"])}'
+    sources = "".join(
+        f'<li>{_esc(e["source_series"])} — {_esc(e["source_name"])}</li>'
         for e in sorted(brief_input["indicators"], key=lambda e: e["source_series"])
     )
+    checks = "".join(
+        f'<li><span class="emphasis">{_esc(code)}</span> — {_esc(name)}: {_esc(role)}</li>'
+        for code, name, role in INDEPENDENT_CHECKS
+    )
+    check_codes = " / ".join(code for code, _, _ in INDEPENDENT_CHECKS)
     prov = brief_input["provenance"]
+    economy = brief_input.get("economy", "")
+    economy_name = ECONOMY_NAMES.get(economy, economy)
+    model = metadata.get("model_reported") or metadata.get("model_requested", "unrecorded")
 
     return f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{_esc(draft["brief_title"])}</title>
   <meta name="description" content="Descriptive macroeconomic briefing generated from validated source data. Draft, pending human review.">
+  <meta name="theme-color" content="#0B0D10">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230B0D10'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' rx='3' fill='none' stroke='%23C6A15B'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='16' fill='%23C6A15B' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{root_prefix}assets/css/base.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
     <div class="container site-header__inner">
-      <a class="wordmark" href="{root_prefix}index.html">EFI<span class="wordmark__sep">/</span>Projects</a>
-      <a class="backlink" href="{project_prefix}index.html"><span aria-hidden="true">&#8592;</span> Project 01</a>
+      <a class="backlink" href="{project_prefix}index.html"><span class="backlink__arrow" aria-hidden="true">&#8592;</span> Project 01</a>
+      <a class="brand" href="{root_prefix}index.html">
+        <span class="brand__mark" aria-hidden="true">E</span>
+        <span class="brand__text">EFI <span>/</span> Projects</span>
+      </a>
     </div>
+    <span class="progress" aria-hidden="true"></span>
   </header>
 
-  <main>
-    <div class="container page-head">
-      <div class="project-head rule-below">
-        <div>
-          <p class="eyebrow">Macro Intelligence Brief</p>
-          <h1 class="title-lg mt-1">{_esc(draft["brief_title"])}</h1>
-          <p class="meta mt-1">As of {_esc(draft["as_of"])}</p>
-        </div>
-        <span class="pill pill--planned">{_esc(DRAFT_STATUS)}</span>
+  <main id="main">
+    <div class="container brief-head">
+      <div class="brief-head__top">
+        <p class="eyebrow eyebrow--gold eyebrow--rule">{_esc(economy_name)} &middot; Macro Intelligence Brief</p>
+        <span class="pill pill--draft"><span class="pill__dot" aria-hidden="true"></span>{_esc(DRAFT_STATUS)}</span>
+      </div>
+      <h1 class="display-lg brief-head__title">{_esc(draft["brief_title"])}</h1>
+      <div class="brief-head__meta">
+        <dl class="meta-grid">
+          <div><dt>As of</dt><dd class="tnum">{_esc(draft["as_of"])}</dd></div>
+          <div><dt>Data</dt><dd>Primary retrieval: {_esc(prov["source_name"])}<br>Independent checks: {_esc(check_codes)}</dd></div>
+          <div><dt>Prose</dt><dd>AI-assisted &middot; {_esc(model)}</dd></div>
+          <div><dt>Coverage</dt><dd class="tnum">{_esc(len(brief_input["indicators"]))} validated indicators</dd></div>
+        </dl>
+      </div>
+      <div class="btn-group brief-actions">
+        <a class="btn btn--ghost btn--sm" href="{project_prefix}index.html"><span aria-hidden="true">&#8592;</span> Back to case study</a>
+        <button class="btn btn--ghost btn--sm" type="button" data-print hidden>Print / Save PDF</button>
       </div>
     </div>
 
-    <div class="container page-body">
-      <dl class="defs">
+    <div class="container brief-layout">
+      <nav class="brief-toc" aria-label="Brief contents">
+        <p class="label">Contents</p>
+        <ol class="mt-1">
+          <li><a href="#summary">Executive Summary</a></li>
+          <li><a href="#data">Validated Data</a></li>
+          {"".join(toc)}
+          <li><a href="#developments">Key Developments</a></li>
+          <li><a href="#notes">Quality &amp; Methodology</a></li>
+        </ol>
+      </nav>
 
-        <div class="def-row">
-          <dt>Executive Summary</dt>
-          <dd>{_paragraphs(draft["executive_summary"])}</dd>
-        </div>
+      <div>
+        <section class="brief-block" id="summary" aria-labelledby="h-summary">
+          <div class="brief-block__head"><span class="section-num">A</span><h2 class="brief-block__title" id="h-summary">Executive Summary</h2></div>
+          <div class="summary-panel">{_paragraphs(draft["executive_summary"])}</div>
+          <ul class="snapshot" aria-label="Snapshot of the validated figures">{"".join(snapshot)}</ul>
+        </section>
 
-        <div class="def-row">
-          <dt>Validated Data</dt>
-          <dd>
-            <div class="data-table-wrap">
-              <table class="data-table">
-                <caption>Every figure below was computed and validated before this brief was written. Displayed values are rounded deterministically; the pipeline retains full precision.</caption>
-                <thead><tr>
-                  <th scope="col">Indicator</th><th scope="col">Series</th>
-                  <th scope="col">Period</th><th scope="col">Value</th>
-                  <th scope="col">Previous</th><th scope="col">Change</th>
-                </tr></thead>
-                <tbody>{"".join(rows)}</tbody>
-              </table>
+        <section class="brief-block" id="data" aria-labelledby="h-data">
+          <div class="brief-block__head"><span class="section-num">B</span><h2 class="brief-block__title" id="h-data">Validated Data</h2></div>
+          <div class="table-wrap table-wrap--stack">
+            <table class="data-table data-table--stack">
+              <caption>Every figure below was computed and validated before this brief was written. Displayed values are rounded deterministically; the pipeline retains full precision.</caption>
+              <thead><tr>
+                <th scope="col">Indicator</th><th scope="col">Series</th>
+                <th scope="col">Period</th><th scope="col" class="num-col">Value</th>
+                <th scope="col" class="num-col">Previous</th><th scope="col" class="num-col">Change</th>
+              </tr></thead>
+              <tbody>{"".join(rows)}</tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="brief-block" aria-labelledby="h-narrative">
+          <div class="brief-block__head"><span class="section-num">C</span><h2 class="brief-block__title" id="h-narrative">Indicator Briefing</h2></div>
+          <ol class="narrative">{"".join(section_html)}</ol>
+        </section>
+
+        <section class="brief-block" id="developments" aria-labelledby="h-developments">
+          <div class="brief-block__head"><span class="section-num">D</span><h2 class="brief-block__title" id="h-developments">Key Developments</h2></div>
+          <details class="accordion" data-print-open>
+            <summary>At a glance &middot; {len(draft.get("key_developments", []))} developments, restating the figures above</summary>
+            <div class="accordion__body">
+              <ol class="dev-list dev-list--compact">{developments}</ol>
             </div>
-          </dd>
-        </div>
+          </details>
+        </section>
 
-        {"".join(section_html)}
-
-        <div class="def-row">
-          <dt>Key Developments</dt>
-          <dd><ul class="chips">{developments}</ul></dd>
-        </div>
-
-        <div class="def-row">
-          <dt>Data Quality Notes</dt>
-          <dd><div class="note">{quality}</div></dd>
-        </div>
-
-        <div class="def-row">
-          <dt>Sources &amp; Methodology</dt>
-          <dd>
-            <p class="prose">{sources}</p>
-            <p class="prose">Figures were retrieved from the source, normalised, and transformed
-            by tested deterministic code. A language model wrote the prose from those validated
-            figures only: it performed no calculation, chose no period, and received no
-            unvalidated data. The draft was then checked programmatically against its input, and
-            every number in it corresponds to a supplied presentation value.</p>
-            <p class="small-print mt-3">
-              Run {_esc(prov["run_id"])} &middot; retrieved {_esc(prov["retrieved_at_utc"])} &middot;
-              raw payloads preserved at {_esc(prov["raw_snapshot_directory"])} &middot;
-              model {_esc(metadata.get("model_reported")
-                          or metadata.get("model_requested", "unrecorded"))} &middot;
-              prompt {_esc(metadata.get("prompt_version", "unrecorded"))}
-            </p>
-            <p class="small-print">Indicators cover different periods by design. The latest
-            available observation is not the latest economic period.</p>
-          </dd>
-        </div>
-
-        <div class="def-row">
-          <dt>Limitations</dt>
-          <dd><div class="note">{_paragraphs(draft["limitations"])}
-            <p class="prose"><span class="emphasis">{_esc(DRAFT_STATUS)}.</span>
-            This document is a research exercise. It is not investment advice, contains no
-            forecast, and must be verified against the primary releases before any use.</p>
-          </div></dd>
-        </div>
-
-      </dl>
+        <section class="brief-block" id="notes" aria-labelledby="h-notes">
+          <div class="brief-block__head"><span class="section-num">E</span><h2 class="brief-block__title" id="h-notes">Quality &amp; Methodology</h2></div>
+          <div class="aux-grid">
+            <div class="aux">
+              <h3 class="aux__title">Data Quality Notes</h3>
+              <ul class="aux__list">{quality}</ul>
+            </div>
+            <div class="aux">
+              <h3 class="aux__title">Limitations</h3>
+              {_paragraphs(draft["limitations"])}
+              <p><strong>{_esc(DRAFT_STATUS)}.</strong>
+              This document is a research exercise. It is not investment advice, contains no
+              forecast, and must be verified against the primary releases before any use.</p>
+            </div>
+            <div class="aux aux--wide">
+              <h3 class="aux__title">Sources &amp; Methodology</h3>
+              <h4 class="label">Primary series retrieval</h4>
+              <ul class="aux__list">{sources}</ul>
+              <h4 class="label aux__subhead">Independent validation</h4>
+              <ul class="aux__list aux__list--checks">{checks}</ul>
+              <p>Figures were retrieved from the source, normalised, and transformed
+              by tested deterministic code. A language model wrote the prose from those validated
+              figures only: it performed no calculation, chose no period, and received no
+              unvalidated data. The draft was then checked programmatically against its input, and
+              every number in it corresponds to a supplied presentation value.</p>
+              <p class="small">Indicators cover different periods by design. The latest
+              available observation is not the latest economic period.</p>
+            </div>
+          </div>
+          <details class="accordion mt-2">
+            <summary>Run provenance</summary>
+            <div class="accordion__body">
+              <p class="small">
+                Run {_esc(prov["run_id"])} &middot; retrieved {_esc(prov["retrieved_at_utc"])} &middot;
+                raw payloads preserved at {_esc(prov["raw_snapshot_directory"])} &middot;
+                model {_esc(model)} &middot;
+                prompt {_esc(metadata.get("prompt_version", "unrecorded"))}
+              </p>
+            </div>
+          </details>
+        </section>
+      </div>
     </div>
   </main>
 
   <footer class="site-footer">
     <div class="site-footer__bar"><div class="container">
-      <span>EFI / Projects</span>
+      <span><a href="{root_prefix}index.html">EFI / Projects</a> &middot; <a href="{project_prefix}index.html">Project 01</a></span>
       <span class="tnum">{_esc(DRAFT_STATUS)}</span>
+      <a class="back-to-top no-print" href="#main">Back to top <span aria-hidden="true">&#8593;</span></a>
     </div></div>
   </footer>
 
+  <script src="{root_prefix}assets/js/site.js"></script>
 </body>
 </html>
 """

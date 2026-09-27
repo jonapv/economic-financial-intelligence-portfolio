@@ -589,6 +589,22 @@ class TestEndToEndOffline(unittest.TestCase):
         self.assertIn("2026 Q2", html)
         self.assertIn("24 September 2026", html)
 
+    def test_rendered_html_carries_every_draft_sentence_verbatim(self):
+        # Presentation may regroup or collapse sections, but it must never drop
+        # or alter validated prose.
+        import html as html_lib
+        draft = good_draft()
+        code, tmp = self.run_with(draft)
+        page = html_lib.unescape((tmp / "brief.html").read_text())
+        texts = [draft["executive_summary"], draft["limitations"],
+                 *draft.get("key_developments", []),
+                 *draft.get("data_quality_notes", []),
+                 *(s["summary"] for s in draft["sections"])]
+        for text in texts:
+            for block in (b.strip() for b in text.split("\n\n")):
+                if block:
+                    self.assertIn(block, page)
+
     def test_malformed_json_from_provider_rejected(self):
         # The transport returns a non-object, as a broken response would parse to.
         code, tmp = self.run_with("not a json object at all")
