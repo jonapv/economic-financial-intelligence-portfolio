@@ -1650,6 +1650,8 @@ img, svg { display: block; max-width: 100%; }
   .aux--wide { grid-column: 1 / -1; }
 }
 .aux--wide .aux__list { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+.aux--wide .aux__list--checks { display: grid; gap: 0.5rem; }
+.aux__subhead { padding-top: 0.75rem; border-top: 1px solid var(--line-soft); }
 .aux {
   display: flex;
   flex-direction: column;
@@ -2140,7 +2142,7 @@ img, svg { display: block; max-width: 100%; }
    white paper, dark ink, no navigation or controls, no clipped cards.
    -------------------------------------------------------------------------- */
 @media print {
-  @page { margin: 16mm 14mm; }
+  @page { size: A4; margin: 16mm 15mm 18mm; }
   :root {
     --bg: #fff; --surface-1: #fff; --surface-2: #f6f5f2; --surface-3: #f6f5f2;
     --line: #cfccc4; --line-soft: #e2dfd8;
@@ -2160,6 +2162,13 @@ img, svg { display: block; max-width: 100%; }
   .summary-panel, .table-wrap, .aux, .snapshot, .accordion, .narrative__figure { background: #fff !important; box-shadow: none; }
   .summary-panel, .snapshot, .narrative__item, .aux, .data-table tr, .brief-block__head { break-inside: avoid; }
   .brief-block__head { break-after: avoid; }
+  .snapshot__item, .dev-list li, .aux__list li, .data-table caption { break-inside: avoid; }
+  .table-wrap, .accordion[open], .snapshot { break-inside: avoid; }
+  h1, h2, h3, h4 { break-after: avoid; }
+  .brief-head__top .pill--draft { color: #111; border-color: #111; font-size: 8.5pt; font-weight: 600; }
+  .brief-head__top .pill--draft .pill__dot { background: #111; }
+  .brief-head::before, .hero::before, .page-hero::before { display: none; }
+  .site-footer__bar a { color: inherit; }
   .brief-block + .brief-block { margin-top: 1.5rem; }
   .table-wrap { overflow: visible; }
   .data-table { font-size: 9.5pt; }

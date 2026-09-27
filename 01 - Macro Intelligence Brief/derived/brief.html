@@ -36,7 +36,7 @@
       <div class="brief-head__meta">
         <dl class="meta-grid">
           <div><dt>As of</dt><dd class="tnum">27 September 2026</dd></div>
-          <div><dt>Source</dt><dd>Official data &middot; Federal Reserve Bank of St. Louis (FRED)</dd></div>
+          <div><dt>Data</dt><dd>Primary retrieval: Federal Reserve Bank of St. Louis (FRED)<br>Independent checks: BLS / BEA</dd></div>
           <div><dt>Prose</dt><dd>AI-assisted &middot; gemini-3.8-flash</dd></div>
           <div><dt>Coverage</dt><dd class="tnum">5 validated indicators</dd></div>
         </dl>
@@ -82,7 +82,7 @@
         </section>
 
         <section class="brief-block" aria-labelledby="h-narrative">
-          <div class="brief-block__head"><span class="section-num">C</span><h2 class="brief-block__title" id="h-narrative">By Section</h2></div>
+          <div class="brief-block__head"><span class="section-num">C</span><h2 class="brief-block__title" id="h-narrative">Indicator Briefing</h2></div>
           <ol class="narrative"><li class="narrative__item" id="s-inflation"><span class="narrative__num" aria-hidden="true">01</span><div><h3 class="narrative__title">Inflation</h3><p class="prose">Headline CPI inflation was broadly stable at 3.4% year-on-year in August 2026, with a change of +0.03 pp compared with 3.4% in the preceding month.</p><p class="narrative__source">Source: CPIAUCNS (August 2026)</p></div><div class="narrative__figure"><span class="narrative__value">3.4%</span><span class="narrative__change">+0.03 pp</span><span class="narrative__period">August 2026</span></div></li><li class="narrative__item" id="s-monetary-policy"><span class="narrative__num" aria-hidden="true">02</span><div><h3 class="narrative__title">Monetary Policy</h3><p class="prose">The effective federal funds rate stood at 3.88% on 24 September 2026, unchanged with a 0.00 pp change from the previous reading of 3.88%.</p><p class="narrative__source">Source: DFF (24 September 2026)</p></div><div class="narrative__figure"><span class="narrative__value">3.88%</span><span class="narrative__change">0.00 pp</span><span class="narrative__period">24 September 2026</span></div></li><li class="narrative__item" id="s-growth"><span class="narrative__num" aria-hidden="true">03</span><div><h3 class="narrative__title">Growth</h3><p class="prose">Real GDP growth decreased to an annualised rate of 1.5% in 2026 Q2, down −0.61 pp from 2.1% in the prior quarter.</p><p class="narrative__source">Source: GDPC1 (2026 Q2)</p></div><div class="narrative__figure"><span class="narrative__value">1.5%</span><span class="narrative__change">−0.61 pp</span><span class="narrative__period">2026 Q2</span></div></li><li class="narrative__item" id="s-labour-market"><span class="narrative__num" aria-hidden="true">04</span><div><h3 class="narrative__title">Labour Market</h3><p class="prose">The unemployment rate stood at 4.1% in August 2026, unchanged with a 0.00 pp change from the 4.1% recorded in the preceding month.</p><p class="narrative__source">Source: UNRATE (August 2026)</p></div><div class="narrative__figure"><span class="narrative__value">4.1%</span><span class="narrative__change">0.00 pp</span><span class="narrative__period">August 2026</span></div></li><li class="narrative__item" id="s-consumption"><span class="narrative__num" aria-hidden="true">05</span><div><h3 class="narrative__title">Consumption</h3><p class="prose">Retail sales increased by 1.2% month-over-month in August 2026, an increase of +1.78 pp compared with −0.5% in the preceding month.</p><p class="narrative__source">Source: RSAFS (August 2026)</p></div><div class="narrative__figure"><span class="narrative__value">1.2%</span><span class="narrative__change">+1.78 pp</span><span class="narrative__period">August 2026</span></div></li></ol>
         </section>
 
@@ -112,7 +112,10 @@
             </div>
             <div class="aux aux--wide">
               <h3 class="aux__title">Sources &amp; Methodology</h3>
+              <h4 class="label">Primary series retrieval</h4>
               <ul class="aux__list"><li>CPIAUCNS — Federal Reserve Bank of St. Louis (FRED)</li><li>DFF — Federal Reserve Bank of St. Louis (FRED)</li><li>GDPC1 — Federal Reserve Bank of St. Louis (FRED)</li><li>RSAFS — Federal Reserve Bank of St. Louis (FRED)</li><li>UNRATE — Federal Reserve Bank of St. Louis (FRED)</li></ul>
+              <h4 class="label aux__subhead">Independent validation</h4>
+              <ul class="aux__list aux__list--checks"><li><span class="emphasis">BLS</span> — U.S. Bureau of Labor Statistics: Consumer Price Index independent cross-check</li><li><span class="emphasis">BEA</span> — U.S. Bureau of Economic Analysis: Real GDP growth independent cross-check</li></ul>
               <p>Figures were retrieved from the source, normalised, and transformed
               by tested deterministic code. A language model wrote the prose from those validated
               figures only: it performed no calculation, chose no period, and received no

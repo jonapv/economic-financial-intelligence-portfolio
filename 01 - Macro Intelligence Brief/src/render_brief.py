@@ -24,6 +24,16 @@ from .brief_schema import (
 #: only; an unknown code is shown as-is rather than guessed.
 ECONOMY_NAMES = {"US": "United States"}
 
+#: Independent validation sources. These describe the methodology's fixed
+#: roles, not the result of any particular run: FRED supplies every primary
+#: series, and these agencies are consulted only to check the transformations.
+INDEPENDENT_CHECKS = (
+    ("BLS", "U.S. Bureau of Labor Statistics",
+     "Consumer Price Index independent cross-check"),
+    ("BEA", "U.S. Bureau of Economic Analysis",
+     "Real GDP growth independent cross-check"),
+)
+
 #: Short labels for the snapshot strip. Presentation only: the figure beside
 #: each label is the indicator's supplied display value, and an indicator with
 #: no entry here falls back to its full display name.
@@ -144,6 +154,11 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
         f'<li>{_esc(e["source_series"])} — {_esc(e["source_name"])}</li>'
         for e in sorted(brief_input["indicators"], key=lambda e: e["source_series"])
     )
+    checks = "".join(
+        f'<li><span class="emphasis">{_esc(code)}</span> — {_esc(name)}: {_esc(role)}</li>'
+        for code, name, role in INDEPENDENT_CHECKS
+    )
+    check_codes = " / ".join(code for code, _, _ in INDEPENDENT_CHECKS)
     prov = brief_input["provenance"]
     economy = brief_input.get("economy", "")
     economy_name = ECONOMY_NAMES.get(economy, economy)
@@ -187,7 +202,7 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
       <div class="brief-head__meta">
         <dl class="meta-grid">
           <div><dt>As of</dt><dd class="tnum">{_esc(draft["as_of"])}</dd></div>
-          <div><dt>Source</dt><dd>Official data &middot; {_esc(prov["source_name"])}</dd></div>
+          <div><dt>Data</dt><dd>Primary retrieval: {_esc(prov["source_name"])}<br>Independent checks: {_esc(check_codes)}</dd></div>
           <div><dt>Prose</dt><dd>AI-assisted &middot; {_esc(model)}</dd></div>
           <div><dt>Coverage</dt><dd class="tnum">{_esc(len(brief_input["indicators"]))} validated indicators</dd></div>
         </dl>
@@ -233,7 +248,7 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
         </section>
 
         <section class="brief-block" aria-labelledby="h-narrative">
-          <div class="brief-block__head"><span class="section-num">C</span><h2 class="brief-block__title" id="h-narrative">By Section</h2></div>
+          <div class="brief-block__head"><span class="section-num">C</span><h2 class="brief-block__title" id="h-narrative">Indicator Briefing</h2></div>
           <ol class="narrative">{"".join(section_html)}</ol>
         </section>
 
@@ -263,7 +278,10 @@ def render_html(draft: Dict[str, Any], brief_input: Dict[str, Any],
             </div>
             <div class="aux aux--wide">
               <h3 class="aux__title">Sources &amp; Methodology</h3>
+              <h4 class="label">Primary series retrieval</h4>
               <ul class="aux__list">{sources}</ul>
+              <h4 class="label aux__subhead">Independent validation</h4>
+              <ul class="aux__list aux__list--checks">{checks}</ul>
               <p>Figures were retrieved from the source, normalised, and transformed
               by tested deterministic code. A language model wrote the prose from those validated
               figures only: it performed no calculation, chose no period, and received no
