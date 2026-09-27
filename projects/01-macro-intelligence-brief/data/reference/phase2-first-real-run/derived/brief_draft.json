@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "review_status": "DRAFT — HUMAN REVIEW REQUIRED",
+  "synthesis": {
+    "schema_version": "1.0",
+    "prompt_version": "synthesis-v1",
+    "generated_at": "2026-09-27T09:30:10.891869+00:00",
+    "input_run_id": "phase2-20260927T000634Z-b7ea4089",
+    "input_file": "brief_input.json",
+    "review_status": "DRAFT — HUMAN REVIEW REQUIRED",
+    "provider": "Google Gemini API",
+    "endpoint": "https://generativelanguage.googleapis.com/v1beta/interactions",
+    "model_requested": "gemini-3.8-flash",
+    "auth": "x-goog-api-key header; no credential in any URL",
+    "structured_output": "response_format mime_type=application/json with schema",
+    "response_parsing": "steps[type=model_output].content[type=text].text from the raw Interaction resource; no dependency on SDK output_text",
+    "schema_keywords_dropped_for_provider": [
+      "maxLength",
+      "minLength"
+    ],
+    "thinking_level": "low",
+    "temperature": 0.0,
+    "transport": "python standard library urllib; no third-party SDK",
+    "interaction_id": "v1_ChdNdUs0YXVXVU85N2puc0VQcnFUVW1RdxIXTXVLNGF1V1VPOTdqbnNFUHJxVFVtUXc",
+    "interaction_object": "interaction",
+    "status": "completed",
+    "model_reported": "gemini-3.8-flash",
+    "created": "2026-09-27T09:30:26Z",
+    "usage": {
+      "total_input_tokens": 6202,
+      "total_output_tokens": 972,
+      "total_tokens": 7174,
+      "total_cached_tokens": 0
+    },
+    "step_count": 2
+  },
+  "validation": {
+    "accepted": true,
+    "status": "accepted",
+    "counts": {
+      "hard_failures": 0,
+      "warnings": 1
+    },
+    "hard_failures": [],
+    "warnings": [
+      {
+        "code": "draft.status_not_asserted",
+        "severity": "warning",
+        "message": "neither brief_title nor as_of mentions draft status; the renderer applies it unconditionally"
+      }
+    ]
+  },
+  "draft": {
+    "brief_title": "United States Macroeconomic Briefing",
+    "as_of": "27 September 2026",
+    "executive_summary": "Headline CPI inflation was broadly stable at 3.4% year-on-year in August 2026, while the unemployment rate stood unchanged at 4.1%. Retail sales increased by 1.2% month-over-month in August 2026 following −0.5% in the prior month. Real GDP expanded at an annualised quarterly rate of 1.5% in 2026 Q2, down from 2.1% in the preceding quarter. The effective federal funds rate was 3.88% on 24 September 2026, unchanged from the previous observation.",
+    "sections": [
+      {
+        "section_id": "inflation",
+        "title": "Inflation",
+        "indicator_ids": [
+          "us_cpi_inflation_yoy"
+        ],
+        "summary": "Headline CPI inflation was broadly stable at 3.4% year-on-year in August 2026, with a change of +0.03 pp compared with 3.4% in the preceding month."
+      },
+      {
+        "section_id": "monetary_policy",
+        "title": "Monetary Policy",
+        "indicator_ids": [
+          "us_effective_fed_funds_rate"
+        ],
+        "summary": "The effective federal funds rate stood at 3.88% on 24 September 2026, unchanged with a 0.00 pp change from the previous reading of 3.88%."
+      },
+      {
+        "section_id": "growth",
+        "title": "Growth",
+        "indicator_ids": [
+          "us_real_gdp_growth_qoq_ann"
+        ],
+        "summary": "Real GDP growth decreased to an annualised rate of 1.5% in 2026 Q2, down −0.61 pp from 2.1% in the prior quarter."
+      },
+      {
+        "section_id": "labour_market",
+        "title": "Labour Market",
+        "indicator_ids": [
+          "us_unemployment_rate"
+        ],
+        "summary": "The unemployment rate stood at 4.1% in August 2026, unchanged with a 0.00 pp change from the 4.1% recorded in the preceding month."
+      },
+      {
+        "section_id": "consumption",
+        "title": "Consumption",
+        "indicator_ids": [
+          "us_retail_sales_mom"
+        ],
+        "summary": "Retail sales increased by 1.2% month-over-month in August 2026, an increase of +1.78 pp compared with −0.5% in the preceding month."
+      }
+    ],
+    "key_developments": [
+      "CPI inflation was broadly stable at 3.4% year-on-year in August 2026 (+0.03 pp change).",
+      "The effective federal funds rate was unchanged at 3.88% on 24 September 2026 (0.00 pp change).",
+      "Real GDP growth decreased to 1.5% annualised in 2026 Q2 (−0.61 pp change from 2.1%).",
+      "The unemployment rate was unchanged at 4.1% in August 2026 (0.00 pp change).",
+      "Retail sales increased by 1.2% month-over-month in August 2026 (+1.78 pp change from −0.5%)."
+    ],
+    "data_quality_notes": [
+      "CPIAUCNS: 1 gap(s) longer than 40 days between consecutive observations",
+      "UNRATE: 1 gap(s) longer than 40 days between consecutive observations"
+    ],
+    "limitations": "Data snapshot. No forecast, no interpretation, no investment advice. Every figure was computed from the source series named and covers different observation periods that are not normalised to a common date."
+  }
+}

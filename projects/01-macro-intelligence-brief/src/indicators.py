@@ -55,6 +55,7 @@ class IndicatorSpec:
     output_unit: Unit
     comparison: str
     period_selection: PeriodSelection
+    display_decimals: int
     minimum_history_required: int
     interpretation: str
     known_revision_risk: str
@@ -83,6 +84,7 @@ CPI_INFLATION = IndicatorSpec(
         "never by list position"
     ),
     period_selection=PeriodSelection.CALENDAR,
+    display_decimals=1,
     minimum_history_required=14,
     interpretation=(
         "The rate at which consumer prices are rising over twelve months. The "
@@ -118,6 +120,7 @@ UNEMPLOYMENT_RATE = IndicatorSpec(
         "The preceding month must be present; a gap is not bridged"
     ),
     period_selection=PeriodSelection.CALENDAR,
+    display_decimals=1,
     minimum_history_required=2,
     interpretation=(
         "Labour market slack. Already a rate, so the change is a "
@@ -147,6 +150,7 @@ EFFECTIVE_FED_FUNDS = IndicatorSpec(
         "observation, in percentage points"
     ),
     period_selection=PeriodSelection.PREVIOUS_AVAILABLE,
+    display_decimals=2,
     minimum_history_required=2,
     interpretation=(
         "The rate actually realised in the overnight market, at daily "
@@ -183,6 +187,7 @@ REAL_GDP_GROWTH = IndicatorSpec(
         "differenced in percentage points. Quarters are selected by calendar date"
     ),
     period_selection=PeriodSelection.CALENDAR,
+    display_decimals=1,
     minimum_history_required=3,
     interpretation=(
         "The headline United States growth number, quoted at a seasonally "
@@ -215,6 +220,7 @@ RETAIL_SALES = IndicatorSpec(
         "differenced in percentage points. Months are selected by calendar date"
     ),
     period_selection=PeriodSelection.CALENDAR,
+    display_decimals=1,
     minimum_history_required=3,
     interpretation=(
         "Momentum in consumer spending. The raw level is a dollar amount and "

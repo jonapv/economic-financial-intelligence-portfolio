@@ -66,12 +66,11 @@
           <dd>
             <div class="note note--accent">
               <p>
-                <span class="prose emphasis">In development.</span> The collection, normalisation,
-                calculation and validation stages are implemented and have been run against the live
-                source. The synthesis, brief and review stages do not exist yet, so
-                <span class="emphasis">no brief is produced or distributed</span>, and nothing here runs
-                on a schedule. An earlier prototype produced briefs through a no-code automation
-                platform; that approach has been retired and is preserved only as reference material.
+                <span class="prose emphasis">In development.</span> The full pipeline has been run
+                once end to end, producing the example brief below. Nothing runs on a schedule, no
+                brief is distributed, and every generated brief remains a draft until a person reviews
+                it. An earlier prototype produced briefs through a no-code automation platform; that
+                approach has been retired and is preserved only as reference material.
               </p>
             </div>
           </dd>
@@ -173,7 +172,7 @@
                 </div>
               </li>
             </ol>
-            <p class="diagram-caption">Stages 01&ndash;05 implemented and run against the live source &middot; stages 06&ndash;08 not yet built</p>
+            <p class="diagram-caption">All eight stages implemented &middot; stages 01&ndash;05 deterministic, 06&ndash;07 AI-assisted, 08 human and required</p>
           </dd>
         </div>
 
@@ -313,6 +312,65 @@
               Source: Federal Reserve Bank of St. Louis (FRED), retrieved 2026-09-27. Raw payloads,
               validation report, provenance and spot-check notes are stored alongside the pipeline.
               Displayed values are rounded; the pipeline retains full precision.
+            </p>
+          </dd>
+        </div>
+
+
+        <!-- Example validated output -->
+        <div class="def-row">
+          <dt>Example Validated Output</dt>
+          <dd>
+            <p class="prose mb-3">
+              <span class="emphasis">Example validated output.</span> One brief, generated once from
+              the validated dataset above and committed as a static file. The page you are reading
+              makes no request to any AI provider, and neither does opening the brief &mdash; visiting
+              this portfolio never triggers a paid model call.
+            </p>
+
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <caption>
+                  Generated 27 September 2026 from run <code>phase2-20260927T000634Z-b7ea4089</code>.
+                  Data periods differ by design and are not normalised.
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Property</th>
+                    <th scope="col">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="name">Review status</td><td>DRAFT &mdash; HUMAN REVIEW REQUIRED</td></tr>
+                  <tr><td class="name">Generated</td><td class="num">27 September 2026</td></tr>
+                  <tr><td class="name">Data periods</td><td class="num">August 2026 (CPI, unemployment, retail) &middot; 2026 Q2 (GDP) &middot; 24 September 2026 (effective rate)</td></tr>
+                  <tr><td class="name">Source</td><td>Federal Reserve Bank of St. Louis (FRED)</td></tr>
+                  <tr><td class="name">Language model</td><td class="num">gemini-3.8-flash</td></tr>
+                  <tr><td class="name">Validation</td><td>Accepted &mdash; 0 hard failures</td></tr>
+                  <tr><td class="name">Factual audit</td><td>19 sentences, 0 unsupported claims</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p class="prose mt-4">
+              The model received only the validated figures, already rounded for presentation, with
+              their units, periods and provenance attached. It performed no calculation, chose no
+              period and never saw the raw source data. Its output was then checked programmatically
+              against that input: every number, unit, period and direction-of-change claim had to
+              correspond to a supplied value, and both data-quality warnings had to be carried
+              through. A draft that failed any of those checks would have been rejected rather than
+              corrected, and no brief would exist.
+            </p>
+
+            <p class="mt-3">
+              <a class="link-rule" href="data/reference/phase2-first-real-run/derived/brief.html">
+                Read the example brief <span aria-hidden="true">&#8594;</span>
+              </a>
+            </p>
+            <p class="small-print mt-3">
+              The brief remains a draft pending human review. It is descriptive only: no forecast, no
+              interpretation of causes, no investment advice. Verify every figure against the primary
+              release before any use.
             </p>
           </dd>
         </div>

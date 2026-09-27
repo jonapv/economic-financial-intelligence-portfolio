@@ -39,6 +39,7 @@ from .errors import CollectionError, InvalidPeriodError
 from .indicators import SPECS
 from .models import MacroObservation
 from .periods import period_label
+from .presentation import presentation_for
 from .provenance import RunProvenance
 from .validation import ValidationReport
 
@@ -65,6 +66,7 @@ INDICATOR_FIELDS = (
     "source_last_updated",
     "retrieved_at",
     "validation_status",
+    "presentation",
 )
 
 
@@ -108,6 +110,9 @@ def _indicator_entry(
         ) else "failed",
         "warning_codes": sorted({f.code for f in series_findings if f.severity == "warning"}),
         "known_revision_risk": spec.known_revision_risk,
+        # Deterministic presentation strings. The model must quote these
+        # verbatim and is never asked to round anything itself.
+        "presentation": presentation_for(spec, observation),
     }
 
 
@@ -202,7 +207,8 @@ def build_brief_input(
         },
         "usage_contract": {
             "may": [
-                "describe each figure using the value, unit, period_label and direction given",
+                "describe each figure using the presentation display strings, "
+                "the unit, the period_label and the direction given",
                 "state the comparison basis and the source series",
                 "explain a warning that is present in this file",
             ],
@@ -214,6 +220,8 @@ def build_brief_input(
                 "suppress or omit a warning present in this file",
                 "add a forecast, a market call or investment advice",
                 "introduce any figure not present in this file",
+                "round, reformat or recompute any figure — use the presentation "
+                "display strings exactly as given",
             ],
         },
         "disclaimer": (

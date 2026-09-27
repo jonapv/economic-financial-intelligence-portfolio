@@ -1,8 +1,8 @@
 # Project 01 — Macro Intelligence Brief
 
-**Status: in development.** Collection, normalisation, calculation and validation are implemented and
-have been run against live data. Synthesis, the brief itself and human review do not exist yet, so **no
-brief is produced or distributed**, and nothing runs on a schedule. This is not production-ready.
+**Status: in development.** The full pipeline has been run end to end once, producing one validated
+example brief. Nothing runs on a schedule, no brief is distributed, and every generated brief remains a
+**draft pending human review**. This is not production-ready.
 
 A reproducible weekly reading of the United States macroeconomic picture. Automation handles
 collection and computation; a language model drafts the surrounding prose; a person reviews and
@@ -414,7 +414,7 @@ figures.
 | [`src/brief_input.py`](src/brief_input.py) | The brief input contract and the publication invariant |
 | [`src/errors.py`](src/errors.py) | `MissingValueError`, `NonNumericValueError`, `ZeroDenominatorError`, `InsufficientHistoryError`, `MissingRequiredPeriodError` |
 | [`data/samples/`](data/samples/) | Synthetic fixtures, one per source series — **not real data** |
-| [`tests/`](tests/) | 313 tests: transformations, collection boundary, period semantics, period labels, the brief input contract |
+| [`tests/`](tests/) | 431 tests: transformations, collection boundary, period semantics, period labels, the brief input contract, synthesis and rendering |
 
 Standard library only; no third-party dependencies. The `src` package performs no I/O whatsoever.
 
@@ -882,6 +882,139 @@ refuses to publish what it cannot verify.
 
 ---
 
+## Phase 3 — AI-assisted synthesis
+
+**Status: complete for one brief.** The full pipeline has been run end to end once. Nothing runs on a
+schedule, no brief is distributed, and every generated brief stays a draft until a person reviews it.
+
+### The language layer, and its boundary
+
+The model is a **language layer**. It received the validated `brief_input.json` and nothing else:
+
+| It may | It may not |
+| --- | --- |
+| describe a figure using the supplied presentation string | compute, adjust, infer or recall any statistic |
+| state the comparison basis and source series | retrieve data, or choose an observation period |
+| use `period_label` for periods | reinterpret the canonical period date |
+| explain a supplied warning | suppress a warning, or invent one |
+| | forecast, or give investment advice |
+| | explain *why* anything happened |
+
+```
+validated brief_input.json → gate → constrained model call → brief_draft.json
+  → deterministic validation → brief.html → human review
+```
+
+### Modules
+
+| Module | Role | Provider-specific |
+| --- | --- | --- |
+| [`src/presentation.py`](src/presentation.py) | Deterministic rounding, **before** the call | no |
+| [`src/brief_schema.py`](src/brief_schema.py) | Closed five-section schema | no |
+| [`src/synthesis_prompt.py`](src/synthesis_prompt.py) | Versioned prompt (`synthesis-v1`) | no |
+| [`src/llm_client.py`](src/llm_client.py) | Gemini Interactions REST call | **yes, only here** |
+| [`src/draft_validator.py`](src/draft_validator.py) | Deterministic claim validation | no |
+| [`src/render_brief.py`](src/render_brief.py) | HTML renderer | no |
+| [`src/synthesize.py`](src/synthesize.py) | Entry point | no |
+
+The project remains **standard library only**. There is no SDK and no `requirements.txt`: the provider
+call is one HTTPS POST, so `urllib` is sufficient and the whole test suite runs with nothing installed.
+
+### Provider integration
+
+Google Gemini, model `gemini-3.8-flash`, via the **Interactions** REST endpoint:
+
+```
+POST https://generativelanguage.googleapis.com/v1beta/interactions
+x-goog-api-key: <from GEMINI_API_KEY>
+{ "model": …, "input": …, "system_instruction": …,
+  "response_format": { "mime_type": "application/json", "schema": … },
+  "generation_config": { "thinking_level": "low", "temperature": 0.0 } }
+```
+
+The credential travels in a **header, never a query string**. That is deliberate: the retired prototype
+put its keys in URL query parameters, which is exactly how this project's first key leaked.
+
+Two interface corrections were made before the first call, both found by reading the reference rather
+than by running anything:
+
+1. The synthesis layer was first written against a different provider's API. Rewriting it touched only
+   `llm_client.py`; the schema, prompt, presentation layer, validator, renderer and their tests were
+   provider-independent and did not change. That is the boundary working.
+2. **The response is parsed from the raw Interaction resource**, not from `output_text`. That field is
+   a convenience property added by Google's SDK and does **not** exist in the REST response. The parser
+   walks `status == "completed"` → `steps[type == "model_output"]` → `content[type == "text"]` → `text`,
+   rejects all seven non-completed statuses with a specific reason each, refuses more than one
+   `model_output` step rather than guessing which is the brief, joins only *consecutive* text blocks,
+   and rejects interleaved output. Reading `output_text` would have passed every stubbed test and
+   failed on the first live call.
+
+### Structured output is not validation
+
+The request constrains the response to JSON matching the schema, so no free-form prose is parsed after
+the fact. The canonical schema in `brief_schema.py` is the source of truth; `provider_schema()` adapts a
+*copy* to the keyword subset the provider documents, and records what it dropped (`minLength`,
+`maxLength`) rather than hiding the difference.
+
+**Schema enforcement guarantees shape, not truth.** The deterministic validator runs over every
+response regardless, and a test proves it: a schema-*valid* draft containing a fabricated figure is
+still rejected.
+
+### The publication invariant
+
+`build_brief_input` refuses to produce a brief input unless `publication_ready` is true, and
+`synthesize.py` re-checks the gate **before contacting the provider** — a test asserts the transport is
+never called when the gate fails. A model must never get the opportunity to write fluent prose about
+invalid figures, because fluency is what makes a wrong figure dangerous.
+
+A rejected draft is written to disk for inspection but **never rendered**. There is no silent repair.
+
+### First real synthesis
+
+One request, one draft, accepted. No retry, no prompt adjustment, no regeneration.
+
+| | |
+| --- | --- |
+| Model requested / reported | `gemini-3.8-flash` / `gemini-3.8-flash` |
+| Interaction status | `completed` |
+| Tokens | 6,202 in · 972 out · 7,174 total |
+| Prompt version | `synthesis-v1` |
+| Input run | `phase2-20260927T000634Z-b7ea4089` |
+| Deterministic validation | **accepted**, 0 hard failures, 1 advisory warning |
+| Factual audit | **19 sentences, 0 unsupported claims** |
+| Review status | `DRAFT — HUMAN REVIEW REQUIRED` |
+
+The audit checked every number, unit, period, direction-of-change claim, comparison and data-quality
+statement against `brief_input.json`: 55 numeric tokens, 81 unit checks, 14 period checks, 17
+direction checks. Both warnings were carried through. No forecast, causal claim, market reference or
+advice appeared.
+
+One result is worth recording because it validates a design decision. CPI inflation was 3.3965% against
+a previous 3.3648% — both render as **3.4%** at CPI's conventional precision, while the direction is
+`increased`. The presentation layer detected that the change was smaller than one displayed decimal
+place and supplied a `comparison_note` instructing the model to call it broadly stable and explicitly
+*not* to write that it moved from 3.4% to 3.4%. The model complied and still disclosed the
+`+0.03 pp` change. Without that note, the most likely output was a sentence that read as self-contradictory.
+
+Artefacts: [`derived/brief_draft.json`](data/reference/phase2-first-real-run/derived/brief_draft.json)
+(raw draft, provider metadata, validation result) and
+[`derived/brief.html`](data/reference/phase2-first-real-run/derived/brief.html) (rendered brief).
+The deterministic input is never overwritten.
+
+### Example output on the portfolio
+
+The Project 01 page links the committed static brief. Opening either page makes **no** request to any
+provider, so visiting the portfolio never triggers a paid model call. There is no email form.
+
+### What Phase 3 does not establish
+
+One brief, from one dataset, on one day. It shows the pipeline runs end to end and that this particular
+output survived every check. It does not establish that the model behaves this well across datasets,
+that the forbidden-language patterns catch paraphrase, or that the numeric grounding catches a claim
+built from correct numbers arranged wrongly. Those need more than one sample.
+
+---
+
 ## Legacy prototype
 
 The first version of this project was built on [n8n](https://n8n.io), a no-code automation platform.
@@ -901,8 +1034,17 @@ A sanitised copy is preserved at [`../../legacy/n8n/`](../../legacy/n8n/) as a h
 
 ## Known limitations
 
-- **No brief exists.** Stages 06–08 of the pipeline — AI-assisted synthesis, the structured brief and
-  human review — are not built. The project computes validated statistics and stops there.
+- **One brief, one dataset, one day.** The pipeline has run end to end once. That the output survived
+  every check says nothing yet about how the model behaves across datasets, and there is no operational
+  history at all.
+- **The forbidden-language check is regex-based.** It catches the phrasings it knows and will miss
+  paraphrase. It also over-fires: two false positives appeared in a single realistic draft during
+  development, both fixed, and more certainly exist.
+- **Numeric grounding is textual.** It cannot catch a claim built entirely from correct numbers arranged
+  wrongly — attributing the right figure to the wrong indicator in prose that avoids period labels would
+  pass.
+- **The publication invariant is enforced in code, not by process.** Nothing stops a future author
+  reading `macro_snapshot.json` directly and bypassing the contract.
 - **One run, one moment.** The stored dataset is a single snapshot from 2026-09-27. It is not refreshed,
   there is no scheduling, and it must not be read as current.
 - **A silent-wrong-answer class of bug reached real data before being caught.** Positional period
@@ -961,10 +1103,10 @@ canonical `period` and a deterministically generated `period_label`, removing th
 before a model reads the file. All five numeric values verified bit-identical across the change. 313
 tests.
 
-**Phase 3 — synthesis and review.** Not started. AI-assisted drafting from `brief_input.json`, plus the
-human review step. Deliberately last: there was no point drafting prose until the figures underneath it
-were correct, and Phase 2 demonstrated exactly why — a confidently wrong figure would have been written
-up in fluent prose.
+**Phase 3 — AI-assisted synthesis.** Complete for one brief. Constrained Gemini synthesis from
+`brief_input.json`, deterministic draft validation, rendered HTML, and a required human-review status.
+One live request produced a draft that passed validation with zero hard failures and a sentence-by-sentence
+factual audit with zero unsupported claims. 431 tests, none touching a provider.
 
-The two things worth doing before Phase 3 have now been done: the remaining transformations were audited
-for assumptions real data could break, and the vintage question is answered by the provenance contract.
+Deliberately last, and Phase 2 showed why: a confidently wrong figure would have been written up in
+fluent prose and read perfectly well.

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "run_id": "phase2-20260927T000634Z-b7ea4089",
-  "generated_at": "2026-09-27T08:50:22.834892+00:00",
+  "generated_at": "2026-09-27T09:05:21.382989+00:00",
   "publication_ready": true,
   "economy": "US",
   "content": "validated derived macroeconomic statistics",
@@ -31,7 +31,15 @@
       "warning_codes": [
         "series.unusual_gaps"
       ],
-      "known_revision_risk": "Very low. The not-seasonally-adjusted index is not subject to the annual seasonal-factor revisions that alter the adjusted series, so published NSA index values are effectively final."
+      "known_revision_risk": "Very low. The not-seasonally-adjusted index is not subject to the annual seasonal-factor revisions that alter the adjusted series, so published NSA index values are effectively final.",
+      "presentation": {
+        "value_display": "3.4%",
+        "previous_value_display": "3.4%",
+        "change_display": "+0.03 pp",
+        "display_decimals": 1,
+        "change_decimals": 2,
+        "comparison_note": "The current and previous values are identical at the displayed precision (3.4%). The change of +0.03 pp is smaller than one displayed decimal place. Describe this as broadly stable or little changed; do NOT write that it moved from 3.4% to 3.4%, which would read as no change at all."
+      }
     },
     {
       "indicator_id": "us_effective_fed_funds_rate",
@@ -55,7 +63,15 @@
       "retrieved_at": "2026-09-27T00:06:34.170846+00:00",
       "validation_status": "validated",
       "warning_codes": [],
-      "known_revision_risk": "Very low. A realised market average rather than an estimate, though the most recent daily observations can be revised slightly."
+      "known_revision_risk": "Very low. A realised market average rather than an estimate, though the most recent daily observations can be revised slightly.",
+      "presentation": {
+        "value_display": "3.88%",
+        "previous_value_display": "3.88%",
+        "change_display": "0.00 pp",
+        "display_decimals": 2,
+        "change_decimals": 2,
+        "comparison_note": "The value is unchanged from the previous observation (3.88%). For this series an unchanged reading is an ordinary outcome and is not itself a development."
+      }
     },
     {
       "indicator_id": "us_real_gdp_growth_qoq_ann",
@@ -79,7 +95,14 @@
       "retrieved_at": "2026-09-27T00:06:34.170846+00:00",
       "validation_status": "validated",
       "warning_codes": [],
-      "known_revision_risk": "HIGH. Revised across advance, second and third estimates and again in annual and comprehensive revisions. Revisions of several tenths are routine and can change the sign of a weak quarter."
+      "known_revision_risk": "HIGH. Revised across advance, second and third estimates and again in annual and comprehensive revisions. Revisions of several tenths are routine and can change the sign of a weak quarter.",
+      "presentation": {
+        "value_display": "1.5%",
+        "previous_value_display": "2.1%",
+        "change_display": "−0.61 pp",
+        "display_decimals": 1,
+        "change_decimals": 2
+      }
     },
     {
       "indicator_id": "us_retail_sales_mom",
@@ -103,7 +126,14 @@
       "retrieved_at": "2026-09-27T00:06:34.170846+00:00",
       "validation_status": "validated",
       "warning_codes": [],
-      "known_revision_risk": "MEDIUM. 'Advance' estimates are revised in the following month as more complete survey responses arrive."
+      "known_revision_risk": "MEDIUM. 'Advance' estimates are revised in the following month as more complete survey responses arrive.",
+      "presentation": {
+        "value_display": "1.2%",
+        "previous_value_display": "−0.5%",
+        "change_display": "+1.78 pp",
+        "display_decimals": 1,
+        "change_decimals": 2
+      }
     },
     {
       "indicator_id": "us_unemployment_rate",
@@ -129,7 +159,15 @@
       "warning_codes": [
         "series.unusual_gaps"
       ],
-      "known_revision_risk": "Low. Household survey estimates are not routinely revised, though seasonal factors and annual population controls can shift the series."
+      "known_revision_risk": "Low. Household survey estimates are not routinely revised, though seasonal factors and annual population controls can shift the series.",
+      "presentation": {
+        "value_display": "4.1%",
+        "previous_value_display": "4.1%",
+        "change_display": "0.00 pp",
+        "display_decimals": 1,
+        "change_decimals": 2,
+        "comparison_note": "The value is unchanged from the previous observation (4.1%). For this series an unchanged reading is an ordinary outcome and is not itself a development."
+      }
     }
   ],
   "warnings": [
@@ -293,7 +331,7 @@
   },
   "usage_contract": {
     "may": [
-      "describe each figure using the value, unit, period_label and direction given",
+      "describe each figure using the presentation display strings, the unit, the period_label and the direction given",
       "state the comparison basis and the source series",
       "explain a warning that is present in this file"
     ],
@@ -303,7 +341,8 @@
       "present figures from different periods as a single common period",
       "suppress or omit a warning present in this file",
       "add a forecast, a market call or investment advice",
-      "introduce any figure not present in this file"
+      "introduce any figure not present in this file",
+      "round, reformat or recompute any figure — use the presentation display strings exactly as given"
     ]
   },
   "disclaimer": "Data snapshot. No forecast, no interpretation, no investment advice. Every figure was computed by this project from the source series named, and must be verified against the primary release before use."
